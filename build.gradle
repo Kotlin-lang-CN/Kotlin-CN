@@ -1,0 +1,21 @@
+group 'tech.kotlin.china'
+version project_version
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url "http://jcenter.bintray.com" }
+        maven { url "https://jitpack.io" }
+        maven { url "http://mvnrepository.com/artifact/org.springframework/spring-context" }
+    }
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven { url "http://jcenter.bintray.com" }
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+        }
+    }
+}

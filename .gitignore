@@ -1,0 +1,10 @@
+.DS_Store
+.gradle
+build
+*.iml
+restful/src/main/resources/product/
+*.ipr
+*.iws
+local.properties
+out
+

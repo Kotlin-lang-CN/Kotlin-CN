@@ -1,0 +1,22 @@
+group 'tech.kotlin.china'
+version project_version
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'spring-boot'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.6.7"
+    compile 'org.mybatis:mybatis:3.4.0'
+    compile 'com.github.pagehelper:pagehelper:4.1.6'
+    compile 'mysql:mysql-connector-java:6.0.2'
+    compile 'com.alibaba:fastjson:1.2.12'
+    compile 'io.jsonwebtoken:jjwt:0.6.0'
+    testCompile 'junit:junit:4.11'
+}
+
+bootRun {
+    addResources = true
+}
