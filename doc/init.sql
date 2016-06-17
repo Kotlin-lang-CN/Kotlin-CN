@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS accounts (
  * create_time: 文章创建时间
  * view: 阅读数量
  * flower: 点赞数量
- * comment: 评论 JsonArray 格式字符串, 保存 评论id 列表
  * forbidden: 封禁状态
  */
 CREATE TABLE IF NOT EXISTS articles (
@@ -55,8 +54,6 @@ CREATE TABLE IF NOT EXISTS articles (
   COMMENT '阅读数量',
   flower      INT(16)             NOT NULL DEFAULT 0
   COMMENT '点赞数量',
-  `comment`   TEXT                         DEFAULT NULL
-  COMMENT '评论列表',
   forbidden   BOOL                NOT NULL DEFAULT FALSE
   COMMENT '文章的封禁状态'
 )

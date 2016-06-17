@@ -24,13 +24,11 @@ data class Account(var uid: Long = 0, var name: String = "", var password: Strin
  * create_time: 文章创建时间
  * view: 阅读数量
  * flower: 点赞数量
- * comment: 评论 JsonArray 格式字符串, 保存 评论id 列表
  * forbidden: 封禁状态
  */
-data class Article(var aid: Long = 0, var author: Long = 0, var title: String = "",
-                   var description: String = "", var content: String = "", var category: Int = 0,
-                   var create_time: Date = Date(), var view: Long = 0, val flower: Long = 0,
-                   var comments: String? = "", var forbidden: Boolean = false)
+data class Article(var aid: Long = 0, var author: Long = 0, var title: String = "", var description: String = "",
+                   var content: String = "", var category: Int = 0, var create_time: Date = Date(), var view: Long = 0,
+                   val flower: Long = 0, var forbidden: Boolean = false)
 
 /***
  * 评论
