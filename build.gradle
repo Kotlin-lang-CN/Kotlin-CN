@@ -7,6 +7,7 @@ allprojects {
         maven { url "http://jcenter.bintray.com" }
         maven { url "https://jitpack.io" }
         maven { url "http://mvnrepository.com/artifact/org.springframework/spring-context" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     buildscript {
         repositories {
@@ -15,7 +16,7 @@ allprojects {
         }
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+            classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE'
         }
     }
 }

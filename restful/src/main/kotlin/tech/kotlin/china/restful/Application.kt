@@ -10,8 +10,8 @@ import tech.kotlin.china.restful.framework.DBManager
 
 @SpringBootApplication
 open class Application {
-    @Bean open fun objectMapperBuilder(): Jackson2ObjectMapperBuilder =
-            Jackson2ObjectMapperBuilder().modulesToInstall(KotlinModule())
+    @Bean open fun objectMapperBuilder(): Jackson2ObjectMapperBuilder = Jackson2ObjectMapperBuilder()
+            .modulesToInstall(KotlinModule())
 }
 
 fun main(args: Array<String>) {

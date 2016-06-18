@@ -24,21 +24,38 @@ data class Account(var uid: Long = 0, var name: String = "", var password: Strin
  * create_time: 文章创建时间
  * view: 阅读数量
  * flower: 点赞数量
+ * comment: 评论数量
  * forbidden: 封禁状态
  */
 data class Article(var aid: Long = 0, var author: Long = 0, var title: String = "", var description: String = "",
                    var content: String = "", var category: Int = 0, var create_time: Date = Date(), var view: Long = 0,
-                   val flower: Long = 0, var forbidden: Boolean = false)
+                   var flower: Long = 0, var comment: Long = 0, var forbidden: Boolean = false)
 
 /***
  * 评论
  * cid: 评论id
  * aid: 文章id
- * uid: 评论人id
- * forbidden: 封禁状态
- * targetUID: 回复用户ID
+ * commenter: 评论人id
+ * reply: 回复用户ID
  * create_time: 创建时间
  * content: 评论内容
+ * flower: 点赞数量
+ * delete: 删除状态
+ * forbidden: 封禁状态
  */
-data class Comment(var cid: Long = 0, var aid: Long = 0, var uid: Long = 0, var forbidden: Boolean = false,
-                   var targetUID: Long? = null, var create_time: Long = 0, var content: String = "")
+data class Comment(var cid: Long = 0, var aid: Long = 0, var commenter: Long = 0, var reply: Long? = null,
+                   var create_time: Date = Date(), var content: String = "", var flower: Long = 0,
+                   var delete: Boolean = false, var forbidden: Boolean = false)
+
+
+/***
+ * 点赞
+ * id: 点赞id
+ * mode: 类型 0-文章 1-评论
+ * oid: 被点赞客体 id
+ * actor: 点赞人
+ * praised: 被点赞人
+ * create_time: 点赞时间
+ */
+data class Flower(var id: Long = 0, var mode: Int = 0, var oid: Long, var actor: Long, val praised: Long,
+                  var create_time: Date = Date())
