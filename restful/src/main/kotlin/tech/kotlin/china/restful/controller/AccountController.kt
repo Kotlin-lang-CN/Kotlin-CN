@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RequestMethod.GET
 import org.springframework.web.bind.annotation.RequestMethod.POST
 import tech.kotlin.china.restful.database.AccountMapper
+import tech.kotlin.china.restful.database.get
 import tech.kotlin.china.restful.database.use
 import tech.kotlin.china.restful.framework.Config
 import tech.kotlin.china.restful.model.Account
@@ -24,13 +25,11 @@ class AccountController : _Base() {
         it.name.forbid("用户名过长") { it.length > 100 }
         it.password.require("不合法法的密码长度") { it.length >= 6 && it.length < 100 }
     }.session {
-        it.use(AccountMapper::class.java) {
-            val account = it.queryByName(form.name)
-                    .forbid("该用户不存在") { it == null }!!
-                    .forbid("用户密码不正确") { !form.password.encrypt(PASSWORD_SECRET).equals(it.password) }
-            val token = createToken(uid = account.uid, admin = account.rank == 1)
-            @Return Maps.p("token", token).p("uid", account.uid)
-        }
+        val account = it[AccountMapper::class.java].queryByName(form.name)
+                .forbid("该用户不存在") { it == null }!!
+                .forbid("用户密码不正确") { !form.password.encrypt(PASSWORD_SECRET).equals(it.password) }
+        val token = createToken(uid = account.uid, admin = account.rank == 1)
+        @Return Maps.p("token", token).p("uid", account.uid)
     }
 
     @Doc("会员账号注册")
@@ -42,17 +41,15 @@ class AccountController : _Base() {
     }.session(transaction = true) {
         it.use(AccountMapper::class.java) {
             it.queryByName(form.name).forbid("该用户已存在") { it != null }
-            @Return it.registerAccount(Maps.p("name", form.name).p("password", form.password.encrypt(PASSWORD_SECRET)))
+            it.registerAccount(Maps.p("name", form.name).p("password", form.password.encrypt(PASSWORD_SECRET)))
+            val account = it.queryByName(form.name).forbid("注册失败") { it == null }!!
+            @Return Maps.p("uid", account.uid)
         }
     }
 
     @Doc("获得当前注册用户总数")
     @RequestMapping("/account/count", method = arrayOf(GET))
-    fun getUserCount() = session {
-        it.use(AccountMapper::class.java) {
-            @Return it.getUserCount()
-        }
-    }
+    fun getUserCount() = session { @Return it[AccountMapper::class.java].getUserCount() }
 
     @Doc("查看用户列表")
     @RequestMapping("/account/list/{page}", method = arrayOf(GET))
@@ -83,7 +80,7 @@ class AccountController : _Base() {
     }.authorized(admin = true).session(transaction = true) {
         it.use(AccountMapper::class.java) {
             it.queryByUID(uid).forbid("该用户不存在") { it == null }
-            @Return it.enableAccount(Maps.p("uid", uid).p("forbidden", true))
+            it.enableAccount(Maps.p("uid", uid).p("forbidden", true))
         }
     }
 
@@ -94,7 +91,7 @@ class AccountController : _Base() {
     }.authorized(admin = true).session(transaction = true) {
         it.use(AccountMapper::class.java) {
             it.queryByUID(uid).forbid("该用户不存在") { it == null }
-            @Return it.enableAccount(Maps.p("uid", uid).p("forbidden", false))
+            it.enableAccount(Maps.p("uid", uid).p("forbidden", false))
         }
     }
 }

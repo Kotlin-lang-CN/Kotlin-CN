@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 /***
  * 初始 admin 用户: username->admin@kotlin.tech; password->rootadmin
  */
-INSERT INTO accounts (name, password, rank) values ('admin@kotlin.tech', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb290YWRtaW4ifQ.QnxCvCCSxCRik7P3U2gus7xPHxwLNhV9SgZDNhNmS-O3hTzvQqbUjZnvyRdXBjwa3EQwWlxMt-kzhrrwWorrQw', 1);
+# INSERT INTO accounts (name, password, rank) values ('admin@kotlin.tech', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJyb290YWRtaW4ifQ.QnxCvCCSxCRik7P3U2gus7xPHxwLNhV9SgZDNhNmS-O3hTzvQqbUjZnvyRdXBjwa3EQwWlxMt-kzhrrwWorrQw', 1);
 
 /***
  * 文章
@@ -69,7 +69,6 @@ CREATE TABLE IF NOT EXISTS articles (
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;
 
-
 /***
  * 评论
  * cid: 评论id
@@ -103,5 +102,29 @@ CREATE TABLE IF NOT EXISTS comments (
   COMMENT '被封禁'
 )
   COMMENT '文章表',
+  DEFAULT CHARSET utf8,
+  ENGINE = Innodb;
+
+/***
+ * 点赞
+ * id: 点赞id
+ * mode: 点赞类型 0-文章 1-评论
+ * oid: 被点赞客体 id
+ * actor: 点赞人
+ * create_time: 点赞时间
+ */
+CREATE TABLE IF NOT EXISTS flowers (
+  id          INT(16) PRIMARY KEY NOT NULL AUTO_INCREMENT
+  COMMENT '点赞id',
+  `mode`      INT(4)              NOT NULL
+  COMMENT '点赞类型 0-文章 1-评论',
+  oid         INT(16)             NOT NULL
+  COMMENT '客体(如文章)id',
+  actor       INT(16)             NOT NULL
+  COMMENT '点赞人',
+  create_time DATETIME            NOT NULL DEFAULT NOW()
+  COMMENT '创建时间'
+)
+  COMMENT '点赞表',
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;

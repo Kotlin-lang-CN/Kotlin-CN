@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod.GET
 import org.springframework.web.bind.annotation.RequestMethod.POST
 import org.springframework.web.bind.annotation.RestController
 import tech.kotlin.china.restful.database.ArticleMapper
+import tech.kotlin.china.restful.database.FlowerMapper
+import tech.kotlin.china.restful.database.get
 import tech.kotlin.china.restful.database.use
 import tech.kotlin.china.restful.model.Article
 import tech.kotlin.china.restful.model.ArticleForm
@@ -26,18 +28,14 @@ class ArticleController : _Base() {
     fun article(@PathVariable("aid") @Doc("文章id") aid: Long) = session(transaction = true) {
         it.use(ArticleMapper::class.java) {
             val article = it.queryByAID(aid).forbid("文章不存在", 404) { it == null }!!
-            @Return article.expose("aid", "title", "description", "content", "author", "flower")
+            @Return article.expose("aid", "title", "description", "content", "author", "comment", "flower")
                     .p("create_time", article.create_time.format())
         }
     }
 
     @Doc("查看当前文章总数")
     @RequestMapping("/article/count", method = arrayOf(GET))
-    fun getArticleCount() = session {
-        it.use(ArticleMapper::class.java) {
-            @Return it.getArticleCount()
-        }
-    }
+    fun getArticleCount() = session { @Return it[ArticleMapper::class.java].getArticleCount() }
 
     @Doc("查看文章列表")
     @RequestMapping("/article/list/{page}", method = arrayOf(GET))
@@ -45,7 +43,8 @@ class ArticleController : _Base() {
         it.use(ArticleMapper::class.java) {
             PageHelper.startPage<Article>((page - 1) * ARTICLE_PAGE_SIZE + 1, page * ARTICLE_PAGE_SIZE)
             @Return it.queryArticleList().map {
-                it.expose("aid", "title", "description", "author").p("create_time", it.create_time.format())
+                it.expose("aid", "title", "description", "author", "comment", "flower")
+                        .p("create_time", it.create_time.format())
             }
         }
     }
@@ -56,7 +55,7 @@ class ArticleController : _Base() {
         it.use(ArticleMapper::class.java) {
             PageHelper.startPage<Article>((page - 1) * ARTICLE_PAGE_SIZE + 1, page * ARTICLE_PAGE_SIZE)
             @Return it.queryByUID(getUID()!!).map {
-                it.expose("aid", "title", "description", "author")
+                it.expose("aid", "title", "description", "author", "comment", "flower")
                         .p("create_time", it.create_time.format())
                         .p("status", if (it.forbidden) "管理员锁定" else "正常")
             }
@@ -70,9 +69,7 @@ class ArticleController : _Base() {
         it.content.forbid("请输入文章内容") { it.length == 0 }
         it.description.forbid("请输入文章描述") { it.length == 0 }
     }.authorized().session(transaction = true) {
-        it.use(ArticleMapper::class.java) {
-            @Return it.publishArticle(form.expose("title", "content", "description").p("uid", getUID()!!))
-        }
+        it[ArticleMapper::class.java].publishArticle(form.expose("title", "content", "description").p("uid", getUID()!!))
     }
 
     @Doc("修改我的文章")
@@ -89,9 +86,31 @@ class ArticleController : _Base() {
                     .forbid("您没有修改这篇文章的权利!", 403) { it.author != getUID()!! }
         }
     }.session(transaction = true) {
-        it.use(ArticleMapper::class.java) {
-            @Return it.updateArticle(form.expose("title", "content", "description").p("aid", aid))
-        }
+        it[ArticleMapper::class.java].updateArticle(form.expose("title", "content", "description").p("aid", aid))
+    }
+
+    @Doc("点赞文章")
+    @RequestMapping("/article/{aid}/flower", method = arrayOf(POST))
+    fun praiseArticle(@PathVariable("aid") @Doc("文章id") aid: Long) = authorized(strict = true) {
+        it[FlowerMapper::class.java].queryActor(Maps.p("mode", 0).p("oid", aid).p("actor", getUID()!!))
+                .forbid("你已经点过赞了!") { it != 0 }
+    }.session(transaction = true) {
+        val args = Maps.p("mode", 0).p("oid", aid).p("actor", getUID()!!)
+        it[FlowerMapper::class.java].addFlower(args)
+        val count = it[FlowerMapper::class.java].countFlower(args)
+        it[ArticleMapper::class.java].updateFlowerCount(Maps.p("flower", count).p("aid", aid))
+    }
+
+    @Doc("取消文章点赞")
+    @RequestMapping("/article/{aid}/flower/cancel", method = arrayOf(POST))
+    fun cancelPraiseArticle(@PathVariable("aid") @Doc("文章id") aid: Long) = authorized(strict = true) {
+        it[FlowerMapper::class.java].queryActor(Maps.p("mode", 0).p("oid", aid).p("actor", getUID()!!))
+                .forbid("你还没点过赞呢!") { it == 0 }
+    }.session(transaction = true) {
+        val args = Maps.p("mode", 0).p("oid", aid).p("actor", getUID()!!)
+        it[FlowerMapper::class.java].cancelFlower(args)
+        val count = it[FlowerMapper::class.java].countFlower(args)
+        it[ArticleMapper::class.java].updateFlowerCount(Maps.p("flower", count).p("aid", aid))
     }
 
     @Doc("锁定文章")
@@ -100,7 +119,7 @@ class ArticleController : _Base() {
             .session(transaction = true) {
                 it.use(ArticleMapper::class.java) {
                     it.queryByAID(aid).forbid("该文章不存在", 404) { it == null }
-                    @Return it.enableArticle(Maps.p("aid", aid).p("disable", true))
+                    it.enableArticle(Maps.p("aid", aid).p("disable", true))
                 }
             }
 
@@ -110,7 +129,7 @@ class ArticleController : _Base() {
             .session(transaction = true) {
                 it.use(ArticleMapper::class.java) {
                     it.queryByAID(aid).forbid("该文章不存在", 404) { it == null }
-                    @Return it.enableArticle(Maps.p("aid", aid).p("disable", false))
+                    it.enableArticle(Maps.p("aid", aid).p("disable", false))
                 }
             }
 }

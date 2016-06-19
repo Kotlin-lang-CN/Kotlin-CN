@@ -4,7 +4,7 @@ import org.apache.ibatis.session.SqlSession
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.ExceptionHandler
 import tech.kotlin.china.restful.database.AccountMapper
-import tech.kotlin.china.restful.database.use
+import tech.kotlin.china.restful.database.get
 import tech.kotlin.china.restful.framework.Config
 import tech.kotlin.china.restful.framework.DBManager
 import tech.kotlin.china.restful.utils.*
@@ -47,7 +47,7 @@ open class _Base {
     /***
      * 用户权限相关的判断
      */
-    fun authorized(login: Long? = null, admin: Boolean = false,
+    fun authorized(login: Long? = null, admin: Boolean = false, strict: Boolean = false,
                    action: (SqlSession) -> Unit = { }): AuthorizedTask {
         val token = getToken()
                 .require(message = "未登录用户", status = 403) { it != null }!!
@@ -56,9 +56,8 @@ open class _Base {
             //对管理员权限执行检测
             override fun onCheck(session: SqlSession) {
                 if (admin) {
-                    session.use(AccountMapper::class.java) {
-                        it.seekRankOf(token.uid).require("用户权限不足", 403) { it == 1 }
-                    }
+                    session[AccountMapper::class.java].seekRankOf(token.uid).require("用户权限不足", 403) { it == 1 }
+                    if (strict) action.invoke(session)
                 } else {
                     action.invoke(session)
                 }

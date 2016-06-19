@@ -1,5 +1,6 @@
 package tech.kotlin.china.restful.database
 
+import org.apache.ibatis.annotations.Delete
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.annotations.Update
@@ -68,6 +69,12 @@ interface ArticleMapper {
 
     @Select("SELECT COUNT(*) FROM articles")
     fun getArticleCount(): Int
+
+    @Update("UPDATE articles set `comment` = #{comment} where aid = #{aid}")
+    fun updateCommentCount(data: Map<String, Any?>)
+
+    @Update("UPDATE articles set `flower` = #{flower} where aid = #{aid}")
+    fun updateFlowerCount(data: Map<String, Any?>)
 }
 
 interface CommentMapper {
@@ -88,4 +95,24 @@ interface CommentMapper {
 
     @Update("UPDATE comments set forbidden = #{disable} WHERE cid = #{cid}")
     fun enableComment(data: Map<String, Any?>)
+
+    @Select("SELECT COUNT(*) FROM comments where aid = #{aid} AND forbidden = FALSE AND `delete` = FALSE")
+    fun countComment(aid: Long): Long
+
+    @Update("UPDATE comments set `flower` = #{flower} where cid = #{cid}")
+    fun updateFlowerCount(data: Map<String, Any?>)
+}
+
+interface FlowerMapper {
+    @Insert("INSERT INTO flowers (`mode`, oid, actor) VALUES (#{mode}, #{oid}, #{actor})")
+    fun addFlower(data: Map<String, Any?>)
+
+    @Delete("DELETE FROM flowers WHERE `mode` = #{mode} AND oid = #{oid} AND actor = #{actor}")
+    fun cancelFlower(data: Map<String, Any?>)
+
+    @Select("SELECT COUNT(*) FROM flowers WHERE `mode` = #{mode} AND oid = #{oid} AND actor = #{actor}")
+    fun queryActor(data: Map<String, Any?>): Int
+
+    @Select("SELECT COUNT(*) FROM flowers WHERE `mode` = #{mode} AND oid = #{oid}")
+    fun countFlower(data: Map<String, Any?>): Int
 }

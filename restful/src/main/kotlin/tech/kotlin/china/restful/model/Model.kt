@@ -51,11 +51,11 @@ data class Comment(var cid: Long = 0, var aid: Long = 0, var commenter: Long = 0
 /***
  * 点赞
  * id: 点赞id
- * mode: 类型 0-文章 1-评论
+ * mode: 点赞类型 0-文章 1-评论
  * oid: 被点赞客体 id
  * actor: 点赞人
  * praised: 被点赞人
  * create_time: 点赞时间
  */
-data class Flower(var id: Long = 0, var mode: Int = 0, var oid: Long, var actor: Long, val praised: Long,
+data class Flower(var id: Long = 0, var mode: Int = 0, var oid: Long, var actor: Long, val author: Long,
                   var create_time: Date = Date())
