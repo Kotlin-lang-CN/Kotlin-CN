@@ -1,11 +1,5 @@
 ### Mysql
 
-> get image
-
-```docker
-docker pull mysql
-```
-
 > start mysql
 
 ```docker

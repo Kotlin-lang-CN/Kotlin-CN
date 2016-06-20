@@ -1,4 +1,4 @@
-package tech.kotlin.china.restful.controller
+package tech.kotlin.china.restful.controller.rest
 
 import com.github.pagehelper.PageHelper
 import org.springframework.web.bind.annotation.*
@@ -7,16 +7,15 @@ import org.springframework.web.bind.annotation.RequestMethod.POST
 import tech.kotlin.china.restful.database.AccountMapper
 import tech.kotlin.china.restful.database.get
 import tech.kotlin.china.restful.database.use
-import tech.kotlin.china.restful.framework.Config
 import tech.kotlin.china.restful.model.Account
 import tech.kotlin.china.restful.model.AccountForm
 import tech.kotlin.china.restful.utils.*
 
 @RestController
-class AccountController : _Base() {
+class AccountController : _Rest() {
 
     val ACCOUNT_PAGE_SIZE = 20 //账号列表的分页大小
-    val PASSWORD_SECRET = Config.get("password_secret")
+    val PASSWORD_SECRET: String by lazy { config["password_secret"] }
 
     @Doc("会员账号登录")
     @RequestMapping("/account/login", method = arrayOf(POST))
@@ -28,7 +27,7 @@ class AccountController : _Base() {
         val account = it[AccountMapper::class.java].queryByName(form.name)
                 .forbid("该用户不存在") { it == null }!!
                 .forbid("用户密码不正确") { !form.password.encrypt(PASSWORD_SECRET).equals(it.password) }
-        val token = createToken(uid = account.uid, admin = account.rank == 1)
+        val token = createToken(uid = account.uid, admin = account.rank == 1, username = form.name)
         @Return Maps.p("token", token).p("uid", account.uid)
     }
 

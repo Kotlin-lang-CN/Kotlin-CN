@@ -1,4 +1,4 @@
-package tech.kotlin.china.restful.controller
+package tech.kotlin.china.restful.controller.rest
 
 import com.github.pagehelper.PageHelper
 import org.springframework.web.bind.annotation.*
@@ -6,13 +6,10 @@ import org.springframework.web.bind.annotation.RequestMethod.POST
 import tech.kotlin.china.restful.database.*
 import tech.kotlin.china.restful.model.Comment
 import tech.kotlin.china.restful.model.CommentForm
-import tech.kotlin.china.restful.utils.Maps
-import tech.kotlin.china.restful.utils.expose
-import tech.kotlin.china.restful.utils.format
-import tech.kotlin.china.restful.utils.p
+import tech.kotlin.china.restful.utils.*
 
 @RestController
-class CommentController : _Base() {
+class CommentController : _Rest() {
 
     val COMMENT_PAGE_SIZE = 20 //账号列表的分页大小
 
@@ -46,17 +43,15 @@ class CommentController : _Base() {
     @RequestMapping("/comment/make", method = arrayOf(POST))
     fun makeComment(@RequestBody @Doc("评论内容") form: CommentForm) = form.check {
         it.content.require("请填写评论内容") { it.length != 0 }
-    }.authorized().session(transaction = true) {
-        val commentMapper = it[CommentMapper::class.java]
-        val articleMapper = it[ArticleMapper::class.java]
-        val accountMapper = it[AccountMapper::class.java]
-
-        articleMapper.queryByAID(form.aid).forbid("该文章不存在", 404) { it == null }!!
-        if (form.reply != null) accountMapper.queryByUID(form.reply).forbid("不存在该用户", 404) { it == null }
-
-        commentMapper.makeComment(form.expose("content", "aid", "reply").p("uid", getUID()!!))
-        val count = commentMapper.countComment(form.aid)
-        articleMapper.updateCommentCount(Maps.p("aid", form.aid).p("comment", count))
+    }.authorized(strict = true) {
+        it[ArticleMapper::class.java].queryByAID(form.aid)
+                .forbid("该文章不存在", 404) { it == null }!!
+        if (form.reply != null) it[AccountMapper::class.java].queryByUID(form.reply)
+                .forbid("不存在该用户", 404) { it == null }
+    }.session(transaction = true) {
+        it[CommentMapper::class.java].makeComment(form.expose("content", "aid", "reply").p("uid", getUID()!!))
+        val count = it[CommentMapper::class.java].countComment(form.aid)
+        it[ArticleMapper::class.java].updateCommentCount(Maps.p("aid", form.aid).p("comment", count))
     }
 
     @Doc("删除评论")
@@ -66,13 +61,10 @@ class CommentController : _Base() {
                 .forbid("该评论根本不存在!", 404) { it == null }!!
                 .require("您没有删除该评论的权利") { it.commenter == getUID()!! }
     }.session(transaction = true) {
-        val commentMapper = it[CommentMapper::class.java]
-        val articleMapper = it[ArticleMapper::class.java]
-
-        val comment = commentMapper.queryByCID(cid).forbid("该评论不存在", 404) { it == null }!!
-        commentMapper.deleteComment(cid)
-        val count = commentMapper.countComment(comment.aid)
-        articleMapper.updateCommentCount(Maps.p("aid", comment.aid).p("comment", count))
+        val comment = it[CommentMapper::class.java].queryByCID(cid).forbid("该评论不存在", 404) { it == null }!!
+        it[CommentMapper::class.java].deleteComment(cid)
+        val count = it[CommentMapper::class.java].countComment(comment.aid)
+        it[ArticleMapper::class.java].updateCommentCount(Maps.p("aid", comment.aid).p("comment", count))
     }
 
     @Doc("点赞评论")

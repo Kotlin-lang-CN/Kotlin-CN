@@ -1,4 +1,4 @@
-package tech.kotlin.china.restful.controller
+package tech.kotlin.china.restful.controller.rest
 
 import com.github.pagehelper.PageHelper
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,13 +13,10 @@ import tech.kotlin.china.restful.database.get
 import tech.kotlin.china.restful.database.use
 import tech.kotlin.china.restful.model.Article
 import tech.kotlin.china.restful.model.ArticleForm
-import tech.kotlin.china.restful.utils.Maps
-import tech.kotlin.china.restful.utils.expose
-import tech.kotlin.china.restful.utils.format
-import tech.kotlin.china.restful.utils.p
+import tech.kotlin.china.restful.utils.*
 
 @RestController
-class ArticleController : _Base() {
+class ArticleController : _Rest() {
 
     val ARTICLE_PAGE_SIZE = 10 //账号列表的分页大小
 

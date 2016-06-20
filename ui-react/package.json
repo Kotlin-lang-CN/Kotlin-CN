@@ -1,0 +1,23 @@
+{
+  "name": "ui-react",
+  "version": "1.0.0",
+  "description": "react ui for wechat public account",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Kotlin-China"
+  ],
+  "author": "chpengzh@foxmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  },
+  "dependencies": {
+    "history": "^1.17.0",
+    "react": "^15.1.0",
+    "react-weui": "^0.4.0",
+    "weui": "^0.4.2"
+  }
+}

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <properties resource="test/jdbc.properties"/>
+    <properties resource="database/jdbc.properties"/>
     <!--<properties resource="product/jdbc.properties"/>-->
     <settings>
         <setting name="defaultStatementTimeout" value="30"/>
