@@ -1,0 +1,4 @@
+#!/bin/sh
+# Do not run this shell in product env!
+docker rm -f $(docker ps -a)
+docker rmi $(docker images | awk '/^<none>/ { print $3 }')

@@ -2,9 +2,10 @@
 .gradle
 build
 *.iml
-restful/src/main/resources/product/
 *.ipr
 *.iws
+*.ids
 local.properties
 out
-
+!build.dev
+!build.release
