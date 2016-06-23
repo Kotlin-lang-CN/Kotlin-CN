@@ -5,6 +5,12 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'spring-boot'
 
+sourceSets {
+    main {
+        resources.srcDirs = ['src/main/config', 'src/main/assets']
+    }
+}
+
 jar {
     baseName = 'kotlin_china'
     version = 'latest'
@@ -23,8 +29,4 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testCompile 'junit:junit:4.11'
-}
-
-bootRun {
-    addResources = true
 }

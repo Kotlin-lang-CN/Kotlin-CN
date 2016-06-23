@@ -4,13 +4,13 @@ import org.apache.ibatis.io.Resources
 import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactory
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import tech.kotlin.china.utils.Env
 import tech.kotlin.china.utils.Props
 import tech.kotlin.china.utils.p
 
-@Component
-open class Database {
+@Service
+class Database {
 
     val SESSION_FACTORY: SqlSessionFactory = Resources.getResourceAsStream("mybatis-config.xml").use {
         SqlSessionFactoryBuilder().build(it, Props

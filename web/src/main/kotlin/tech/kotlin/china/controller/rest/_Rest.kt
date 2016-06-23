@@ -115,7 +115,7 @@ open class _Rest {
      */
     @BusinessSafe
     @ExceptionHandler(Throwable::class)
-    fun handleError(error: Throwable): Map<String, Any?> = when (error) {
+    open fun handleError(error: Throwable): Map<String, Any?> = when (error) {
         is BusinessError -> p("status", error.status).p("message", error.msg)
         is BindException -> p("status", 400).p("message", error.message)
         is ConversionNotSupportedException -> p("status", 500).p("message", error.message)

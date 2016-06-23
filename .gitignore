@@ -7,5 +7,5 @@ build
 *.ids
 local.properties
 out
-!build.dev
 !build.release
+node_modules

@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y git && \
     apt-get autoremove && apt-get autoclean
 
 # 同步代码, 安装依赖
-RUN cd /usr/local/ && git clone https://GostGollum@bitbucket.org/GostGollum/Kotlin-China.git && \
+RUN cd /usr/local/ && git clone https://github.com/KotlinChina/Kotlin-China.git && \
     cd Kotlin-China && ./gradlew web:buildDependents
 
 # 编译代码

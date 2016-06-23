@@ -1,8 +1,10 @@
 package tech.kotlin.china.controller.view
 
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import tech.kotlin.china.controller.rest._Rest
+import tech.kotlin.china.utils.BusinessSafe
 import tech.kotlin.china.utils.Env
 import tech.kotlin.china.utils.p
 import java.util.*
@@ -15,7 +17,7 @@ import java.util.*
  * template location: resources/templates
  * template suffix: .html
  */
-@RequestMapping("/view")
+@RequestMapping("/")
 open class _View : _Rest() {
 
     val static = Env["static"] ?: "http://localhost:8080"
@@ -32,5 +34,18 @@ open class _View : _Rest() {
                         .p("username", token?.username)
                         .p("admin", token != null && token.admin)
                 ))
+    }
+
+    fun app(fragment: String, model: () -> HashMap<String, Any?> = { HashMap() }): ModelAndView =
+            view("app") { model().p("fragment", "$fragment.min.js") }
+
+    /***
+     * 执行业务逻辑的异常的响应
+     */
+    @BusinessSafe
+    @ExceptionHandler(Throwable::class)
+    override fun handleError(error: Throwable): Map<String, Any?> {
+        error.printStackTrace()
+        return p("error", "$error")
     }
 }
