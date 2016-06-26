@@ -1,6 +1,7 @@
 package tech.kotlin.china.controller.rest
 
 import org.apache.ibatis.session.SqlSession
+import org.apache.log4j.Logger
 import org.springframework.beans.ConversionNotSupportedException
 import org.springframework.beans.TypeMismatchException
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,10 +18,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.multipart.support.MissingServletRequestPartException
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
-import tech.kotlin.china.database.AccountMapper
-import tech.kotlin.china.database.Database
-import tech.kotlin.china.database.map
-import tech.kotlin.china.utils.*
+import tech.kotlin.china.framework.Database
+import tech.kotlin.china.framework.of
+import tech.kotlin.china.mapper.AccountMapper
+import utils.dataflow.BusinessError
+import utils.dataflow.BusinessSafe
+import utils.dataflow.require
+import utils.json.toJson
+import utils.json.toModel
+import utils.map.p
+import utils.properties.Env
+import utils.string.decrypt
+import utils.string.encrypt
+import utils.string.randStr
 import java.net.BindException
 import javax.servlet.http.HttpServletRequest
 
@@ -34,6 +44,7 @@ open class _Rest {
 
     @Autowired lateinit var request: HttpServletRequest
     @Autowired lateinit var database: Database
+    val log = Logger.getLogger("_Rest")
 
     /***
      * 编码和解析 Json Web Token
@@ -60,8 +71,7 @@ open class _Rest {
     /***
      * 表单校验
      */
-
-    fun <R> R.check(enable: Boolean = true, onCheck: (R) -> Unit): _Rest {
+    fun <R> R.check(enable: Boolean = true, onCheck: (R) -> Any?): _Rest {
         if (enable) onCheck.invoke(this)
         return this@_Rest
     }
@@ -70,7 +80,7 @@ open class _Rest {
      * 用户权限相关的判断
      */
     fun authorized(login: Long? = null, admin: Boolean = false, strict: Boolean = false,
-                   action: (SqlSession) -> Unit = { }): AuthorizedTask {
+                   action: (SqlSession) -> Any? = { }): AuthorizedTask {
         val token = getToken()
                 .require(message = "未登录用户", status = 403) { it != null }!!
                 .require(message = "未授权用户", status = 403) { it.admin || login == null || it.uid == login }
@@ -78,8 +88,7 @@ open class _Rest {
             //对管理员权限执行检测
             override fun onCheck(session: SqlSession) {
                 if (admin) {
-                    session.map<AccountMapper>().seekRankOf(token.uid)
-                            .require("用户权限不足", 403) { it == 1 }
+                    session.of<AccountMapper>().seekRankOf(token.uid).require("用户权限不足", 403) { it == 1 }
                     if (strict) action.invoke(session)
                 } else {
                     action.invoke(session)
@@ -106,7 +115,7 @@ open class _Rest {
         if (transaction) database.dbWrite(doResponse) else database.dbRead(doResponse)
     } catch(e: Throwable) {
         if (e is BusinessError) throw e
-        e.printStackTrace()
+        log.warn("Unhandled server error!", e)
         throw BusinessError("服务器错误", 502)
     }
 
@@ -132,6 +141,6 @@ open class _Rest {
         is TypeMismatchException -> p("status", 400).p("message", error.message)
         is MissingPathVariableException -> p("status", 500).p("message", error.message)
         is NoHandlerFoundException -> p("status", 404).p("message", error.message)
-        else -> p("stauts", 503).p("message", "未知服务器错误")
+        else -> p("status", 503).p("message", "未知服务器错误")
     }
 }

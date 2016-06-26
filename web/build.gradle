@@ -29,4 +29,5 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testCompile 'junit:junit:4.11'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:1.2.4.RELEASE'
 }

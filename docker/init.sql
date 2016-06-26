@@ -10,7 +10,7 @@ USE kotlin_china;
  * forbidden: 封禁状态
  */
 CREATE TABLE IF NOT EXISTS accounts (
-  uid       INT(16) PRIMARY KEY NOT NULL AUTO_INCREMENT
+  uid       INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT
   COMMENT '用户id',
   name      VARCHAR(255)        NOT NULL
   COMMENT '用户名',
@@ -47,9 +47,9 @@ INSERT INTO accounts (name, password, rank) VALUES ('admin@kotlin.tech',
  * forbidden: 封禁状态
  */
 CREATE TABLE IF NOT EXISTS articles (
-  aid         INT(16) PRIMARY KEY NOT NULL AUTO_INCREMENT
+  aid         INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT
   COMMENT '文章id',
-  author      INT(16)             NOT NULL
+  author      INTEGER             NOT NULL
   COMMENT '作者用户id',
   title       VARCHAR(255)        NOT NULL
   COMMENT '文章标题',
@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS articles (
   COMMENT '文章内容',
   category    INT(4)              NOT NULL DEFAULT 0
   COMMENT '文章类别',
-  create_time TIMESTAMP           NOT NULL DEFAULT now()
+  create_time DATETIME            NOT NULL DEFAULT now()
   COMMENT '文章创建时间',
-  view        INT(16)             NOT NULL DEFAULT 0
+  view        INTEGER             NOT NULL DEFAULT 0
   COMMENT '阅读数量',
-  flower      INT(16)             NOT NULL DEFAULT 0
+  flower      INTEGER             NOT NULL DEFAULT 0
   COMMENT '点赞数量',
-  `comment`   INT(16)             NOT NULL DEFAULT 0
+  `comment`   INTEGER             NOT NULL DEFAULT 0
   COMMENT '评论数量',
   forbidden   BOOL                NOT NULL DEFAULT FALSE
   COMMENT '文章的封禁状态'
@@ -87,19 +87,19 @@ CREATE TABLE IF NOT EXISTS articles (
  * forbidden: 封禁状态
  */
 CREATE TABLE IF NOT EXISTS comments (
-  cid         INT(16) PRIMARY KEY NOT NULL         AUTO_INCREMENT
+  cid         INTEGER PRIMARY KEY NOT NULL         AUTO_INCREMENT
   COMMENT '评论id',
-  aid         INT(16)             NOT NULL
+  aid         INTEGER             NOT NULL
   COMMENT '文章id',
-  commenter   INT(16)             NOT NULL
+  commenter   INTEGER             NOT NULL
   COMMENT '评论人id',
-  reply       INT(16)                              DEFAULT NULL
+  reply       INTEGER                              DEFAULT NULL
   COMMENT '被回复人',
-  create_time TIMESTAMP           NOT NULL         DEFAULT NOW()
+  create_time DATETIME            NOT NULL         DEFAULT now()
   COMMENT '评论建立时间',
   content     TEXT                NOT NULL
   COMMENT '评论内容',
-  flower      INT(16)             NOT NULL         DEFAULT 0
+  flower      INTEGER             NOT NULL         DEFAULT 0
   COMMENT '点赞数量',
   `delete`    BOOL                NOT NULL         DEFAULT FALSE
   COMMENT '被删除',
@@ -119,17 +119,48 @@ CREATE TABLE IF NOT EXISTS comments (
  * create_time: 点赞时间
  */
 CREATE TABLE IF NOT EXISTS flowers (
-  id          INT(16) PRIMARY KEY NOT NULL AUTO_INCREMENT
+  id          INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT
   COMMENT '点赞id',
   `mode`      INT(4)              NOT NULL
   COMMENT '点赞类型 0-文章 1-评论',
-  oid         INT(16)             NOT NULL
+  oid         INTEGER             NOT NULL
   COMMENT '客体(如文章)id',
-  actor       INT(16)             NOT NULL
+  actor       INTEGER             NOT NULL
   COMMENT '点赞人',
-  create_time TIMESTAMP           NOT NULL DEFAULT NOW()
+  create_time DATETIME            NOT NULL DEFAULT now()
   COMMENT '创建时间'
 )
   COMMENT '点赞表',
+  DEFAULT CHARSET utf8,
+  ENGINE = Innodb;
+
+
+/***
+ * 消息
+ * id: 消息id
+ * content: 消息正文
+ * title: 消息标题
+ * create_time: 创建时间
+ * from: 发信人id(系统消息为null)
+ * to: 收信人id
+ * status: 消息状态(0-未读取,1-已读取)
+ */
+CREATE TABLE IF NOT EXISTS messages (
+  id          INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT
+  COMMENT '消息id',
+  content     TEXT                NOT NULL
+  COMMENT '消息内容',
+  title       TEXT                NOT NULL
+  COMMENT '消息标题',
+  create_time DATETIME            NOT NULL DEFAULT now()
+  COMMENT '创建时间',
+  `from`      INTEGER                      DEFAULT NULL
+  COMMENT '发信人id',
+  `to`        INTEGER             NOT NULL
+  COMMENT '收信人id',
+  `status`    INT(4)              NOT NULL DEFAULT 0
+  COMMENT '消息状态'
+)
+  COMMENT '用户消息表',
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;

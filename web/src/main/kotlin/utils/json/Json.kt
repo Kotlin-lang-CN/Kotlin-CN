@@ -1,10 +1,7 @@
-package tech.kotlin.china.utils
+package utils.json
 
 import com.alibaba.fastjson.JSON
 
-/***
- * JSON Converter
- */
 fun Any.toJson(): String = JSON.toJSONString(this)
 
 fun Any.toJsonBytes(): ByteArray = JSON.toJSONBytes(this)

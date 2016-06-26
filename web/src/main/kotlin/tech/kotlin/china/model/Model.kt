@@ -61,3 +61,15 @@ data class Flower(var id: Long = 0, var mode: Int = 0, var oid: Long, var actor:
                   var create_time: Date = Date())
 
 
+/***
+ * 消息
+ * id: 消息id
+ * content: 消息正文
+ * title: 消息标题
+ * create_time: 创建时间
+ * from: 发信人id(系统消息为null)
+ * to: 收信人id
+ * status: 消息状态(0-未读取,1-已读取)
+ */
+data class Message(var id: Long = 0, var content: String = "", var title: String = "", var create_time: Date = Date(),
+                   var from: Long? = null, var to: Long = 0L, var status: Int = 0)

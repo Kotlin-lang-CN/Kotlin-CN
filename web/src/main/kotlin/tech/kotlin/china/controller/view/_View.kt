@@ -4,16 +4,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import tech.kotlin.china.controller.rest._Rest
-import tech.kotlin.china.utils.BusinessSafe
-import tech.kotlin.china.utils.Env
-import tech.kotlin.china.utils.p
 import java.util.*
+import utils.dataflow.BusinessSafe
+import utils.map.p
+import utils.properties.Env
 
 /***
  * ModelAndView Controller
  *
  * 使用了<a href="http://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html">thymeleaf</a> 作为视图模板引擎
  * <a href="http://itutorial.thymeleaf.org/">更多更好的 thymeleaf 教程</a>
+ *
  * template location: resources/templates
  * template suffix: .html
  */
@@ -37,7 +38,7 @@ open class _View : _Rest() {
     }
 
     fun app(fragment: String, model: () -> HashMap<String, Any?> = { HashMap() }): ModelAndView =
-            view("app") { model().p("fragment", "$fragment.min.js") }
+            view("app") { model().p("fragment", "$fragment.app.js") }
 
     /***
      * 执行业务逻辑的异常的响应

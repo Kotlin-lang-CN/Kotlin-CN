@@ -1,10 +1,4 @@
-package tech.kotlin.china.utils
-
-
-/***
- * 用以表述返回值的描述注解
- */
-@MustBeDocumented @Target(AnnotationTarget.EXPRESSION) @Retention(AnnotationRetention.RUNTIME) annotation class Return
+package utils.dataflow
 
 /***
  * 为 参变量提供注释
@@ -22,18 +16,19 @@ annotation class Doc(val value: String)
 annotation class BusinessSafe()
 
 /***
- * 业务流数据流的校验方法
+ * 对数据流进行校验, 对不满足条件的表达式返回值抛出异常
  */
+
 @Throws(BusinessError::class)
 inline fun <R> R.require(message: String, status: Int = 400, filter: (R) -> Boolean): R = try {
-    if (!filter(this)) throw BusinessError(message, status) else this
+    if (!filter(this)) throw BusinessError(message, status) else this@require
 } catch(e: Throwable) {
     throw BusinessError(message, status)
 }
 
 @Throws(BusinessError::class)
 inline fun <R> R.forbid(message: String, status: Int = 400, filter: (R) -> Boolean): R = try {
-    if (filter(this)) throw BusinessError(message, status) else this
+    if (filter(this)) throw BusinessError(message, status) else this@forbid
 } catch (e: Throwable) {
     throw BusinessError(message, status)
 }

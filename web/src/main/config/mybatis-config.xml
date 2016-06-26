@@ -5,6 +5,7 @@
 <configuration>
     <settings>
         <setting name="defaultStatementTimeout" value="30"/>
+        <setting name="logImpl" value="LOG4J"/>
     </settings>
     <plugins>
         <!-- com.github.pagehelper为PageHelper类所在包名 -->
@@ -47,8 +48,7 @@
             </dataSource>
         </environment>
     </environments>
-
     <mappers>
-        <package name="tech.kotlin.china.test.database"/>
+        <package name="tech.kotlin.china.mapper"/>
     </mappers>
 </configuration>

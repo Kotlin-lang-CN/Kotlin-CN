@@ -1,5 +1,7 @@
-package tech.kotlin.china.utils
+package utils.string
 
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
 import java.util.*
 
@@ -17,6 +19,11 @@ fun randStr(length: Int, sample: List<Char> = Letters.lowers): String {
     return sb.toString()
 }
 
+fun String.encrypt(key: String): String = Jwts.builder().setSubject(this)
+        .signWith(SignatureAlgorithm.HS512, key).compact()
+
+fun String.decrypt(key: String): String = Jwts.parser().setSigningKey(key)
+        .parseClaimsJws(this).body.subject;
 
 /***
  * Random String
@@ -27,8 +34,8 @@ object Letters : ArrayList<Char>() {
     val digits = Array(10, { (it + 48).toChar() }).toList()
 
     init {
-        Letters.addAll(lowers)
-        Letters.addAll(uppers)
-        Letters.addAll(digits)
+        addAll(lowers)
+        addAll(uppers)
+        addAll(digits)
     }
 }

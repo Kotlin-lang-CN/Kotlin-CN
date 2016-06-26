@@ -1,5 +1,5 @@
 var React = require('react');
-var GenderSelect = require('./component/gender-select');
+var GenderSelect = require('./app/component/gender-select');
 var SignUpForm = React.createClass({
     getInitialState: function () {
         return {name: '', password: '', gender: ''}
