@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
  */
 @Controller
 class WebController() : _View() {
-    @RequestMapping("/") fun index() = app("register")
+    @RequestMapping("/") fun index() = app("index")
     @RequestMapping("/documentation") fun documentation() = app("documentation")
     @RequestMapping("/wiki") fun wiki() = app("wiki")
     @RequestMapping("/login") fun login() = app("login")

@@ -1,0 +1,25 @@
+{
+  "name": "web-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-webpack": "^1.0.11",
+    "jsx-loader": "^0.13.2",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "jquery": "^3.0.0",
+    "react": "^15.1.0",
+    "react-bootstrap": "^0.29.5",
+    "react-dom": "^15.1.0"
+  }
+}

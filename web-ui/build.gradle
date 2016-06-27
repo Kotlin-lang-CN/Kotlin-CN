@@ -1,0 +1,10 @@
+group 'tech.kotlin.china'
+version project_version
+
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        resources.srcDirs = ['src/app']
+    }
+}

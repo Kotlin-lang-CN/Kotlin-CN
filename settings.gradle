@@ -1,2 +1,3 @@
 rootProject.name = 'Kotlin-China'
 include 'web'
+include 'web-ui'

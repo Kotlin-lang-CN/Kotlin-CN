@@ -17,6 +17,7 @@ jar {
 }
 
 dependencies {
+    compile project(':web-ui')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.springframework:spring-context:4.2.6.RELEASE"
     compile 'org.hibernate:hibernate-validator:5.2.4.Final'
@@ -28,6 +29,7 @@ dependencies {
     compile 'io.jsonwebtoken:jjwt:0.6.0'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'net.sourceforge.nekohtml:nekohtml:1.9.15'
     testCompile 'junit:junit:4.11'
     testCompile 'org.springframework.boot:spring-boot-starter-test:1.2.4.RELEASE'
 }
