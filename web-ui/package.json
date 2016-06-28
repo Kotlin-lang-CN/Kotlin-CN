@@ -10,7 +10,6 @@
   "license": "ISC",
   "devDependencies": {
     "grunt": "^1.0.1",
-    "grunt-aws-lambda": "^0.13.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-webpack": "^1.0.11",
     "jsx-loader": "^0.13.2",

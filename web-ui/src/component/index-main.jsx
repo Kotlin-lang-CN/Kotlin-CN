@@ -19,7 +19,10 @@ var SectionHeader = React.createClass({
                 <small>共建最潮流的Kotlin中文社区</small>
             </p>
             <Bootstrap.Pager>
-                <Bootstrap.PageItem next href="http://try.kotlinlang.org">在线尝试 &rarr;</Bootstrap.PageItem>
+                <Bootstrap.PageItem
+                    next href="http://try.kotlinlang.org"
+                    target="_blank">在线尝试 &rarr;
+                </Bootstrap.PageItem>
             </Bootstrap.Pager>
         </Jumbotron>
     }

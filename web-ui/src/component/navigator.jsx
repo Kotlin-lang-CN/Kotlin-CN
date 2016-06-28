@@ -43,10 +43,9 @@ var GuestMenu = React.createClass({
     render: function () {
         return <NavDropdown title="未登录">
             <MenuItem href="javascript:void(0);"
-                      onClick={() => this.setState({showSignIn: true})}>我要登录</MenuItem>
+                      onClick={this.showSignIn}>我要登录</MenuItem>
             <MenuItem href="javascript:void(0);"
-                      onClick={() => this.setState({showSignUp: true})}>注册账号</MenuItem>
-
+                      onClick={this.showSignUp}>注册账号</MenuItem>
             <Modal show={this.state.showSignIn || this.state.showSignUp } onHide={this.close}>
                 <Modal.Header>
                     <Modal.Title>{this.state.showSignIn ? '用户登录' : '用户注册'}</Modal.Title>
@@ -68,16 +67,28 @@ var GuestMenu = React.createClass({
     getFooter: function () {
         if (this.state.showSignIn) {
             return <Modal.Footer>
-                <Button onClick={() => this.setState({showSignIn: false})}>等会儿</Button>
-                <Button onClick={() => this.setState({showSignIn: false})}>恩, 我要登录</Button>
+                <Button onClick={this.dismissSignIn}>等会儿</Button>
+                <Button onClick={this.dismissSignIn}>恩, 我要登录</Button>
                 <Button href="/rest/sign-in/github">使用Gitbub登录</Button>
             </Modal.Footer>
         } else {
             return <Modal.Footer>
-                <Button onClick={() => this.setState({showSignUp: false})}>取消注册</Button>
-                <Button onClick={() => this.setState({showSignUp: false})}>确认注册</Button>
+                <Button onClick={this.dismissSignUp}>取消注册</Button>
+                <Button onClick={this.dismissSignUp}>确认注册</Button>
             </Modal.Footer>
         }
+    },
+    showSignIn: function () {
+        this.setState({showSignIn: true})
+    },
+    showSignUp: function () {
+        this.setState({showSignUp: true})
+    },
+    dismissSignIn: function () {
+        this.setState({showSignIn: false})
+    },
+    dismissSignUp: function () {
+        this.setState({showSignUp: false})
     }
 });
 
