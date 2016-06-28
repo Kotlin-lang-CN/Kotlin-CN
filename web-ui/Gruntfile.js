@@ -8,7 +8,7 @@ module.exports = function (grunt) {
                 // webpack options
                 entry: {
                     index: './src/index.jsx',
-                    register: './src/register.jsx'
+                    document: './src/document.jsx'
                 },
                 output: {
                     path: './src/app/static/js',
@@ -25,6 +25,9 @@ module.exports = function (grunt) {
                 }
             }
         },
+        lambda_invoke: {
+
+        },
         uglify: {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -38,6 +41,7 @@ module.exports = function (grunt) {
     // 加载包含 "uglify" 任务的插件。
     grunt.loadNpmTasks('grunt-webpack');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-aws-lambda');
     // 默认被执行的任务列表。
     grunt.registerTask('default', ['webpack', 'uglify']);
 };

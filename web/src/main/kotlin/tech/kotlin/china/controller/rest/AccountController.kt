@@ -11,11 +11,14 @@ import tech.kotlin.china.model.AccountForm
 import utils.dataflow.Doc
 import utils.dataflow.forbid
 import utils.dataflow.require
+import utils.json.toJson
 import utils.map.get
 import utils.map.p
 import utils.properties.Env
 import utils.string.encrypt
 import utils.string.isEmailFormat
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 class AccountController : _Rest() {
@@ -24,8 +27,8 @@ class AccountController : _Rest() {
     val PASSWORD_SECRET: String by lazy { Env["secret_password"] ?: "L21mVCqxXldrNfaAM0YotRO35FUuP8se" }
 
     @Doc("会员账号登录")
-    @RequestMapping("/account/login", method = arrayOf(POST))
-    fun login(@RequestBody form: AccountForm) = form.check {
+    @RequestMapping("/account/sign_in", method = arrayOf(POST))
+    fun login(@RequestBody form: AccountForm, response: HttpServletResponse) = form.check {
         it.name.require("用户名不是合法的邮箱账号") { it.isEmailFormat() }
         it.name.forbid("用户名过长") { it.length > 100 }
         it.password.require("不合法法的密码长度") { it.length >= 6 && it.length < 100 }
@@ -34,11 +37,13 @@ class AccountController : _Rest() {
                 .forbid("该用户不存在") { it == null }!!
                 .forbid("用户密码不正确") { !form.password.encrypt(PASSWORD_SECRET).equals(it.password) }
         val token = createToken(uid = account.uid, admin = account.rank == 1, username = form.name)
+        response.addCookie(Cookie("kotlin_cn", p("token", token)
+                .p("uid", account.uid).p("username", account.name).toJson()))
         p("token", token).p("uid", account.uid)
     }
 
     @Doc("会员账号注册")
-    @RequestMapping("/account/register", method = arrayOf(POST))
+    @RequestMapping("/account/sign_up", method = arrayOf(POST))
     fun register(@RequestBody @Doc("注册请求") form: AccountForm) = form.check {
         it.name.require("用户名不是合法的邮箱账号") { it.isEmailFormat() }
         it.name.forbid("用户名过长") { it.length > 100 }

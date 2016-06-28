@@ -8,3 +8,12 @@ sourceSets {
         resources.srcDirs = ['src/app']
     }
 }
+
+task grunt(type: Exec, description: 'Grunt task for web ui') {
+    workingDir './'
+    commandLine "grunt"
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
