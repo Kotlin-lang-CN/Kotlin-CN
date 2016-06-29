@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -f docker/Dockerfile -t kotlin_china .
+docker build -f web/docker/Dockerfile -t kotlin_china .
