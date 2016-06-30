@@ -1,4 +1,4 @@
-# Kotlin China Dockerfile
+# Kotlin China web Dockerfile
 # For more information please visit Kotlin China http://kotlin-cn.tech'
 # This docker file is build for deploying release
 # Author: chpengzh

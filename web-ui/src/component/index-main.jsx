@@ -48,14 +48,14 @@ var SectionNavigator = React.createClass({
             </Col>
             <Col xs={4} md={3}>
                 <Thumbnail src="https://react-bootstrap.github.io/assets/thumbnaildiv.png" alt="242x200">
-                    <h3>更大的社区生态</h3>
-                    <p>我们目前拥有1000+会员</p>
+                    <h3>更良好的社区生态</h3>
+                    <p>加入我们</p>
                     <p>有问必有答</p>
                 </Thumbnail>
             </Col>
             <Col xs={4} md={3}>
                 <Thumbnail src="https://react-bootstrap.github.io/assets/thumbnaildiv.png" alt="242x200">
-                    <h3>更好的中文教程</h3>
+                    <h3>更赞的中文教程</h3>
                     <p>我们系统地收纳并翻译 Kotlin 教程</p>
                     <p>欢迎参与 Kotlin 学习</p>
                 </Thumbnail>

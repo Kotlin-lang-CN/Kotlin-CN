@@ -7,20 +7,27 @@ module.exports = function (grunt) {
             build_react: {
                 // webpack options
                 entry: {
+                    article: './src/article.jsx',
+                    community: './src/community.jsx',
+                    document: './src/document.jsx',
+                    everyday: './src/everyday.jsx',
                     index: './src/index.jsx',
-                    document: './src/document.jsx'
+                    publish: './src/publish.jsx'
                 },
                 output: {
-                    path: './src/app/static/js',
+                    path: './src/build',
                     filename: '[name].app.js'
                 },
                 plugins: [
-                    new Webpack.optimize.CommonsChunkPlugin("common.js")
+                    new Webpack.optimize.CommonsChunkPlugin("lib.app.js")
                 ],
                 module: {
                     loaders: [{
                         test: /\.jsx$/,
                         loader: 'jsx-loader'
+                    }, {
+                        test: /\.json$/,
+                        loader: 'json'
                     }]
                 }
             }
@@ -29,9 +36,13 @@ module.exports = function (grunt) {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            build: {
-                src: 'src/app/static/js/common.js',
-                dest: 'src/app/static/js/common.min.js'
+            compress: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/build',
+                    src: '*.js',
+                    dest: 'src/app/js'
+                }]
             }
         }
     });

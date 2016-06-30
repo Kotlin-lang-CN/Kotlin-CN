@@ -109,30 +109,30 @@ var Navigator = React.createClass({
         return {cookie: Cookies.get("kotlin_cn")}
     },
     render: function () {
-        return <Navbar staticTop="true">
+        return <Navbar>
             <Navbar.Header>
-                <Navbar.Brand><a href="#">Kotlin CN</a></Navbar.Brand>
+                <Navbar.Brand><a href="index.html">Kotlin CN</a></Navbar.Brand>
                 <Navbar.Toggle />
             </Navbar.Header>
             <Navbar.Collapse>
                 <Nav>
-                    <NavItem href="/">社区</NavItem>
+                    <NavItem href="community.html">社区</NavItem>
                     <NavDropdown title="快速开始">
                         <MenuItem header>宝贝, 看这里</MenuItem>
-                        <MenuItem>什么是Kotlin</MenuItem>
-                        <MenuItem>为什么Kotlin?</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">什么是Kotlin</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">为什么Kotlin?</MenuItem>
                         <MenuItem divider/>
                         <MenuItem header>都是套路...</MenuItem>
-                        <MenuItem>基本数据类型</MenuItem>
-                        <MenuItem>类与对象</MenuItem>
-                        <MenuItem>函数与Lambda</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">基本数据类型</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">类与对象</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">函数与Lambda</MenuItem>
                         <MenuItem divider/>
                         <MenuItem header>再见 Java</MenuItem>
-                        <MenuItem>从 Java 到 Kotlin</MenuItem>
-                        <MenuItem>第一个Android App</MenuItem>
-                        <MenuItem>第一个Web App</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">从 Java 到 Kotlin</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">第一个Android App</MenuItem>
+                        <MenuItem href="document.html#what_is_kotlin">第一个Web App</MenuItem>
                     </NavDropdown>
-                    <NavItem href="/everyday">每日一Kotlin</NavItem>
+                    <NavItem href="everyday.html">每日一Kotlin</NavItem>
                 </Nav>
                 <Nav pullRight>
                     {this.state.cookie == null ? <GuestMenu/> : <AccountMemu
