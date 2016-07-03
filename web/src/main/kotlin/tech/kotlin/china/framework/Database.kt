@@ -3,7 +3,6 @@ package tech.kotlin.china.framework
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.io.Resources
 import org.apache.ibatis.session.SqlSession
-import org.apache.ibatis.session.SqlSessionFactory
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.log4j.Logger
 import org.springframework.stereotype.Service
@@ -18,56 +17,41 @@ import java.lang.reflect.Method
 @Service
 class Database {
 
-    var testMode = false
-
-    val SESSION_FACTORY: SqlSessionFactory = Resources.getResourceAsStream("mybatis-config.xml").use {
+    val SESSION_FACTORY = Resources.getResourceAsStream("mybatis-config.xml").use {
         val properties = Props
                 .p("jdbc.driver", Env["jdbc_driver"]) { "com.mysql.jdbc.Driver" }
                 .p("jdbc.url", Env["jdbc_url"]) {
-                    "jdbc:mysql://192.168.99.100:3306/kotlin_china?useUnicode=true&characterEncoding=UTF-8"
+                    "jdbc:mysql://127.0.0.1:3306/kotlin_china?useUnicode=true&characterEncoding=UTF-8"
                 }
                 .p("jdbc.username", Env["jdbc_username"]) { "root" }
                 .p("jdbc.password", Env["jdbc_password"]) { "root" }
         SqlSessionFactoryBuilder().build(it, properties)
     }
 
-    fun <T> dbRead(action: (SqlSession) -> T): T = when (testMode) {
-        false -> SESSION_FACTORY.openSession(true).use(action)
-
-        true -> SESSION_FACTORY.openSession(false).use {
+    infix fun write(action: (SqlSession) -> Any?): Any? {
+        SESSION_FACTORY.openSession(false).use {
             try {
-                action(it)
-            } finally {
-                it.rollback()
-            }
-        }
-    }
-
-    fun <T> dbWrite(action: (SqlSession) -> T): T = SESSION_FACTORY.openSession(false).use {
-        when (testMode) {
-            false -> try {
-                val result = action.invoke(it)
+                val result = action(it)
                 it.commit()
                 return result;
             } catch (e: Throwable) {
                 it.rollback()
                 throw e
             }
-
-            true -> try {
-                action(it)
-            } finally {
-                it.rollback()
-            }
         }
     }
+
+    infix fun read(action: (SqlSession) -> Any?): Any? = SESSION_FACTORY.openSession(true).use { return action(it) }
 }
 
 inline fun <reified T : Any> SqlSession.of() = getMapper(T::class.java).decorateTo<T>(SQLLog(this))
 
+/***
+ * 用于 sql 语句的输出
+ */
 class SQLLog(val session: SqlSession) : ClassDecorator {
 
-    private val log = Logger.getLogger("SQLLog")
+    private val log = Logger.getLogger("SQL")
 
     private fun sqlLog(method: Method, args: Array<Any>): String {
         val select = method.getDeclaredAnnotation(Select::class.java)
@@ -88,7 +72,7 @@ class SQLLog(val session: SqlSession) : ClassDecorator {
                 it.append(args[i]).append("(").append(method.parameterTypes[i].simpleName).append(")").append("\t")
         }
         return """
-        |----------------------------------------------
+        |--- SQL [LOG] ----------------------------------------
         |Session: ${session.hashCode()}
         |SQL: $sql
         |Mapping method: ${method.name}

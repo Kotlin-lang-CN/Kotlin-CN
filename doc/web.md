@@ -98,7 +98,7 @@ mysql -u <your mysql username> -p < web/docker/init.sql
 
 ```shell
 docker run --name some-kotlin-china -d \
-    -p 8080:80 \
+    -p 8080:8080 \
     -e "jdbc_url=jdbc:mysql://localhost:3306/kotlin_china?useUnicode=true&characterEncoding=UTF-8" \
     -e "jdbc_username=root" \
     -e "jdbc_password=root" \

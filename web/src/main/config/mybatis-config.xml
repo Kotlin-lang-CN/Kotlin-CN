@@ -49,6 +49,6 @@
         </environment>
     </environments>
     <mappers>
-        <package name="tech.kotlin.china.mapper"/>
+        <package name="tech.kotlin.china.database"/>
     </mappers>
 </configuration>

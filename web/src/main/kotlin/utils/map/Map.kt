@@ -24,3 +24,10 @@ infix fun <T : Any> T.expose(fields: Array<String>) = HashMap<String, Any?>() ne
         it.put(f.name, f.get(this))
     }
 }
+
+fun Any.toMap() = HashMap<String, Any?>() next {
+    this.javaClass.declaredFields.forEach { f ->
+        f.isAccessible = true
+        it.put(f.name, f.get(this))
+    }
+}

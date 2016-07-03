@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                     publish: './src/publish.jsx'
                 },
                 output: {
-                    path: './src/build',
+                    path: './src/app/build',
                     filename: '[name].app.js'
                 },
                 plugins: [
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
             compress: {
                 files: [{
                     expand: true,
-                    cwd: 'src/build',
+                    cwd: 'src/app/build',
                     src: '*.js',
                     dest: 'src/app/js'
                 }]

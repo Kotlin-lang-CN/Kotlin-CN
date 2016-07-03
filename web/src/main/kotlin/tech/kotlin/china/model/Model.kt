@@ -1,75 +1,18 @@
 package tech.kotlin.china.model
 
-import java.util.*
+import org.springframework.context.annotation.Description
 
-/**
- * 用户
- * uid: 用户id
- * name: 用户名
- * password: 用户密码
- * rank: 用户等级 normal - 0, admin - 1
- * forbidden: 封禁状态
- */
-data class Account(var uid: Long = 0, var name: String = "", var password: String = "",
-                   var rank: Int = 0, var forbidden: Boolean = false)
+@Description("发布文章所用表单")
+data class ArticleForm(val title: String, val content: String)
 
-/***
- * 文章
- * aid: 文章id
- * author: 作者用户id
- * title: 文章标题
- * description: 文章描述
- * content: 文章内容
- * category: 文章类别 0-默认
- * create_time: 文章创建时间
- * view: 阅读数量
- * flower: 点赞数量
- * comment: 评论数量
- * forbidden: 封禁状态
- */
-data class Article(var aid: Long = 0, var author: Long = 0, var title: String = "", var description: String = "",
-                   var content: String = "", var category: Int = 0, var create_time: Date = Date(), var view: Long = 0,
-                   var flower: Long = 0, var comment: Long = 0, var forbidden: Boolean = false)
+@Description("评论表单")
+data class CommentForm(val content: String, val aid: Long, val reply: Long?)
 
-/***
- * 评论
- * cid: 评论id
- * aid: 文章id
- * commenter: 评论人id
- * reply: 回复用户ID
- * create_time: 创建时间
- * content: 评论内容
- * flower: 点赞数量
- * delete: 删除状态
- * forbidden: 封禁状态
- */
-data class Comment(var cid: Long = 0, var aid: Long = 0, var commenter: Long = 0, var reply: Long? = null,
-                   var create_time: Date = Date(), var content: String = "", var flower: Long = 0,
-                   var delete: Boolean = false, var forbidden: Boolean = false)
+@Description("发送消息表单")
+data class MessageForm(val title: String, val content: String, val from: Long?, val to: Long)
 
+@Description("github access token wrapper")
+data class GithubTokenWrapper(var access_token: String = "")
 
-/***
- * 点赞
- * id: 点赞id
- * mode: 点赞类型 0-文章 1-评论
- * oid: 被点赞客体 id
- * actor: 点赞人
- * praised: 被点赞人
- * create_time: 点赞时间
- */
-data class Flower(var id: Long = 0, var mode: Int = 0, var oid: Long, var actor: Long, val author: Long,
-                  var create_time: Date = Date())
-
-
-/***
- * 消息
- * id: 消息id
- * content: 消息正文
- * title: 消息标题
- * create_time: 创建时间
- * from: 发信人id(系统消息为null)
- * to: 收信人id
- * status: 消息状态(0-未读取,1-已读取)
- */
-data class Message(var id: Long = 0, var content: String = "", var title: String = "", var create_time: Date = Date(),
-                   var from: Long? = null, var to: Long = 0L, var status: Int = 0)
+@Description("github账号信息")
+data class GithubAccount(var id: Long = 0L, var name: String = "", var avatar_url: String = "", var email: String = "")

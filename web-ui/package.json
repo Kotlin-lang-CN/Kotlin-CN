@@ -24,6 +24,7 @@
     "react": "^15.1.0",
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.1.0",
-    "showdown": "^1.4.2"
+    "showdown": "^1.4.2",
+    "uxcore": "^0.2.3"
   }
 }
