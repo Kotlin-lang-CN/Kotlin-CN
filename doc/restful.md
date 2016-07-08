@@ -28,7 +28,7 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 }
 ```
 
-服务器并不会对所有接口进行鉴权, 本文档中对所有需要鉴权的接口我们表述为`Cookie: <Require>`
+服务器并不会对所有接口进行鉴权, 本文档中对所有需要鉴权的接口我们表述为`Cookie: Require`
 
 除此之外, 所有的请求都加上了对`Referer`的校验
 
@@ -131,6 +131,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 > url: /article/mine
 
+> Cookie: Require
+
 > param: page 页数
 
 > param: category all-所有, <other>-具体类别
@@ -163,6 +165,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 > url: /article/publish
 
+> Cookie: Require
+
 > method: POST
 
 > request:
@@ -185,6 +189,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 > url: /comment/make
 
+> Cookie: Require
+
 > method: POST
 
 > request:
@@ -193,7 +199,7 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 {
     "content":"评论的内容", 
     "aid":1, #文章id
-    "reply":1 #可选,回复用户id
+    "reply":1 #可选 回复用户id
 }
 ```
 
@@ -240,6 +246,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 > url: /comment/mine
 
+> Cookie: Require
+
 > param: aid 文章id
 
 > param: page 页数
@@ -272,6 +280,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 ### 查看所有回复我的列表
 
 > url: /comment/reply
+
+> Cookie: Require
 
 > param: aid 文章id
 
@@ -309,6 +319,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 > url: /flower
 
+> Cookie: Require
+
 > method: POST
 
 > param: oid 对象id
@@ -324,6 +336,8 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 ### 取消点赞
 
 > url: /flower/cancel
+
+> Cookie: Require
 
 > method: POST
 
