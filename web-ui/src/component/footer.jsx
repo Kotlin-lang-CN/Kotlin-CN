@@ -10,7 +10,7 @@ var Footer = React.createClass({
             <Bootstrap.PageHeader/>
             <Row>
                 <i className="kuma-icon kuma-icon-tag"></i>
-                <a href="https://github.com/Kotlin-lang-CN/Kotlin-CN.git" target="_blank">本项目</a> 后端服务完全使用 <a
+                <a href="https://github.com/Kotlin-lang-CN/Kotlin-CN.git" target="_blank">本项目</a> 使用 <a
                 href="http://kotlin-lang.org/" target="_blank">Kotlin</a> 编写
             </Row>
             <Row>

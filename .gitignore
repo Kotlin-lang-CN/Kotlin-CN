@@ -7,5 +7,4 @@ build
 *.ids
 local.properties
 out
-.profile
 !build.release

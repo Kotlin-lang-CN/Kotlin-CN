@@ -9,12 +9,16 @@ import org.springframework.web.client.RestTemplate
 import utils.dataflow.next
 import utils.decorator.ClassDecorator
 import utils.decorator.decorate
+import utils.properties.Env
 import java.lang.reflect.Method
 import java.util.*
 
 @Service
-open class Client {
-    protected val rest = RestTemplate() decorate ClientLog next {
+class Client {
+
+    val CLIENT_LOG = Env["log"]?.contains("client") == true
+
+    val rest = (if (CLIENT_LOG) RestTemplate() decorate ClientLog else RestTemplate()) next {
         it.interceptors = listOf(ClientHttpRequestInterceptor { request, body, execution ->
             execution.execute(HttpRequestWrapper(request) next {
                 it.headers.accept = listOf(MediaType.APPLICATION_JSON)

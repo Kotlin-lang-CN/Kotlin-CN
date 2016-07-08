@@ -1,0 +1,54 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/5.3.0/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'remove',
+1 verbose cli   'react-markdown2',
+1 verbose cli   '--save' ]
+2 info using npm@3.3.12
+3 info using node@v5.3.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly install normalizeTree
+8 silly loadCurrentTree Finishing
+9 silly loadIdealTree Starting
+10 silly install loadIdealTree
+11 silly cloneCurrentTree Starting
+12 silly install cloneCurrentTreeToIdealTree
+13 silly cloneCurrentTree Finishing
+14 silly loadShrinkwrap Starting
+15 silly install loadShrinkwrap
+16 silly loadShrinkwrap Finishing
+17 silly loadAllDepsIntoIdealTree Starting
+18 silly uninstall loadAllDepsIntoIdealtree
+19 verbose stack Error: Missing required argument #3
+19 verbose stack     at replaceModule (/usr/local/lib/node_modules/npm/lib/install/deps.js:427:3)
+19 verbose stack     at /usr/local/lib/node_modules/npm/lib/install/deps.js:236:7
+19 verbose stack     at Array.forEach (native)
+19 verbose stack     at exports.removeDeps (/usr/local/lib/node_modules/npm/lib/install/deps.js:232:8)
+19 verbose stack     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+19 verbose stack     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+19 verbose stack     at chain (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:20:5)
+19 verbose stack     at Uninstaller.loadAllDepsIntoIdealTree (/usr/local/lib/node_modules/npm/lib/uninstall.js:72:3)
+19 verbose stack     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+19 verbose stack     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+20 verbose cwd /Users/chpengzh/Documents/project/Kotlin-China/web-ui
+21 error Darwin 15.5.0
+22 error argv "/usr/local/Cellar/node/5.3.0/bin/node" "/usr/local/bin/npm" "remove" "react-markdown2" "--save"
+23 error node v5.3.0
+24 error npm  v3.3.12
+25 error code EMISSINGARG
+26 error typeerror Error: Missing required argument #3
+26 error typeerror     at replaceModule (/usr/local/lib/node_modules/npm/lib/install/deps.js:427:3)
+26 error typeerror     at /usr/local/lib/node_modules/npm/lib/install/deps.js:236:7
+26 error typeerror     at Array.forEach (native)
+26 error typeerror     at exports.removeDeps (/usr/local/lib/node_modules/npm/lib/install/deps.js:232:8)
+26 error typeerror     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+26 error typeerror     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+26 error typeerror     at chain (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:20:5)
+26 error typeerror     at Uninstaller.loadAllDepsIntoIdealTree (/usr/local/lib/node_modules/npm/lib/uninstall.js:72:3)
+26 error typeerror     at Array.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/slide/lib/bind-actor.js:15:8)
+26 error typeerror     at LOOP (/usr/local/lib/node_modules/npm/node_modules/slide/lib/chain.js:15:14)
+26 error typeerror This is an error with npm itself. Please report this error at:
+26 error typeerror     <http://github.com/npm/npm/issues>
+27 verbose exit [ 1, true ]

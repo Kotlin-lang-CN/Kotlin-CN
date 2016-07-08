@@ -28,6 +28,7 @@ dependencies {
     compile 'io.jsonwebtoken:jjwt:0.6.0'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'com.sun.mail:javax.mail'
     compile 'net.sourceforge.nekohtml:nekohtml:1.9.15'
     testCompile 'junit:junit:4.11'
 }

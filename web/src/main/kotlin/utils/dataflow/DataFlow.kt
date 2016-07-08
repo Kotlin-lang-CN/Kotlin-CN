@@ -14,7 +14,7 @@ annotation class BusinessSafe()
  * require expression
  */
 @Throws(BusinessError::class)
-inline fun <R> R.require(message: String = "default", status: Int = 400, filter: (R) -> Boolean): R = try {
+inline fun <R> R.require(message: String = "请求被拒绝", status: Int = 400, filter: (R) -> Boolean): R = try {
     if (!filter(this)) throw BusinessError(message, status) else this@require
 } catch(e: Throwable) {
     throw BusinessError(message, status)
@@ -24,7 +24,7 @@ inline fun <R> R.require(message: String = "default", status: Int = 400, filter:
  * forbid expression
  */
 @Throws(BusinessError::class)
-inline fun <R> R.forbid(message: String = "default", status: Int = 400, filter: (R) -> Boolean): R = try {
+inline fun <R> R.forbid(message: String = "请求被拒绝", status: Int = 400, filter: (R) -> Boolean): R = try {
     if (filter(this)) throw BusinessError(message, status) else this@forbid
 } catch (e: Throwable) {
     throw BusinessError(message, status)

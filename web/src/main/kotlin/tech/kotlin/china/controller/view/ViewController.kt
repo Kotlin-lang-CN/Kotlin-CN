@@ -19,25 +19,20 @@ import tech.kotlin.china.model.GithubAccount
 import tech.kotlin.china.model.GithubTokenWrapper
 import utils.dataflow.BusinessSafe
 import utils.dataflow.monitor
-import utils.dataflow.next
 import utils.dataflow.require
-import utils.json.toJson
 import utils.map.p
-import utils.map.toMap
+import utils.map.row
 import utils.properties.Env
-import java.net.URLEncoder
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
 
 const val SIGN_IN = "/account/github"
 
 @Controller
 class ViewController {
 
-    val CLIENT_ID = Env["client_id"] ?: "ed1760e81a41e5553b0d"
-    val CLIENT_SECRET = Env["client_secret"] ?: "<NULL>"
-    val STATIC = Env["static"] ?: "http://static.kotlin-cn.tech"
-    val HOST = Env["host"] ?: "http://kotlin-cn.tech"
+    val CLIENT_ID = Env["client_id"]!!
+    val CLIENT_SECRET = Env["client_secret"]!!
+    val STATIC = Env["static"]!!
+    val HOST = Env["host"]!!
 
     @Autowired lateinit var client: Client
     @Autowired lateinit var db: Database
@@ -56,9 +51,7 @@ class ViewController {
 
     @Description("github账号登录页面")
     @RequestMapping(SIGN_IN, method = arrayOf(GET))
-    fun signInWithGithub(@RequestParam("code") code: String, response: HttpServletResponse,
-                         @RequestHeader("Referer") referer: String,
-                         @RequestHeader("Host") host: String,
+    fun signInWithGithub(@RequestParam("code") code: String, @RequestHeader("Referer") referer: String,
                          @RequestParam("state") state: String): String {
         //请求数据的校验
         state.require("错误的状态码") { it.equals("kotlin_china") }
@@ -77,20 +70,13 @@ class ViewController {
         }
         db write {
             val accountMapper = it.of<AccountMapper>()
-            val account = accountMapper.queryById(profile.id)
-            if (account == null) {
-                accountMapper.addAccount(profile.toMap().p("token", token))
+            if (accountMapper.queryById(profile.id) == null) {
+                accountMapper.addAccount(profile.row().p("token", token))
             } else {
-                accountMapper.updateAccount(profile.toMap().p("token", token))
+                accountMapper.updateAccount(profile.row().p("token", token))
             }
         }
-        response.addCookie(Cookie("kotlin_cn", URLEncoder.encode(
-                p("token", auth.generateToken(profile)).p("profile", profile).toJson(), "UTF-8")
-        ) next {
-            it.maxAge = 7 * 24 * 60 * 60
-            it.domain = if (host.contains(":")) host.substring(0, host.indexOf(":")) else host
-            it.path = "/"
-        })
+        auth.login(profile)
         return "redirect:$referer"
     }
 

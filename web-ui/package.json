@@ -18,13 +18,12 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "jquery": "^3.0.0",
     "js-cookie": "^2.1.2",
     "markdown-toc": "^0.12.12",
     "react": "^15.1.0",
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.1.0",
-    "showdown": "^1.4.2",
-    "uxcore": "^0.2.3"
+    "reqwest": "^2.0.5",
+    "showdown": "^1.4.2"
   }
 }

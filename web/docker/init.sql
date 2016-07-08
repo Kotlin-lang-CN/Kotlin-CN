@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   COMMENT '用户token',
   avatar_url TEXT        NOT NULL
   COMMENT '用户头像',
+  html_url   TEXT        NOT NULL
+  COMMENT '用户首页',
   email      TEXT        NOT NULL
   COMMENT '用户邮箱'
 )
@@ -33,8 +35,6 @@ CREATE TABLE IF NOT EXISTS accounts (
  * content: 文章内容
  * tag: 文章分类
  * create_time: 文章创建时间
- * comment: 评论数
- * flower: 点赞数
  */
 CREATE TABLE IF NOT EXISTS articles (
   aid         INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT
@@ -45,14 +45,10 @@ CREATE TABLE IF NOT EXISTS articles (
   COMMENT '文章标题',
   content     TEXT                NOT NULL
   COMMENT '文章内容',
-  tag         TEXT                NOT NULL
+  category    TEXT                NOT NULL
   COMMENT '文章类别',
   create_time DATETIME            NOT NULL DEFAULT now()
-  COMMENT '文章创建时间',
-  `comment`   INTEGER             NOT NULL DEFAULT 0
-  COMMENT '评论数量',
-  flower      INTEGER             NOT NULL DEFAULT 0
-  COMMENT '点赞数量'
+  COMMENT '文章创建时间'
 )
   COMMENT '文章',
   DEFAULT CHARSET utf8,
@@ -66,7 +62,6 @@ CREATE TABLE IF NOT EXISTS articles (
  * reply: 回复(@)用户id
  * create_time: 创建时间
  * content: 评论内容
- * flower: 点赞数量
  */
 CREATE TABLE IF NOT EXISTS comments (
   cid         INTEGER PRIMARY KEY NOT NULL         AUTO_INCREMENT
@@ -80,9 +75,7 @@ CREATE TABLE IF NOT EXISTS comments (
   create_time DATETIME            NOT NULL         DEFAULT now()
   COMMENT '创建时间',
   content     TEXT                NOT NULL
-  COMMENT '评论内容',
-  flower      INTEGER             NOT NULL         DEFAULT 0
-  COMMENT '点赞数量'
+  COMMENT '评论内容'
 )
   COMMENT '评论',
   DEFAULT CHARSET utf8,
@@ -94,6 +87,7 @@ CREATE TABLE IF NOT EXISTS comments (
  * mode: 点赞类型 0-文章 1-评论
  * oid: 被点赞客体 id
  * actor: 点赞人
+ * praised: 被点赞人
  * create_time: 点赞时间
  */
 CREATE TABLE IF NOT EXISTS flowers (

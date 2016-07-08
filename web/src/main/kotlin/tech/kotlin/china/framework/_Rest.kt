@@ -1,4 +1,4 @@
-package tech.kotlin.china.controller.rest
+package tech.kotlin.china.framework
 
 import org.apache.log4j.Logger
 import org.springframework.beans.ConversionNotSupportedException
@@ -17,39 +17,47 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.multipart.support.MissingServletRequestPartException
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
-import tech.kotlin.china.framework.API_VERSION
-import tech.kotlin.china.framework.Client
-import tech.kotlin.china.framework.Database
-import tech.kotlin.china.framework.JWT
 import utils.dataflow.BusinessError
 import utils.dataflow.BusinessSafe
 import utils.map.p
+import utils.properties.Env
 import java.net.BindException
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 /***
  * Restful Controller
  *
  * 包含基本的请求逻辑过程函数(JWT编解码, 数据校验 check, 用户权限认证 authorized, 数据库会话 session)
  */
-@RequestMapping(API_VERSION)
+@RequestMapping("/api/v1")
 open class _Rest {
 
-    @Autowired lateinit protected var client: Client
     @Autowired lateinit protected var db: Database
     @Autowired lateinit protected var auth: JWT
+    @Autowired lateinit protected var request: HttpServletRequest
 
-    val log = Logger.getLogger(javaClass)
+    val log = Logger.getLogger("ACCESS")
+    val ACCESS_LOG = Env["log"]?.contains("access") == true
 
     fun response(action: () -> Any?): HashMap<String, Any?> {
         try {
+            if (ACCESS_LOG) log.info("""
+            |--- ACCESS [LOG] -------------------------------------
+            |URI: ${request.requestURI}
+            |METHOD: ${request.method}
+            |BODY: length = ${request.contentLength}
+            """.trimMargin("|"))
             val data = action()
             return if (data == null || data is Unit)
                 p("status", 200).p("message", "")
             else
                 p("status", 200).p("message", "").p("data", data)
         } catch(e: Throwable) {
-            if (e !is BusinessError) log.warn("Unhandled error", e)
+            if (e is BusinessError) return p("status", e.status).p("message", e.msg)
+            log.info("""
+            |--- DEBUG [FAIL] ------------------------------------
+            """.trimMargin("|"), e)
             throw e
         }
     }
@@ -60,7 +68,6 @@ open class _Rest {
     @BusinessSafe
     @ExceptionHandler(Throwable::class)
     open fun handleError(error: Throwable): Map<String, Any?> = when (error) {
-        is BusinessError -> p("status", error.status).p("message", error.msg)
         is BindException -> p("status", 400).p("message", error.message)
         is ConversionNotSupportedException -> p("status", 500).p("message", error.message)
         is HttpMediaTypeNotAcceptableException -> p("status", 406).p("message", error.message)

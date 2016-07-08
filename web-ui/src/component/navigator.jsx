@@ -5,6 +5,8 @@ var Auth = require('../framework/authorization.js');
 var Navbar = Bootstrap.Navbar;
 var Nav = Bootstrap.Nav;
 var NavItem = Bootstrap.NavItem;
+var NavDropdown = Bootstrap.NavDropdown;
+var MenuItem = Bootstrap.MenuItem;
 
 var Navigator = React.createClass({
     getInitialState: function () {
@@ -28,7 +30,7 @@ var Navigator = React.createClass({
             </Navbar.Header>
             <Navbar.Collapse>
                 <Nav>
-                    <NavItem href="community.html">论坛</NavItem>
+                    <NavItem href="community.html">社区</NavItem>
                     <NavItem href="document.html">中文教程</NavItem>
                 </Nav>
                 <Nav pullRight>{this.getSideMenu()}</Nav>
@@ -42,10 +44,16 @@ var Navigator = React.createClass({
             "scope=user&" +
             "state=kotlin_china";
         if (this.state.login) {
-            return <NavItem onClick={this.logout}>{this.state.profile.name}</NavItem>
+            return <NavDropdown title={this.state.profile.name} id="basic-nav-dropdown">
+                <MenuItem href="publish.html">写文章</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={this.logout}>注销</MenuItem>
+            </NavDropdown>
         } else {
-            return <NavItem href={login}>使用Github登录</NavItem>
+            return <NavItem href={login} onClick={this.login}>使用Github登录</NavItem>
         }
+    },
+    login: function () {
     },
     logout: function () {
         Auth.logout();

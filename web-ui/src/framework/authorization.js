@@ -4,7 +4,8 @@ var Authorization = {
     key: 'kotlin_cn',
     isLogin: function () {
         try {
-            return JSON.parse(decodeURI(Cookies.get(this.key))) != null
+            var cookie = JSON.parse(decodeURI(Cookies.get(this.key)));
+            return "profile" in cookie && "token" in cookie
         } catch (e) {
             this.logout();
             return false;

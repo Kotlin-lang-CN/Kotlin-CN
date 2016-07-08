@@ -20,11 +20,9 @@ class Database {
     val SESSION_FACTORY = Resources.getResourceAsStream("mybatis-config.xml").use {
         val properties = Props
                 .p("jdbc.driver", Env["jdbc_driver"]) { "com.mysql.jdbc.Driver" }
-                .p("jdbc.url", Env["jdbc_url"]) {
-                    "jdbc:mysql://127.0.0.1:3306/kotlin_china?useUnicode=true&characterEncoding=UTF-8"
-                }
-                .p("jdbc.username", Env["jdbc_username"]) { "root" }
-                .p("jdbc.password", Env["jdbc_password"]) { "root" }
+                .p("jdbc.url", Env["jdbc_url"])
+                .p("jdbc.username", Env["jdbc_username"])
+                .p("jdbc.password", Env["jdbc_password"])
         SqlSessionFactoryBuilder().build(it, properties)
     }
 
@@ -44,7 +42,10 @@ class Database {
     infix fun read(action: (SqlSession) -> Any?): Any? = SESSION_FACTORY.openSession(true).use { return action(it) }
 }
 
-inline fun <reified T : Any> SqlSession.of() = getMapper(T::class.java).decorateTo<T>(SQLLog(this))
+val DB_LOG = Env["log"]?.contains("database") == true
+
+inline fun <reified T : Any> SqlSession.of() =
+        if (DB_LOG) getMapper(T::class.java).decorateTo<T>(SQLLog(this)) else getMapper(T::class.java)
 
 /***
  * 用于 sql 语句的输出
