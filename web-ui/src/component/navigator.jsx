@@ -39,8 +39,8 @@ var Navigator = React.createClass({
     },
     getSideMenu: function () {
         var login = "https://github.com/login/oauth/authorize?" +
-            "client_id=ed1760e81a41e5553b0d&" +
-            "redirect_uri=http://kotlin-cn.tech/account/github&" +
+            "client_id=56ac3aefad86b012320e&" +
+            "redirect_uri=http://localhost:8080/account/github&" +
             "scope=user&" +
             "state=kotlin_china";
         if (this.state.login) {
