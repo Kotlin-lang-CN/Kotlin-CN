@@ -19,18 +19,24 @@ var NavItem = Bootstrap.NavItem;
 
 const CommunityList = React.createClass({
     getInitialState: function () {
-        return {tab: 1, page: 1, articles: [], loading: true}
+        return {
+            tab: 1, 
+            page: 1, 
+            articles: [{"create_time":"2 天 前","avatar_url":"https://avatars.githubusercontent.com/u/7821898?v=3","author":7821898,"html_url":"https://github.com/chpengzh","name":"手不要乱摸","comment":0,"title":"我是来测试发送的4","category":"tag3","aid":4,"email":"chpengzh@foxmail.com","flower":0},{"create_time":"2 天 前","avatar_url":"https://avatars.githubusercontent.com/u/7821898?v=3","author":7821898,"html_url":"https://github.com/chpengzh","name":"手不要乱摸","comment":0,"title":"我是来测试发送的3","category":"tag3","aid":3,"email":"chpengzh@foxmail.com","flower":1},{"create_time":"2 天 前","avatar_url":"https://avatars.githubusercontent.com/u/7821898?v=3","author":7821898,"html_url":"https://github.com/chpengzh","name":"手不要乱摸","comment":2,"title":"我是来测试发送的2","category":"tag2","aid":2,"email":"chpengzh@foxmail.com","flower":0},{"create_time":"2 天 前","avatar_url":"https://avatars.githubusercontent.com/u/7821898?v=3","author":7821898,"html_url":"https://github.com/chpengzh","name":"手不要乱摸","comment":0,"title":"我是来测试发送的","category":"tag1","aid":1,"email":"chpengzh@foxmail.com","flower":0}],
+            nav: [ 
+                {tab: '最新更新', category: 'all'},
+                {tab: '问答板',  category: 'question'},
+                {tab: '入门者说', category: 'beginner'},
+                {tab: '技术分享', category: 'share'},
+                {tab: '精品区', category: 'awesome'}
+            ],
+            loading: true
+        }
     },
     render: function () {
         return <Row>
             <Col sm={12} md={9}>
-                <Nav bsStyle="tabs" activeKey={2} style={{marginBottom:5}}>
-                    <NavItem eventKey={1} onClick={this.handleSelectTab}>最新更新</NavItem>
-                    <NavItem eventKey={2} onClick={this.handleSelectTab}>问答板</NavItem>
-                    <NavItem eventKey={3} onClick={this.handleSelectTab}>入门者说</NavItem>
-                    <NavItem eventKey={4} onClick={this.handleSelectTab}>技术分享</NavItem>
-                    <NavItem eventKey={5} onClick={this.handleSelectTab}>每日精品</NavItem>
-                </Nav>
+                <Nav bsStyle="tabs" activeKey={this.state.tab} style={{marginBottom:5}}>{this.getNavList()}</Nav>
                 <ListGroup>{this.getArticleView()}</ListGroup>
                 <Pagination prev next first last ellipsis boundaryLinks
                             items={20} maxButtons={5} activePage={this.state.page}
@@ -42,39 +48,47 @@ const CommunityList = React.createClass({
     handleSelectPage: function (eventKey) {
         this.setState({page: eventKey});
     },
-    handleSelectTab: function (eventKey) {
-        this.setState({tag: eventKey})
+    getNavList: function () {
+        var view = [];
+        for (var i = 1; i <= this.state.nav.length; i++) {
+            const index = i;
+            view.push(
+                <NavItem className={(this.state.tab == index) ? 'active' : ''} onClick={() => this.setState({tab: index})}>
+                    {this.state.nav[index - 1].tab}
+                </NavItem>
+            );
+        }
+        return view
     },
     getArticleView: function () {
         var view = [];
-        this.state.articles.forEach(function (article) {
+        for (var i = 1; i <= this.state.articles.length; i++) {
+            const index = i;
+            const article = this.state.articles[index - 1];
             view.push(
-                <ListGroupItem href="/">
+                <ListGroupItem href={article.html_url}>
                     <Media>
                         <Media.Left align="top">
-                            <img width={64} height={64}
-                                 src={article.get('avatar_url')}
-                                 alt="Image"/>
+                            <img width={64} height={64} src={article.avatar_url} alt="Avatar"/>
                         </Media.Left>
                         <Media.Body>
-                            <Media.Heading style={{'marginTop': '10px'}}>article.get('title')</Media.Heading>
-                            <small><Label bsStyle="success">片刻之前</Label> • chpengzh • 赞 <Badge
-                                style={{padding: '1px 7px'}}>10</Badge> • 评论 <Badge
-                                style={{padding: '1px 7px'}}>20</Badge></small>
+                            <Media.Heading style={{'marginTop': '10px'}}>{article.title}</Media.Heading>
+                            <small><Label bsStyle="success">{article.create_time}</Label> • chpengzh • 赞 <Badge
+                                style={{padding: '1px 7px'}}>{article.flower}</Badge> • 评论 <Badge
+                                style={{padding: '1px 7px'}}>{article.comment}</Badge></small>
                         </Media.Body>
                     </Media>
                 </ListGroupItem>
-            )
-        })
+            );
+        }
+        return view;
     }
 });
-
 
 ReactDOM.render((
     <div>
         <Navigator/>
         <Grid>
-            <CommunityNavigation/>
             <CommunityList/>
         </Grid>
         <Footer/>
