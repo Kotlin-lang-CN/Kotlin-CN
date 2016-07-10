@@ -1,4 +1,5 @@
 var ReactDOM = require('react-dom'),
+    React = require('react'),
     Bootstrap = require('react-bootstrap'),
     Footer = require('./component/footer.jsx'),
     Navigator = require('./component/navigator.jsx'),
@@ -6,7 +7,7 @@ var ReactDOM = require('react-dom'),
     Pager = Bootstrap.Pager,
     Jumbotron = Bootstrap.Jumbotron;
 
-const SectionMainHelloWorld = require('react').createClass({
+const SectionMainHelloWorld = React.createClass({
     render: function () {
         return <section className="kotlin-overview-section _get-kotlin" id="get-kotlin">
             <h2 className="section-header" style={{fontSize: '26px'}}>快速开始你的 Kotlin 之旅</h2>
@@ -53,7 +54,7 @@ const SectionMainHelloWorld = require('react').createClass({
         </section>
     }
 });
-const MainPage = require('react').createClass({
+const MainPage = React.createClass({
     render: function () {
         return <Grid><Jumbotron style={{paddingBottom: '30px'}}>
             <h1 style={{fontSize: '50px'}}>Kotlin CN</h1>
@@ -81,8 +82,8 @@ const MainPage = require('react').createClass({
 });
 ReactDOM.render((
     <div>
-        <Navigator/>,
-        <MainPage/>,
+        <Navigator/>
+        <MainPage/>
         <Footer/>
     </div>
 ), document.body);

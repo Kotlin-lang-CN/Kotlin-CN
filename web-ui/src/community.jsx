@@ -4,6 +4,7 @@ var ReactDOM = require('react-dom'),
     Footer = require('./component/footer.jsx'),
     Navigator = require('./component/navigator.jsx'),
     FriendLink = require('./component/friend-link.jsx'),
+    Req = require('./framework/ajax.js'),
     Badge = Bootstrap.Badge,
     Label = Bootstrap.Label,
     Pagination = Bootstrap.Pagination,
@@ -32,58 +33,20 @@ const CommunityList = React.createClass({
         return {
             tab: this.props.tab,
             page: this.props.page,
-            articles: [{
-                "create_time": "2 天 前",
-                "avatar_url": "https://avatars.githubusercontent.com/u/7821898?v=3",
-                "author": 7821898,
-                "html_url": "https://github.com/chpengzh",
-                "name": "手不要乱摸",
-                "comment": 0,
-                "title": "我是来测试发送的4",
-                "category": "精华",
-                "aid": 4,
-                "email": "chpengzh@foxmail.com",
-                "flower": 0
-            }, {
-                "create_time": "2 天 前",
-                "avatar_url": "https://avatars.githubusercontent.com/u/7821898?v=3",
-                "author": 7821898,
-                "html_url": "https://github.com/chpengzh",
-                "name": "手不要乱摸",
-                "comment": 0,
-                "title": "我是来测试发送的3",
-                "category": "求助",
-                "aid": 3,
-                "email": "chpengzh@foxmail.com",
-                "flower": 1
-            }, {
-                "create_time": "2 天 前",
-                "avatar_url": "https://avatars.githubusercontent.com/u/7821898?v=3",
-                "author": 7821898,
-                "html_url": "https://github.com/chpengzh",
-                "name": "手不要乱摸",
-                "comment": 2,
-                "title": "我是来测试发送的2",
-                "category": "技术分享",
-                "aid": 2,
-                "email": "chpengzh@foxmail.com",
-                "flower": 0
-            }, {
-                "create_time": "2 天 前",
-                "avatar_url": "https://avatars.githubusercontent.com/u/7821898?v=3",
-                "author": 7821898,
-                "html_url": "https://github.com/chpengzh",
-                "name": "手不要乱摸",
-                "comment": 0,
-                "title": "我是来测试发送的",
-                "category": "入门者说",
-                "aid": 1,
-                "email": "chpengzh@foxmail.com",
-                "flower": 0
-            }],
+            articles: [],
             nav: this.props.nav,
             loading: false
         }
+    },
+    componentWillMount: function () {
+        const listView = this;
+        Req.get({
+            url: '/article/list',
+            params: {page: 1, category: 'all'},
+            success: function (resp) {
+                listView.setState({articles: resp.data})
+            }
+        })
     },
     render: function () {
         return <Grid><Row>
@@ -100,7 +63,14 @@ const CommunityList = React.createClass({
         </Row></Grid>
     },
     handleSelectPage: function (page) {
-        this.setState({page: page});
+        const listView = this;
+        Req.get({
+            url: '/article/list',
+            params: {page: page, category: 'all'},
+            success: function (resp) {
+                listView.setState({articles: resp.data, page: page})
+            }
+        })
     },
     getNavList: function () {
         var view = [];
