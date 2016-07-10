@@ -1,35 +1,33 @@
-var Cookies = require('js-cookie');
+const Cookies = require('js-cookie'),
+    Conf = require('./config.js');
 
-var Authorization = {
-    key: 'kotlin_cn',
+module.exports = {
     isLogin: function () {
         try {
-            var cookie = JSON.parse(decodeURI(Cookies.get(this.key)));
+            var cookie = JSON.parse(decodeURI(Cookies.get(Conf.cookie)));
             return "profile" in cookie && "token" in cookie
         } catch (e) {
-            this.logout();
+            Cookies.remove(Conf.cookie);
             return false;
         }
     },
     logout: function () {
-        Cookies.remove(this.key);
+        Cookies.remove(Conf.cookie);
     },
     getProfile: function () {
         try {
-            return JSON.parse(decodeURI(Cookies.get(this.key))).profile
+            return JSON.parse(decodeURI(Cookies.get(Conf.cookie))).profile
         } catch (e) {
-            this.logout();
+            Cookies.remove(Conf.cookie);
             return null;
         }
     },
     getToken: function () {
         try {
-            return JSON.parse(decodeURI(Cookies.get(this.key))).token
+            return JSON.parse(decodeURI(Cookies.get(Conf.cookie))).token
         } catch (e) {
-            this.logout();
+            Cookies.remove(Conf.cookie);
             return null;
         }
     }
 };
-
-module.exports = Authorization;

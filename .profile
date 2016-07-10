@@ -8,4 +8,5 @@ export client_secret=aec5164b551ed1d90f0dbd26fedd03ce3ccd2f6b
 export secret_jwt=Kb24t0LDVPoen8jmGXBWdCJTUapSqz1s
 export host='http://localhost:8080'
 export static='http://localhost:63342/Kotlin-China/web-ui'
+export api_version='/api/v1'
 export log='database,client,mail,authorization,access'

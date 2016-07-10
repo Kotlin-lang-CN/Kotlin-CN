@@ -1,53 +1,116 @@
-var React = require('react')
-var ReactDOM = require('react-dom');
-var Bootstrap = require('react-bootstrap');
-var $ = require('jquery');
-var Footer = require('./component/footer.jsx');
-var Navigator = require('./component/navigator.jsx');
+const React = require('react'),
+    ReactDOM = require('react-dom'),
+    Bootstrap = require('react-bootstrap'),
+    $ = require('jquery'),
+    Showdown = require('showdown'),
+    Row = Bootstrap.Row,
+    Grid = Bootstrap.Grid,
+    Col = Bootstrap.Col,
+    Media = Bootstrap.Media,
+    NavDropdown = Bootstrap.NavDropdown,
+    MenuItem = Bootstrap.MenuItem,
+    Footer = require('./component/footer.jsx'),
+    Navigator = require('./component/navigator.jsx'),
+    Auth = require('./framework/authorization.js');
 
-var Row = Bootstrap.Row;
-var Grid = Bootstrap.Grid;
-var Col = Bootstrap.Col;
-var FormGroup = Bootstrap.FormGroup;
-var ControlLabel = Bootstrap.ControlLabel;
-var FormControl = Bootstrap.FormControl;
-var Media = Bootstrap.Media;
+const converter = new Showdown.Converter({
+    tables: true,
+    parseImgDimensions: true,
+    prefixHeaderId: true,
+    omitExtraWLInCodeBlocks: true,
+    tasklists: true,
+    smoothLivePreview: true,
+    smartIndentationFix: true,
+    headerLevelStart: 2
+});
 
 const MDEditor = React.createClass({
-    getInitialState: function () {
-        return {title: '', content: ''}
+    defaultCategory: {
+        question: '寻求解答',
+        share: '技术分享',
+        translation: '文章翻译',
+        talks: '社区杂谈'
     },
-    render: function() {
+    getSideMenus: function () {
+        return [
+            <NavDropdown title={this.state.category == undefined ? '选择类型' : this.defaultCategory[this.state.category]}>
+                <MenuItem onClick={() => this.setState({category: 'question'})}>寻求解答</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={() => this.setState({category: 'share'})}>技术分享</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={() => this.setState({category: 'translation'})}>文章翻译</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={() => this.setState({category: 'talks'})}>社区杂谈</MenuItem>
+            </NavDropdown>,
+            <NavDropdown title={Auth.getProfile().name} id="side-menu-dropdown">
+                <MenuItem onClick={this.cancelEdit}>放弃编辑</MenuItem>
+                <MenuItem onClick={this.publishArticle}>发布文章</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={this.logout}>注销</MenuItem>
+            </NavDropdown>
+        ]
+    },
+    getInitialState: function () {
+        if (!Auth.isLogin()) window.open('/community.html', '_self');
+        return {title: '', content: '', category: undefined}
+    },
+    renderPreview: function () {
+        const title = this.state.title == '' ? '' :
+        "#" + this.state.title + '\n';
+        return converter.makeHtml(title + this.state.content);
+    },
+    cancelEdit: function () {
+
+    },
+    publishArticle: function () {
+
+    },
+    logout: function () {
+        Auth.logout();
+        window.open('/community.html', '_self');
+    },
+    render: function () {
         return (
-            <Row>
-            <Col sm={12} md={6}>
-            <FormGroup controlId="articleTitle">
-            <ControlLabel>文章标题</ControlLabel>
-            <FormControl type="text" inputRef={ref => this.setState({title: ref})} placeholder="请输入文章标题"/>
-            </FormGroup>
-            <FormGroup controlId="articleContent">
-            <ControlLabel>文章内容</ControlLabel>
-            <FormControl componentClass="textarea" inputRef={ref => this.setState({content: ref})} 
-            placeholder="请输入文章内容" style={{resize: 'none', height: '100%'}}/>
-            </FormGroup>       
-            </Col>
-            <Col sm={12} md={6}>
-            </Col>
-            </Row>
+            <div>
+                <Navigator sideMenus={this.getSideMenus()}/>
+                <Grid><Row>
+                    <Col sm={12} md={6}>
+                        <div className="form-group"><label className="control-label" for="articleTitle">文章标题</label>
+                            <input type="text" placeholder="请输入文章标题" ref="titleInput"
+                                   className="form-control" id="articleTitle"
+                                   onChange={() => this.setState({title: this.refs.titleInput.value})}/>
+                        </div>
+                        <div className="form-group">
+                            <label className="control-label" for="articleContent">文章内容</label>
+                        <textarea style={{resize: 'none'}} placeholder="请输入文章内容" ref="contentInput"
+                                  className="form-control" id="articleContent"
+                                  onChange={() => this.setState({content: this.refs.contentInput.value})}/>
+                        </div>
+                    </Col>
+                    <Col sm={12} md={6} className="markdown-body"
+                         style={{borderStyle: 'solid',borderWidth: 0.5,borderRadius: 3, paddingRight: 0 }}>
+                        <Media><Media.Body>
+                            <div id="articlePreview"
+                                 style={{overflowY: 'auto', overflowX: 'auto', paddingRight: 15}}
+                                 className="markdown-block"
+                                 dangerouslySetInnerHTML={{__html: this.renderPreview()}}></div>
+                        </Media.Body></Media>
+                    </Col>
+                </Row></Grid>
+            </div>
         )
     }
 });
 
 ReactDOM.render((
     <div>
-    <Navigator/>
-    <Grid><MDEditor/></Grid>
-    <Footer/>
+        <MDEditor/>
+        <Footer/>
     </div>
 ), document.body);
 
 // textarea full screen
 $(document).ready(function () {
     $('#articleContent').height($(window).height() - 340);
-    $('#articlePreview').height($(window).height() - 266);
+    $('#articlePreview').height($(window).height() - 273 - 525 + 539 + 30);
 });

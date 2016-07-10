@@ -10,7 +10,6 @@ module.exports = function (grunt) {
                     article: './src/article.jsx',
                     community: './src/community.jsx',
                     document: './src/document.jsx',
-                    everyday: './src/everyday.jsx',
                     index: './src/index.jsx',
                     publish: './src/publish.jsx'
                 },

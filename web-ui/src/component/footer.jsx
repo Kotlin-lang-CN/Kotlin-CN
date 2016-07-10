@@ -2,14 +2,15 @@ var React = require('react');
 var Bootstrap = require('react-bootstrap');
 var Row = Bootstrap.Row;
 var Grid = Bootstrap.Grid;
-
+/***
+ * 页脚
+ */
 var Footer = React.createClass({
     render: function () {
-        //noinspection CheckTagEmptyBody
         return <Grid className="text-center">
             <Bootstrap.PageHeader/>
             <Row>
-                <i className="kuma-icon kuma-icon-tag"></i>
+                <i className="kuma-icon kuma-icon-tag"/>
                 <a href="https://github.com/Kotlin-lang-CN/Kotlin-CN.git" target="_blank">本项目</a> 使用 <a
                 href="http://kotlin-lang.org/" target="_blank">Kotlin</a> 编写
             </Row>
@@ -20,5 +21,4 @@ var Footer = React.createClass({
         </Grid>
     }
 });
-
 module.exports = Footer;
