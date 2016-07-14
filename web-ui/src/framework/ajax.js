@@ -1,65 +1,45 @@
-const req = require('reqwest'),
+const $ = require('jquery'),
     conf = require('./config.js');
+
 String.prototype.startWith = function (str) {
     var reg = new RegExp("^" + str);
     return reg.test(this);
 };
+
+const handleRequest = function (ajax) {
+    const success = ajax.success;
+    const fail = ajax.fail;
+    if (!ajax.url.startWith('http')) ajax.url = conf.api_version + ajax.url;
+    ajax.success = function (resp) {
+        if (!('status' in resp)) {
+            console.log('Unknown response:');
+            console.log(resp);
+            if (fail != undefined) fail({status: -1, message: ''});
+        } else if (resp.status == 200) {
+            if (success != undefined) success(resp);
+        } else {
+            if (fail != undefined) fail(resp);
+        }
+    };
+    ajax.error = function (e) {
+        if (fail != undefined) fail({status: -1, message: e.message})
+    };
+};
+
 const Request = {
     get: function (ajax) {
-        req({
-            url: this.getUrl(ajax),
-            method: 'GET',
-            headers: this.getHeaders(),
-            success: function (resp) {
-                if (!('status' in resp)) {
-                    console.log('Unknown response:');
-                    console.log(resp);
-                    if ('fail' in ajax) ajax.fail({status: -1, message: ''});
-                } else if (resp.status == 200) {
-                    if ('success' in ajax) ajax.success(resp);
-                } else {
-                    if ('fail' in ajax) ajax.fail(resp);
-                }
-            },
-            error: function (e) {
-                if ('fail' in ajax) ajax.fail({status: -1, message: e.message})
-            }
-        })
+        handleRequest(ajax);
+        ajax.method = 'get';
+        $.ajax(ajax)
     },
+
     post: function (ajax) {
-        req({
-            url: this.getUrl(ajax),
-            method: 'POST',
-            data: ajax.data,
-            headers: this.getHeaders(),
-            success: function (resp) {
-                if (!('status' in resp)) {
-                    console.log('Unknown response:' + resp);
-                    if ('fail' in ajax) ajax.fail({status: -1, message: ''});
-                } else if (resp.status == 200) {
-                    if ('success' in ajax) ajax.success(resp);
-                } else {
-                    if ('fail' in ajax) ajax.fail(resp);
-                }
-            },
-            error: function (e) {
-                if ('fail' in ajax) ajax.fail({status: -1, message: e.message});
-            }
-        })
-    },
-    getUrl: function (ajax) {
-        var url = ajax.url.startWith('http') ? ajax.url : conf.host + conf.api_version + ajax.url;
-        if ('params' in ajax) {
-            url += '?';
-            for (var name in ajax.params) {
-                url += name + '=' + ajax.params[name] + '&';
-            }
-            url = url.substring(0, url.length - 1);
-        }
-        return url;
-    },
-    getHeaders: function () {
-        return {'X-TimeStamp': new Date().getTime()}
+        ajax.contentType = 'application/json';
+        ajax.data = (ajax.data == undefined) ? undefined : JSON.stringify(ajax.data);
+        handleRequest(ajax);
+        ajax.method = 'post';
+        $.ajax(ajax)
     }
 };
-module.exports = Request;
+module.exports.get = Request.get;
+module.exports.post = Request.post;

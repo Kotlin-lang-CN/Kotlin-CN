@@ -5,6 +5,7 @@ var ReactDOM = require('react-dom'),
     Navigator = require('./component/navigator.jsx'),
     FriendLink = require('./component/friend-link.jsx'),
     Req = require('./framework/ajax.js'),
+    Conf = require('./framework/config.js'),
     Badge = Bootstrap.Badge,
     Label = Bootstrap.Label,
     Pagination = Bootstrap.Pagination,
@@ -96,7 +97,7 @@ const CommunityList = React.createClass({
                     </Media.Left><Media.Body>
                         <Media.Heading style={{'marginTop': '10px'}}>
                             {article.title + '  '}
-                            <small>{article.category == 'default' ? '' : article.category}</small>
+                            <small>{Conf.ArticleCategory[article.category]}</small>
                         </Media.Heading>
                         <small>
                             <Label bsStyle="success">{article.create_time}</Label>

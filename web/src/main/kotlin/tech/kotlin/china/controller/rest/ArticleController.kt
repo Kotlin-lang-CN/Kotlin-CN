@@ -7,6 +7,7 @@ import tech.kotlin.china.database.ArticleMapper
 import tech.kotlin.china.database.page
 import tech.kotlin.china.framework._Rest
 import tech.kotlin.china.framework.of
+import tech.kotlin.china.model.ArticleCategory
 import tech.kotlin.china.model.ArticleForm
 import utils.dataflow.forbid
 import utils.dataflow.require
@@ -63,6 +64,7 @@ import java.util.*
     fun publishArticle(@RequestBody articleForm: ArticleForm) = response {
         articleForm.title.forbid("请输入标题") { it.length == 0 }
         articleForm.content.forbid("请输入内容") { it.length == 0 }
+        articleForm.category.require("未知的文章类型") { ArticleCategory.valueOf(it.toUpperCase()).name.length > 0 }
         val account = auth.loginRequire()
         db write {
             val articleMapper = it.of<ArticleMapper>()

@@ -15,5 +15,5 @@ data class MessageForm(val title: String, val content: String, val from: Long?, 
 data class GithubTokenWrapper(var access_token: String = "")
 
 @Description("github账号信息")
-data class GithubAccount(var id: Long = 0L, var name: String = "", var avatar_url: String = "",
-                         var html_url: String = "", var email: String = "")
+data class GithubAccount(var id: Long = 0L, var login: String = "", var avatar_url: String = "",
+                         var html_url: String = "", var email: String? = "")

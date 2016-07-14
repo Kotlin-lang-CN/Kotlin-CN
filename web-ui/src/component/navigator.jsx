@@ -19,7 +19,7 @@ const Navigator = React.createClass({
         if (Auth.isLogin()) {
             return {
                 sideMenus: (
-                    <NavDropdown title={Auth.getProfile().name} id="basic-nav-dropdown">
+                    <NavDropdown title={Auth.getProfile().login} id="basic-nav-dropdown">
                         <MenuItem href="publish.html">写文章</MenuItem>
                         <MenuItem divider/>
                         <MenuItem onClick={() => {

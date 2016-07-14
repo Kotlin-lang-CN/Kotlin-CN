@@ -9,6 +9,8 @@ const React = require('react'),
     Media = Bootstrap.Media,
     NavDropdown = Bootstrap.NavDropdown,
     MenuItem = Bootstrap.MenuItem,
+    Conf = require('./framework/config.js'),
+    Req = require('./framework/ajax.js'),
     Footer = require('./component/footer.jsx'),
     Navigator = require('./component/navigator.jsx'),
     Auth = require('./framework/authorization.js');
@@ -25,24 +27,20 @@ const converter = new Showdown.Converter({
 });
 
 const MDEditor = React.createClass({
-    defaultCategory: {
-        question: '寻求解答',
-        share: '技术分享',
-        translation: '文章翻译',
-        talks: '社区杂谈'
-    },
     getSideMenus: function () {
         return [
-            <NavDropdown title={this.state.category == undefined ? '选择类型' : this.defaultCategory[this.state.category]}>
+            <NavDropdown title={this.state.category == undefined ? '选择类型' : Conf.ArticleCategory[this.state.category]}>
                 <MenuItem onClick={() => this.setState({category: 'question'})}>寻求解答</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={() => this.setState({category: 'beginner'})}>入门者说</MenuItem>
                 <MenuItem divider/>
                 <MenuItem onClick={() => this.setState({category: 'share'})}>技术分享</MenuItem>
                 <MenuItem divider/>
                 <MenuItem onClick={() => this.setState({category: 'translation'})}>文章翻译</MenuItem>
                 <MenuItem divider/>
-                <MenuItem onClick={() => this.setState({category: 'talks'})}>社区杂谈</MenuItem>
+                <MenuItem onClick={() => this.setState({category: 'other'})}>社区杂谈</MenuItem>
             </NavDropdown>,
-            <NavDropdown title={Auth.getProfile().name} id="side-menu-dropdown">
+            <NavDropdown title={Auth.getProfile().login} id="side-menu-dropdown">
                 <MenuItem onClick={this.cancelEdit}>放弃编辑</MenuItem>
                 <MenuItem onClick={this.publishArticle}>发布文章</MenuItem>
                 <MenuItem divider/>
@@ -63,7 +61,15 @@ const MDEditor = React.createClass({
 
     },
     publishArticle: function () {
-
+        console.log("publish!");
+        Req.post({
+            url: '/article/publish',
+            data: {
+                title: this.refs.titleInput.value,
+                content: this.refs.contentInput.value,
+                category: this.state.category
+            }
+        })
     },
     logout: function () {
         Auth.logout();
@@ -90,9 +96,8 @@ const MDEditor = React.createClass({
                     <Col sm={12} md={6} className="markdown-body"
                          style={{borderStyle: 'solid',borderWidth: 0.5,borderRadius: 3, paddingRight: 0 }}>
                         <Media><Media.Body>
-                            <div id="articlePreview"
-                                 style={{overflowY: 'auto', overflowX: 'auto', paddingRight: 15}}
-                                 className="markdown-block"
+                            <div id="articlePreview" className="markdown-block"
+                                 style={{overflowY: 'auto', paddingRight: 15, wordBreak: 'break-all'}}
                                  dangerouslySetInnerHTML={{__html: this.renderPreview()}}></div>
                         </Media.Body></Media>
                     </Col>

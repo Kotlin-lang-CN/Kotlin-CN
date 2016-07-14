@@ -64,6 +64,7 @@ class ViewController {
                             .p("redirect_uri", "$HOST$SIGN_IN")
                             .p("state", state))
         }.access_token
+        log.info(token)
         //获得用户信息
         val profile = client.monitor("获取用户信息失败", 403) {
             it.get<GithubAccount>("https://api.github.com/user", params = p("access_token", token))
@@ -71,9 +72,13 @@ class ViewController {
         db write {
             val accountMapper = it.of<AccountMapper>()
             if (accountMapper.queryById(profile.id) == null) {
-                accountMapper.addAccount(profile.row().p("token", token))
+                accountMapper.addAccount(profile.row().p("token", token)
+                        .p("name", profile.login)
+                        .p("email", if (profile.email == null) "" else profile.email))
             } else {
-                accountMapper.updateAccount(profile.row().p("token", token))
+                accountMapper.updateAccount(profile.row().p("token", token)
+                        .p("name", profile.login)
+                        .p("email", if (profile.email == null) "" else profile.email))
             }
         }
         auth.login(profile)

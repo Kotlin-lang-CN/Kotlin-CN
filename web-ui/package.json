@@ -25,7 +25,6 @@
     "react": "^15.2.1",
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.2.1",
-    "reqwest": "^2.0.5",
     "showdown": "^1.4.2"
   }
 }
