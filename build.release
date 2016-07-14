@@ -1,2 +1,0 @@
-#!/bin/sh
-docker build -f web/docker/Dockerfile -t kotlin_china .

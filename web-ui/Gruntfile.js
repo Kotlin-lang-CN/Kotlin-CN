@@ -10,12 +10,11 @@ module.exports = function (grunt) {
                     article: './src/article.jsx',
                     community: './src/community.jsx',
                     document: './src/document.jsx',
-                    everyday: './src/everyday.jsx',
                     index: './src/index.jsx',
                     publish: './src/publish.jsx'
                 },
                 output: {
-                    path: './src/build',
+                    path: './src/app/js',
                     filename: '[name].app.js'
                 },
                 plugins: [
@@ -28,27 +27,18 @@ module.exports = function (grunt) {
                     }, {
                         test: /\.json$/,
                         loader: 'json'
+                    }, {
+                        // I want to uglify with mangling only app files, not thirdparty libs
+                        test: /\.js$/,
+                        exclude: /.app.js/,
+                        loader: "uglify"
                     }]
                 }
-            }
-        },
-        uglify: {
-            options: {
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-            },
-            compress: {
-                files: [{
-                    expand: true,
-                    cwd: 'src/build',
-                    src: '*.js',
-                    dest: 'src/app/js'
-                }]
             }
         }
     });
     // 加载包含 "uglify" 任务的插件。
     grunt.loadNpmTasks('grunt-webpack');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     // 默认被执行的任务列表。
-    grunt.registerTask('default', ['webpack', 'uglify']);
+    grunt.registerTask('default', ['webpack']);
 };

@@ -1,2 +1,4 @@
-src/app/static/js
+src/debug/nd
+js
+src/app/js
 node_modules

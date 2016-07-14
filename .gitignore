@@ -8,3 +8,4 @@ build
 local.properties
 out
 !build.release
+npm-debug.log

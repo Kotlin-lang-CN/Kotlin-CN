@@ -2,25 +2,41 @@ package utils.map
 
 import utils.dataflow.next
 import java.util.*
-import kotlin.reflect.KProperty1
 
 /***
  * Map Generator
  */
-fun <K> p(k: K, v: Any?): HashMap<K, Any?> = HashMap<K, Any?>().p(k, v)
+open class Row : HashMap<String, Any?>()
 
-fun <K, M : HashMap<K, Any?>> M.p(k: K, v: Any?): M {
-    put(k, v)
+fun p(k: String, v: Any?): Row = Row().p(k, v)
+
+fun <T : Row> T.p(k: String, v: Any?): T {
+    if (this is HashMap<String, Any?>) put(k, v)
     return this
 }
 
-operator fun <T : Any> T.get(vararg fields: KProperty1<T, Any?>) = HashMap<String, Any?>() next {
-    fields.forEach { f -> it.p(f.name, f.get(this)) }
-}
-
-infix fun <T : Any> T.expose(fields: Array<String>) = HashMap<String, Any?>() next {
-    fields.map { this.javaClass.getDeclaredField(it) }.forEach { f ->
-        f.isAccessible = true
-        it.put(f.name, f.get(this))
+fun <T : Any> T.hide(vararg fields: String) = Row() next {
+    if (this is Row) {
+        this.entries.forEach { f ->
+            if (!fields.contains(f.key)) it.put(f.key, f.value)
+        }
+    } else {
+        javaClass.declaredFields.forEach { f ->
+            f.isAccessible = true
+            if (!fields.contains(f.name)) it.put(f.name, f.get(this))
+        }
     }
 }
+
+fun <T : Any> T.expose(vararg fields: String) = Row() next {
+    if (this is Row) {
+        fields.forEach { f -> it.put(f, this[f]) }
+    } else {
+        fields.map { this.javaClass.getDeclaredField(it) }.forEach { f ->
+            f.isAccessible = true
+            it.put(f.name, f.get(this))
+        }
+    }
+}
+
+fun Any.row() = hide()

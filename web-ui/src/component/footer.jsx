@@ -1,26 +1,24 @@
 var React = require('react');
 var Bootstrap = require('react-bootstrap');
-var Grid = Bootstrap.Grid;
 var Row = Bootstrap.Row;
-var PageHeader = Bootstrap.PageHeader;
-
+var Grid = Bootstrap.Grid;
+/***
+ * 页脚
+ */
 var Footer = React.createClass({
     render: function () {
-        //noinspection CheckTagEmptyBody
-        return <footer className="footer common-footer text-center" role="contentinfo">
-            <Grid>
-                <Row>
-                    <PageHeader/>
-                    <span className="glyphicon glyphicon-console" aria-hidden="true"></span> 本项目完全使用 <a
-                    href="https://github.com/Kotlin-lang-CN/Kotlin-CN.git">Kotlin</a> 编写
-                </Row>
-                <Row>
-                    <span className="copyright"> © Since 2016. All rights reserved by <a
-                        href="http://kotlin-cn.org">kotlin-cn.org</a></span>
-                </Row>
-            </Grid>
-        </footer>
+        return <Grid className="text-center">
+            <Bootstrap.PageHeader/>
+            <Row>
+                <i className="kuma-icon kuma-icon-tag"/>
+                <a href="https://github.com/Kotlin-lang-CN/Kotlin-CN.git" target="_blank">本项目</a> 使用 <a
+                href="http://kotlin-lang.org/" target="_blank">Kotlin</a> 编写
+            </Row>
+            <Row>
+                <span className="copyright"> © Since 2016. All rights reserved by <a
+                    href="http://kotlin-cn.tech" target="_blank">kotlin-cn.tech</a></span><br/><br/>
+            </Row>
+        </Grid>
     }
 });
-
 module.exports = Footer;

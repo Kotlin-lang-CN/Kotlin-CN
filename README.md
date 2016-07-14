@@ -26,7 +26,7 @@ Kotlin China 论坛
 
 - [x] [网站前端模块 web-ui 开发者文档](doc/web-ui.md)
 
-- [x] [restful 接口文档](restful.md)
+- [x] [restful 接口文档](doc/restful.md)
 
 
 

@@ -1,11 +1,6 @@
 package utils.dataflow
 
-/***
- * 为 参变量提供注释
- */
-@MustBeDocumented @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Doc(val value: String)
+import org.apache.log4j.Logger
 
 /***
  * 逻辑安全, 表征函数体本身不会主动抛出业务逻辑异常
@@ -16,24 +11,38 @@ annotation class Doc(val value: String)
 annotation class BusinessSafe()
 
 /***
- * 对数据流进行校验, 对不满足条件的表达式返回值抛出异常
+ * require expression
  */
-
 @Throws(BusinessError::class)
-inline fun <R> R.require(message: String, status: Int = 400, filter: (R) -> Boolean): R = try {
+inline fun <R> R.require(message: String = "请求被拒绝", status: Int = 400, filter: (R) -> Boolean): R = try {
     if (!filter(this)) throw BusinessError(message, status) else this@require
 } catch(e: Throwable) {
     throw BusinessError(message, status)
 }
 
+/***
+ * forbid expression
+ */
 @Throws(BusinessError::class)
-inline fun <R> R.forbid(message: String, status: Int = 400, filter: (R) -> Boolean): R = try {
+inline fun <R> R.forbid(message: String = "请求被拒绝", status: Int = 400, filter: (R) -> Boolean): R = try {
     if (filter(this)) throw BusinessError(message, status) else this@forbid
 } catch (e: Throwable) {
     throw BusinessError(message, status)
 }
 
-infix inline fun <R> R.next(action: (R) -> Unit): R {
+/***
+ * try expression
+ */
+@Throws(BusinessError::class)
+inline fun <T, R> T.monitor(message: String, status: Int = 400, log: Boolean = false, filter: (T) -> R): R = try {
+    filter(this)
+} catch (e: Throwable) {
+    if (log) Logger.getLogger("monitor").info("error", e)
+    throw BusinessError(message, status)
+}
+
+
+infix fun <R> R.next(action: (R) -> Unit): R {
     action.invoke(this)
     return this
 }

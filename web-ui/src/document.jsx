@@ -1,8 +1,11 @@
-var ReactDOM = require('react-dom');
-var Footer = require('./component/footer.jsx');
-var Navigator = require('./component/navigator.jsx');
+var ReactDOM = require('react-dom'),
+    React = require('react'),
+    Footer = require('./component/footer.jsx'),
+    Navigator = require('./component/navigator.jsx');
 
-ReactDOM.render(<div>
-    <Navigator/>
-    <Footer/>
-</div>, document.body);
+ReactDOM.render((
+    <div>
+        <Navigator/>
+        <Footer/>
+    </div>
+), document.body);

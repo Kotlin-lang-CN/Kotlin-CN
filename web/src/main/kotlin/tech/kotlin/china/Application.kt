@@ -11,5 +11,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 }
 
 fun main(args: Array<String>) {
-    SpringApplication.run(Application::class.java, *args)
+    val application = SpringApplication(Application::class.java)
+    application.run(*args);
 }
