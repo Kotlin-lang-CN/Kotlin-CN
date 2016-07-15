@@ -2,7 +2,6 @@ const React = require('react'),
     ReactDOM = require('react-dom'),
     Bootstrap = require('react-bootstrap'),
     $ = require('jquery'),
-    Showdown = require('showdown'),
     Row = Bootstrap.Row,
     Grid = Bootstrap.Grid,
     Col = Bootstrap.Col,
@@ -15,16 +14,7 @@ const React = require('react'),
     Navigator = require('./component/navigator.jsx'),
     Auth = require('./framework/authorization.js');
 
-const converter = new Showdown.Converter({
-    tables: true,
-    parseImgDimensions: true,
-    prefixHeaderId: true,
-    omitExtraWLInCodeBlocks: true,
-    tasklists: true,
-    smoothLivePreview: true,
-    smartIndentationFix: true,
-    headerLevelStart: 2
-});
+
 
 const MDEditor = React.createClass({
     getSideMenus: function () {
@@ -55,7 +45,7 @@ const MDEditor = React.createClass({
     renderPreview: function () {
         const title = this.state.title == '' ? '' :
         "#" + this.state.title + '\n';
-        return converter.makeHtml(title + this.state.content);
+        return Conf.MarkdownConverter.makeHtml(title + this.state.content);
     },
     cancelEdit: function () {
 

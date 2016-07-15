@@ -1,18 +1,19 @@
 const React = require('react'),
     Bootstrap = require('react-bootstrap'),
-    Auth = require('../framework/authorization.js'),
+    Conf = require('../framework/config.js'),
+    Auth = require('../framework/authorization.js');
 
-    Navbar = Bootstrap.Navbar,
+const Navbar = Bootstrap.Navbar,
     Nav = Bootstrap.Nav,
     NavItem = Bootstrap.NavItem,
     NavDropdown = Bootstrap.NavDropdown,
-    MenuItem = Bootstrap.MenuItem,
+    MenuItem = Bootstrap.MenuItem;
 
-    login = "https://github.com/login/oauth/authorize?" +
-        "client_id=56ac3aefad86b012320e&" +
-        "redirect_uri=http://localhost:8080/account/github&" +
-        "scope=user&" +
-        "state=kotlin_china";
+const login = "https://github.com/login/oauth/authorize?" +
+    "client_id=" + Conf.client_id + "&" +
+    "redirect_uri=" + Conf.host + "/account/github&" +
+    "scope=user&" +
+    "state=kotlin_china";
 
 const Navigator = React.createClass({
     getDefaultProps: function () {

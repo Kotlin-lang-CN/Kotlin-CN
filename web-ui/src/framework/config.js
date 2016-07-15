@@ -1,3 +1,5 @@
+const Showdown = require('showdown');
+
 module.exports = {
     host: 'http://localhost:8080',
     client_id: '56ac3aefad86b012320e',
@@ -13,3 +15,14 @@ module.exports.ArticleCategory = {
     other: "社区杂谈",
     translation: "文章翻译"
 };
+
+module.exports.MarkdownConverter = new Showdown.Converter({
+    tables: true,
+    parseImgDimensions: true,
+    prefixHeaderId: true,
+    omitExtraWLInCodeBlocks: true,
+    tasklists: true,
+    smoothLivePreview: true,
+    smartIndentationFix: true,
+    headerLevelStart: 2
+});

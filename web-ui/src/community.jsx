@@ -91,9 +91,9 @@ const CommunityList = React.createClass({
         for (var i = 0; i < this.state.articles.length; i++) {
             const article = this.state.articles[i];
             view.push(
-                <ListGroupItem href={article.html_url} ref={'article-id-' + article.aid}>
+                <ListGroupItem href={'/article.html?aid=' + article.aid} ref={'article-id-' + article.aid}>
                     <Media><Media.Left align="top">
-                        <img width={64} height={64} src={article.avatar_url} alt="Avatar"/>
+                        <img width={64} height={64} src={article.avatar_url} alt="Avatar" href={article.html_url}/>
                     </Media.Left><Media.Body>
                         <Media.Heading style={{'marginTop': '10px'}}>
                             {article.title + '  '}
