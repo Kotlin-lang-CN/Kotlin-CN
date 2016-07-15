@@ -68,13 +68,10 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 #### 文章详情
 
-> url: /article/{aid}
-
-> path_variable: aid 文章id
-
-> response:
-
-```json
+```
+url: /article/{aid}
+path_variable: aid 文章id
+response:
 {
     "data": {
         "create_time": "4 天 前",
@@ -97,15 +94,11 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 #### 文章列表
 
-> url: /article/list
-
-> param: page 页数
-
-> param: category all-所有, <other>-具体类别
-
-> response:
-
 ```json
+url: /article/list
+param: page 页数
+param: category all-所有, <other>-具体类别
+response:
 {
     "data": [
         {
@@ -129,17 +122,12 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 ### 我的文章列表
 
-> url: /article/mine
-
-> Cookie: Require
-
-> param: page 页数
-
-> param: category all-所有, <other>-具体类别
-
-> response: 
-
 ```json
+url: /article/mine
+Cookie: Require
+param: page 页数
+param: category all-所有, <other>-具体类别
+response: 
 {
     "data": [
         {
@@ -163,63 +151,51 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 ### 发布一篇文章
 
-> url: /article/publish
-
-> Cookie: Require
-
-> method: POST
-
-> request:
-
 ```json
+url: /article/publish
+Cookie: Require
+method: POST
+request:
 {
     "title":"测试发送文章标题", 
     "content":"markdown格式的文章内容",
     "category": "default"
 }
+response:
+{
+    "status":200, 
+    "message":""
+}
 ```
 
-> response:
-
-```json
-{"status":200, "message":""}
-```
+> 
 
 ### 发布评论
 
-> url: /comment/make
-
-> Cookie: Require
-
-> method: POST
-
-> request:
-
 ```json
+url: /comment/make
+Cookie: Require
+method: POST
+request:
 {
     "content":"评论的内容", 
     "aid":1, #文章id
     "reply":1 #可选 回复用户id
 }
-```
-
-> response:
-
-```json
-{"status":200,"message":""}
+response:
+{
+    "status":200,
+    "message":""
+}
 ```
 
 ### 查看文章的评论列表
 
-> url: /comment/list
-
-> param: aid 文章id
-
-> param: page 页数
-
-> response: 
-
 ```json
+url: /comment/list
+param: aid 文章id
+param: page 页数
+response: 
 {
     "data": [
         {
@@ -244,17 +220,12 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 ### 查看我的评论列表
 
-> url: /comment/mine
-
-> Cookie: Require
-
-> param: aid 文章id
-
-> param: page 页数
-
-> response: 
-
 ```json
+url: /comment/mine
+Cookie: Require
+param: aid 文章id
+param: page 页数
+response: 
 {
     "data": [
         {
@@ -279,17 +250,12 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 ### 查看所有回复我的列表
 
-> url: /comment/reply
-
-> Cookie: Require
-
-> param: aid 文章id
-
-> param: page 页数
-
-> response: 
-
 ```json
+url: /comment/reply
+Cookie: Require
+param: aid 文章id
+param: page 页数
+response: 
 {
     "data": [
         {
@@ -317,36 +283,30 @@ kotlin_cn=%7B%22profile%22%3A%7B%22avatar_url%22%3A%22https%3A%2F%2Favatars.gith
 
 ### 点赞
 
-> url: /flower
-
-> Cookie: Require
-
-> method: POST
-
-> param: oid 对象id
-
-> param: mode 0-文章, 1-评论
-
-> response:
-
 ```json
-{"status":200,"message":""}
+url: /flower
+Cookie: Require
+method: POST
+param: oid 对象id
+param: mode 0-文章, 1-评论
+response:
+{
+    "status":200,
+    "message":""
+}
 ```
 
 ### 取消点赞
 
-> url: /flower/cancel
-
-> Cookie: Require
-
-> method: POST
-
-> param: oid 对象id
-
-> param: mode 0-文章, 1-评论
-
-> response:
-
 ```json
-{"status":200,"message":""}
+url: /flower/cancel
+Cookie: Require
+method: POST
+param: oid 对象id
+param: mode 0-文章, 1-评论
+response:
+{
+    "status":200,
+    "message":""
+}
 ```
