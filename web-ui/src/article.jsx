@@ -1,6 +1,8 @@
 const ReactDOM = require('react-dom'),
     React = require('react'),
     Bootstrap = require('react-bootstrap'),
+    $ = require('jquery'),
+    hljs = require('highlight.js'),
     Footer = require('./component/footer.jsx'),
     Navigator = require('./component/navigator.jsx'),
     Conf = require('./framework/config.js'),
@@ -66,6 +68,15 @@ const MarkdownArticle = React.createClass({
         "#" + this.state.title + '\n';
         return Conf.MarkdownConverter.makeHtml(title + this.state.content);
     }
+});
+
+$(document).ready(function () {
+    setTimeout(function () {
+        //延迟渲染代码高亮
+        $('.markdown-body pre code').each(function (i, e) {
+            hljs.highlightBlock(e)
+        })
+    }, 500);
 });
 
 ReactDOM.render((

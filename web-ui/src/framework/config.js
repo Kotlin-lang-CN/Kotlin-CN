@@ -1,4 +1,5 @@
-const Showdown = require('showdown');
+const showdown = require('showdown');
+const hljs = require('highlight.js');
 
 module.exports = {
     host: 'http://localhost:8080',
@@ -16,7 +17,7 @@ module.exports.ArticleCategory = {
     translation: "文章翻译"
 };
 
-module.exports.MarkdownConverter = new Showdown.Converter({
+module.exports.MarkdownConverter = new showdown.Converter({
     tables: true,
     parseImgDimensions: true,
     prefixHeaderId: true,
