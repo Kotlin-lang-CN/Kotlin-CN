@@ -14,8 +14,6 @@ const React = require('react'),
     Navigator = require('./component/navigator.jsx'),
     Auth = require('./framework/authorization.js');
 
-
-
 const MDEditor = React.createClass({
     getSideMenus: function () {
         return [
@@ -58,6 +56,12 @@ const MDEditor = React.createClass({
                 title: this.refs.titleInput.value,
                 content: this.refs.contentInput.value,
                 category: this.state.category
+            },
+            success: function() {
+                window.open('/community.html', '_self')
+            },
+            fail: function(error) {
+                alert(error.message);
             }
         })
     },

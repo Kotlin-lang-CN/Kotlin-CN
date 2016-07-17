@@ -75,7 +75,7 @@ ReactDOM.render((
             <Col sm={12} md={9} className="markdown-body" style={{ paddingRight: 0 }}>
                 <MarkdownArticle/>
             </Col>
-            <Col xs={6} md={3}><FriendLink/></Col>
+            <Col sm={6} md={3}><FriendLink/></Col>
         </Row></Grid>
         <Footer/>
     </div>

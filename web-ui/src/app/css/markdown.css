@@ -44,11 +44,35 @@
     overflow: hidden;
 }
 
-.markdown-body code,
-.markdown-body kbd,
+.markdown-body code {
+    padding: .1em .4em;
+    background: #e8f2fb;
+    border: 1px solid #c9e1f6;
+    border-radius: 3px;
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+    font-size: .6em;
+    vertical-align: bottom;
+    word-wrap: break-word;
+}
+
 .markdown-body pre {
-    font-family: monospace, monospace;
-    font-size: 1em;
+    margin-bottom: 1.3em;
+    padding: 1em 2.5%;
+    background: #f0f0f0;
+    border: 1px solid #c9e1f6;
+    border-radius: 3px;
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+    font-size: .6em;
+    font-weight: normal;
+    line-height: 1.3em;
+    overflow: scroll;
+}
+
+.markdown-body pre code {
+    padding: 0;
+    background: none;
+    border: none;
+    word-wrap: normal;
 }
 
 .markdown-body hr {
@@ -488,7 +512,6 @@
     margin: 0;
     font-size: 100%;
     word-break: normal;
-    white-space: pre;
     background: transparent;
     border: 0;
 }
@@ -501,10 +524,11 @@
 .markdown-body pre {
     padding: 16px;
     overflow: auto;
-    font-size: 85%;
+    font-size: 75%;
     line-height: 1.45;
     background-color: #f7f7f7;
     border-radius: 3px;
+    word-break: keep-all;
 }
 
 .markdown-body .highlight pre {

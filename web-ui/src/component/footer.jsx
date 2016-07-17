@@ -5,7 +5,7 @@ var Grid = Bootstrap.Grid;
 /***
  * 页脚
  */
-var Footer = React.createClass({
+const Footer = React.createClass({
     render: function () {
         return <Grid className="text-center">
             <Bootstrap.PageHeader/>

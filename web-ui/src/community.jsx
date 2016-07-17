@@ -21,11 +21,13 @@ var ReactDOM = require('react-dom'),
 const CommunityList = React.createClass({
     getDefaultProps: function () {
         return {
-            tab: 1, page: 1, nav: [
+            tab: 0, page: 1, nav: [
                 {tab: '最新更新', category: 'all'},
                 {tab: '问答板', category: 'question'},
                 {tab: '入门者说', category: 'beginner'},
                 {tab: '技术分享', category: 'share'},
+                {tab: '文章翻译', category: 'translation'},
+                {tab: '社区杂谈', category: 'other'},
                 {tab: '精品区', category: 'awesome'}
             ]
         }
@@ -40,12 +42,15 @@ const CommunityList = React.createClass({
         }
     },
     componentWillMount: function () {
-        const listView = this;
+        this.refreshList(this.state.page, this.state.tab);
+    },
+    refreshList: function (page, tabIndex) {
+        const _this = this;
         Req.get({
             url: '/article/list',
-            params: {page: 1, category: 'all'},
+            data: {page: page, category: _this.props.nav[tabIndex].category},
             success: function (resp) {
-                listView.setState({articles: resp.data})
+                _this.setState({articles: resp.data, page: page, tab: tabIndex})
             }
         })
     },
@@ -64,23 +69,16 @@ const CommunityList = React.createClass({
         </Row></Grid>
     },
     handleSelectPage: function (page) {
-        const listView = this;
-        Req.get({
-            url: '/article/list',
-            params: {page: page, category: 'all'},
-            success: function (resp) {
-                listView.setState({articles: resp.data, page: page})
-            }
-        })
+        this.refreshList(page, this.state.tab);
     },
     getNavList: function () {
         var view = [];
-        for (var i = 1; i <= this.state.nav.length; i++) {
+        for (var i = 0; i < this.state.nav.length; i++) {
             const index = i;
             view.push(
                 <NavItem className={(this.state.tab == index) ? 'active' : ''}
-                         onClick={() => this.setState({tab: index})}>
-                    {this.state.nav[index - 1].tab}
+                         onClick={() => this.refreshList(1, index)}>
+                    {this.state.nav[index].tab}
                 </NavItem>
             );
         }
