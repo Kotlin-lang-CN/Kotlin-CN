@@ -528,7 +528,6 @@
     line-height: 1.45;
     background-color: #f7f7f7;
     border-radius: 3px;
-    word-break: keep-all;
 }
 
 .markdown-body .highlight pre {
