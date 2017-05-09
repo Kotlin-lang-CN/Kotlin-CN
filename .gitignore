@@ -5,6 +5,7 @@ build
 *.ipr
 *.iws
 *.ids
+.idea
 local.properties
 out
 !build.release
