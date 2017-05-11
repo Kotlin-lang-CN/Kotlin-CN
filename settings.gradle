@@ -1,3 +1,7 @@
-rootProject.name = 'Kotlin-China'
+rootProject.name = 'Kotlin-CN'
 include 'web'
 include 'web-ui'
+include 'front-end'
+include 'common'
+include 'service'
+
