@@ -1,0 +1,25 @@
+group 'tech.kotlin.china'
+version project_version
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/source']
+    }
+    test {
+        java.srcDirs = ['src/test/source']
+    }
+}
+
+jar {
+    baseName = 'kotlin_china'
+    version = 'latest'
+}
+
+dependencies {
+    compile project(':common')
+
+    testCompile 'junit:junit:4.11'
+}

@@ -1,14 +1,35 @@
 group 'tech.kotlin.china'
-version '0.0.1.SNAPSHOT'
+version project_version
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/source']
+    }
+    test {
+        java.srcDirs = ['src/test/source']
+    }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    //mysql
+    compile 'mysql:mysql-connector-java:6.0.6'
+    compile 'org.mybatis:mybatis:3.4.4'
+    compile 'com.github.pagehelper:pagehelper:5.0.1'
+    //redis
+    compile 'redis.clients:jedis:2.9.0'
+
+    compile 'com.sparkjava:spark-core:2.6.0'
+    compile 'org.apache.logging.log4j:log4j-api:2.8.2'
+    compile 'org.reflections:reflections:0.9.10'
+    compile 'com.baidu:jprotobuf:2.0.8'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.7'
+
+    testCompile 'junit:junit:4.12'
 }
