@@ -20,6 +20,6 @@ jar {
 
 dependencies {
     compile project(':common')
-
+    compile 'com.relops:snowflake:1.1'
     testCompile 'junit:junit:4.11'
 }

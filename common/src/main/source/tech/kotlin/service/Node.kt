@@ -1,8 +1,10 @@
 package tech.kotlin.service
 
-import tech.kotlin.Config
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.type.TypeReference
 import tech.kotlin.common.rpc.Contexts
 import tech.kotlin.common.rpc.ServiceContext
+import tech.kotlin.common.utils.map
 import java.net.InetSocketAddress
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
@@ -17,15 +19,14 @@ object Node {
 
     lateinit var executors: ExecutorService
     private val nodeMap = ConcurrentHashMap<String, ServiceContext>()
+    val config: HashMap<String, Address> = map("service.json", object : TypeReference<HashMap<String, Address>>() {})
 
     @Synchronized
     fun init(name: String) {
-        val conf = Config[name]!!.rpc
-        val host = conf.host
-        val port = conf.port
+        val conf = config[name]!!
         this.executors = Executors.newFixedThreadPool(2 * Runtime.getRuntime().availableProcessors())
         val node = Contexts.create(name, executors)
-        node.listen(InetSocketAddress(host, port))
+        node.listen(InetSocketAddress(conf.host, conf.port))
         nodeMap.put(name, node)
     }
 
@@ -34,7 +35,7 @@ object Node {
         val cachedNode = nodeMap[name]
         if (cachedNode != null) return cachedNode
 
-        val conf = Config[name]!!.rpc
+        val conf = config[name]!!
         val host = conf.host
         val port = conf.port
 
@@ -43,20 +44,9 @@ object Node {
         nodeMap[name] = context
         return context
     }
-}
 
-object Service {
-
-    const val ACCOUNT_CHECK_TOKEN = 100000
-    const val ACCOUNT_CREATE_SESSION = 100001
-    const val ACCOUNT_REGISTER = 100002
-    const val ACCOUNT_LOGIN = 100003
-    const val ACCOUNT_FREEZE = 100004
-    const val ACCOUNT_USER = 100005
-
-    const val ARTICLE_CREATE = 100021
-    const val ARTICLE_UPDATE = 100022
-    const val ARTICLE_CHANGE_STATE = 100023
-    const val ARTICLE_QUERY_BY_ID = 100024
-    const val ARTICLE_QUERY_IN_ORDER = 100025
+    class Address {
+        @JsonProperty("host") var host = ""
+        @JsonProperty("port") var port = 0
+    }
 }

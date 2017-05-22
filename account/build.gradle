@@ -2,6 +2,7 @@ group 'tech.kotlin.china'
 version '1.0.0-release'
 
 apply plugin: 'java'
+apply plugin: 'kotlin'
 
 sourceCompatibility = 1.8
 
@@ -12,6 +13,15 @@ sourceSets {
     }
     test {
         java.srcDirs = ['src/test/source']
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'tech.kotlin.account.MainKt'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 

@@ -13,5 +13,6 @@ enum class Err(val code: Int, val msg: String) {
     USER_EMAIL_EXISTS(6, "用户邮箱已经存在"),
     USER_NOT_EXISTS(7, "用户不存在"),
     ILLEGAL_PASSWORD(8, "密码错误"),
+    ARTICLE_NOT_EXISTS(9, "文章不存在"),
     LOGIN_EXPIRE(401, "登录过期，或在其他设备上登录"),
 }

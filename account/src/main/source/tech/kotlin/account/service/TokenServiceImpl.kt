@@ -5,7 +5,7 @@ import tech.kotlin.account.dao.AccountDao
 import tech.kotlin.common.algorithm.JWT
 import tech.kotlin.common.exceptions.Err
 import tech.kotlin.common.exceptions.abort
-import tech.kotlin.common.exceptions.require
+import tech.kotlin.common.exceptions.check
 import tech.kotlin.common.exceptions.tryExec
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.long
@@ -40,19 +40,19 @@ object TokenServiceImpl : TokenService {
         }
 
         //validate device
-        content.require(Err.TOKEN_FAIL) { it.device.isEquals(req.device) }
+        content.check(Err.TOKEN_FAIL) { it.device.isEquals(req.device) }
 
         //validate session
         val cachedSession = tryExec(Err.TOKEN_FAIL) {
             Json.loads<SessionContent>(Redis.read { it.get(key(content.id)) })
         }
-        cachedSession.require(Err.TOKEN_FAIL) { it.isEqual(content) }
+        cachedSession.check(Err.TOKEN_FAIL) { it.isEqual(content) }
 
         //validate account state
         val account = Mysql.read {
             AccountDao.getById(it, content.uid, useCache = true, updateCache = true)
         } ?: abort(Err.TOKEN_FAIL)
-        account.require(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
+        account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
         return CheckTokenResp().apply {
             this.account = account
@@ -70,7 +70,7 @@ object TokenServiceImpl : TokenService {
         val account = Mysql.read {
             AccountDao.getById(it, req.uid, useCache = false, updateCache = true)
         } ?: abort(Err.USER_NOT_EXISTS)
-        account.require(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
+        account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
         //save session in redis
         Redis.write {

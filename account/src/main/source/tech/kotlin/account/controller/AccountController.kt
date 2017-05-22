@@ -4,7 +4,7 @@ import spark.Route
 import tech.kotlin.account.API.ACCOUNT
 import tech.kotlin.common.exceptions.Err
 import tech.kotlin.common.exceptions.abort
-import tech.kotlin.common.exceptions.require
+import tech.kotlin.common.exceptions.check
 import tech.kotlin.common.exceptions.tryExec
 import tech.kotlin.model.Account
 import tech.kotlin.model.Device
@@ -22,42 +22,44 @@ object AccountController {
     val tokenService: TokenService by lazy { Node[ACCOUNT][TokenService::class.java] }
     val userService: UserService by lazy { Node[ACCOUNT][UserService::class.java] }
 
-    val login = Route { req, _ ->
+    val login = Route { req, response ->
         val resp = accountService.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
-            this.loginName = req.queryParams("login_name").require(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
-            this.password = req.queryParams("password").require(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
+            this.loginName = req.queryParams("login_name").check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
+            this.password = req.queryParams("password").check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
         })
 
+        response.cookie("X-App-Token", resp.token)
         return@Route HashMap<String, Any>().apply {
-            this += "uid" to resp.userInfo.uid
-            this += "token" to resp.token
-            this += "username" to resp.userInfo.username
-            this += "email" to resp.userInfo.email
-            this += "is_email_validate" to (resp.userInfo.emailState == UserInfo.EmailState.VERIFIED)
+            this["uid"] = resp.userInfo.uid
+            this["token"] = resp.token
+            this["username"] = resp.userInfo.username
+            this["email"] = resp.userInfo.email
+            this["is_email_validate"] = resp.userInfo.emailState == UserInfo.EmailState.VERIFIED
         }
     }
 
-    val register = Route { req, _ ->
+    val register = Route { req, response ->
         val resp = accountService.create(CreateAccountReq().apply {
-            this.username = req.queryParams("username").require(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
-            this.password = req.queryParams("password").require(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
-            this.email = req.queryParams("email").require(Err.PARAMETER, "无效的邮箱") { !it.isNullOrBlank() }
+            this.username = req.queryParams("username").check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
+            this.password = req.queryParams("password").check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
+            this.email = req.queryParams("email").check(Err.PARAMETER, "无效的邮箱") { !it.isNullOrBlank() }
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
         })
 
+        response.cookie("X-App-Token", resp.token)
         return@Route HashMap<String, Any>().apply {
-            this += "uid" to resp.account.id
-            this += "token" to resp.token
-            this += "username" to resp.userInfo.username
-            this += "email" to resp.userInfo.email
-            this += "is_email_validate" to (resp.userInfo.emailState == UserInfo.EmailState.VERIFIED)
+            this["uid"] = resp.account.id
+            this["token"] = resp.token
+            this["username"] = resp.userInfo.username
+            this["email"] = resp.userInfo.email
+            this["is_email_validate"] = (resp.userInfo.emailState == UserInfo.EmailState.VERIFIED)
         }
     }
 
     val getUserInfo = Route { req, _ ->
         val query = req.params(":uid")
-                .require(Err.PARAMETER, "非法的用户请求") { it.toLong(); true }
+                .check(Err.PARAMETER, "非法的用户请求") { it.toLong(); true }
                 .toLong()
 
         val checkTokenResp = tokenService.checkToken(CheckTokenReq(req))
@@ -70,13 +72,13 @@ object AccountController {
         val account = queryUser.account[query] ?: abort(Err.SYSTEM)
 
         return@Route HashMap<String, Any>().apply {
-            this += "username" to info.username
-            this += "email" to info.email
-            this += "is_email_validate" to (info.emailState == UserInfo.EmailState.VERIFIED)
-            this += "last_login" to account.lastLogin
-            this += "state" to account.state
-            this += "role" to account.role
-            this += "create_time" to account.createTime
+            this["username"] = info.username
+            this["email"] = info.email
+            this["is_email_validate"] = (info.emailState == UserInfo.EmailState.VERIFIED)
+            this["last_login"] = account.lastLogin
+            this["state"] = account.state
+            this["role"] = account.role
+            this["create_time"] = account.createTime
         }
     }
 }

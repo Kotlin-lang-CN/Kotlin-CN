@@ -4,7 +4,6 @@ import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.Account
 import tech.kotlin.common.serialize.Json
-import tech.kotlin.model.UserInfo
 import tech.kotlin.mysql.Mysql
 import tech.kotlin.redis.Redis
 
@@ -44,7 +43,7 @@ object AccountDao {
     fun update(session: SqlSession, uid: Long, args: HashMap<String, Any>) {
         val mapper = session.getMapper(AccountMapper::class.java)
         Cache.drop(uid)
-        mapper.updateAccount(args = args.apply { this["id"] = uid })
+        mapper.updateWithArgs(args = args.apply { this["id"] = uid })
     }
 
     internal object Cache {
@@ -107,21 +106,21 @@ object AccountDao {
         """)
         fun update(account: Account)
 
-        @UpdateProvider(type = AccountSQLGenerator::class, method = "update")
-        fun updateAccount(args: Map<String, Any>)
-    }
+        @UpdateProvider(type = SQLGen::class, method = "updateWithArgs")
+        fun updateWithArgs(args: Map<String, Any>)
 
-    class AccountSQLGenerator {
+        class SQLGen {
 
-        fun update(args: Map<String, Any>): String {
-            return """
-            UPDATE account SET
-            ${StringBuilder().apply {
-                args.forEach { k, _ -> append("$k = #{$k} ,") }
-                setLength(length - ",".length)
-            }}
-            WHERE id = #{id}
-            """
+            fun updateWithArgs(args: Map<String, Any>): String {
+                return """
+                UPDATE account SET
+                ${StringBuilder().apply {
+                    args.forEach { k, _ -> append("$k = #{$k} ,") }
+                    setLength(length - ",".length)
+                }}
+                WHERE id = #{id}
+                """
+            }
         }
     }
 }

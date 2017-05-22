@@ -1,6 +1,7 @@
 package tech.kotlin.account.test
 
 import org.junit.Test
+import tech.kotlin.account.API
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.model.Account
 import tech.kotlin.model.Device
@@ -16,8 +17,8 @@ import tech.kotlin.service.account.UserService
  *********************************************************************/
 class UserTest {
 
-    val accountService: AccountService by lazy { Node["account"][AccountService::class.java] }
-    val userService: UserService by lazy { Node["account"][UserService::class.java] }
+    val accountService: AccountService by lazy { Node[API.ACCOUNT][AccountService::class.java] }
+    val userService: UserService by lazy { Node[API.ACCOUNT][UserService::class.java] }
 
     @Test
     fun getMyInfo() {

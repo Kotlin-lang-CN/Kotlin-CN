@@ -8,12 +8,11 @@ fun abort(err: Err, msg: String = ""): Nothing {
     throw Abort(err.code, if (msg.isNullOrBlank()) err.msg else msg)
 }
 
-
 @Throws(Abort::class)
-inline fun <R> R.require(err: Err, msg: String = "", filter: (R) -> Boolean): R = try {
-    if (!filter(this)) throw Abort(err.code, msg) else this@require
+inline fun <R> R.check(err: Err, msg: String = "", filter: (R) -> Boolean): R = try {
+    if (!filter(this)) abort(err, msg) else this@check
 } catch(e: Throwable) {
-    throw Abort(err.code, msg)
+    abort(err, msg)
 }
 
 /***
@@ -23,7 +22,7 @@ inline fun <R> R.require(err: Err, msg: String = "", filter: (R) -> Boolean): R 
 inline fun <T, R> T.tryExec(err: Err, msg: String = "", filter: (T) -> R): R = try {
     filter(this)
 } catch (e: Throwable) {
-    throw Abort(err.code, msg)
+    abort(err, msg)
 }
 
 

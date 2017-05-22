@@ -1,11 +1,12 @@
 package tech.kotlin.redis
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
-import tech.kotlin.Config
-import tech.kotlin.RedisConf
+import tech.kotlin.common.utils.json
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /*********************************************************************
@@ -19,13 +20,13 @@ object Redis {
     lateinit var readWritePool: JedisPool
     lateinit var readOnlyPool: List<JedisPool>
 
-    fun init(name: String) {
-        val config: RedisConf = Config[name]!!.redis
+    fun init(config: String) {
+        val conf = json<RedisConfig>(config)
         readWritePool = JedisPool(JedisPoolConfig().apply {
-            maxIdle = config.master.maxConn; maxTotal = config.master.maxConn
-        }, config.master.host, config.master.port)
+            maxIdle = conf.master.maxConn; maxTotal = conf.master.maxConn
+        }, conf.master.host, conf.master.port)
         readOnlyPool = ArrayList<JedisPool>().apply {
-            addAll(config.slave.map {
+            addAll(conf.slave.map {
                 JedisPool(JedisPoolConfig().apply {
                     maxTotal = it.maxConn; maxIdle = it.maxConn
                 }, it.host, it.port)
@@ -57,5 +58,16 @@ object Redis {
         } else {
             return readOnlyPool[rand.nextInt(readOnlyPool.size)].resource.use(action)
         }
+    }
+
+    class RedisConfig {
+        @JsonProperty("master") var master = Address()
+        @JsonProperty("slave") var slave = ArrayList<Address>()
+    }
+
+    class Address {
+        @JsonProperty("host") var host = ""
+        @JsonProperty("port") var port = 0
+        @JsonProperty("max_conn") var maxConn = 20
     }
 }

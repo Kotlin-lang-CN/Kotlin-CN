@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import tech.kotlin.model.Article
 import tech.kotlin.common.exceptions.Abort
 import tech.kotlin.common.rpc.RpcInterface
+import tech.kotlin.model.EmptyResp
 import tech.kotlin.service.Service.ARTICLE_CHANGE_STATE
 import tech.kotlin.service.Service.ARTICLE_CREATE
 import tech.kotlin.service.Service.ARTICLE_QUERY_BY_ID
@@ -73,22 +74,9 @@ class UpdateArticleReq {
     @JsonProperty("id")
     var id: Long = 0
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.STRING, description = "标题")
-    @JsonProperty("title")
-    var title: String = ""
-
-    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "作者uid")
-    @JsonProperty("author")
-    var author: Long = 0
-
-    @Protobuf(order = 4, required = true, fieldType = FieldType.UINT32, description = "文章分类id")
-    @JsonProperty("category")
-    var category: Int = 0
-
-    @Protobuf(order = 5, required = false, fieldType = FieldType.STRING, description = "标签")
-    @JsonProperty("tags")
-    var tags: String = ""
-
+    @Protobuf(order = 2, required = true, fieldType = FieldType.MAP, description = "修改内容")
+    @JsonProperty("args")
+    var args: Map<String, String> = HashMap()
 }
 
 class ChangeArticleStateReq {
@@ -115,7 +103,7 @@ class QueryArticleByIdResp {
 
     @Protobuf(order = 1, required = false, fieldType = FieldType.MAP, description = "文章查询结果")
     @JsonProperty("articles")
-    var articles: Map<Long, Article?> = HashMap()
+    var articles: Map<Long, Article> = HashMap()
 
 }
 

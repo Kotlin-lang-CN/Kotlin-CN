@@ -35,7 +35,7 @@ class CheckTokenReq() {
 
     constructor(req: Request) : this() {
         device = Device(req)
-        token = req.headers("X-App-Token")
+        token = req.headers("X-App-Token") ?: req.cookie("X-App-Token")
         assert(!token.isNullOrBlank())
     }
 }

@@ -26,7 +26,7 @@ object Json {
 
     inline fun <reified T : Any> loads(str: String): T = mapper.readValue<T>(str)
 
-    inline fun <T> loads(str: String, typeRef: TypeReference<T>): T {
+    fun <T> loads(str: String, typeRef: TypeReference<T>): T {
         return mapper.readValue(str, typeRef)
     }
 

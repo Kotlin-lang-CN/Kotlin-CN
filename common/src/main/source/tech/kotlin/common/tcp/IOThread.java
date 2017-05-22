@@ -10,6 +10,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
 /*********************************************************************
@@ -22,6 +23,7 @@ public class IOThread extends Thread implements MultiConnPool {
     protected final TcpHandler messenger;
 
     private final ReentrantLock selectorLock = new ReentrantLock();
+    private final CountDownLatch initLatch = new CountDownLatch(1);
     private final ConcurrentSkipListSet<Connection> connPool = new ConcurrentSkipListSet<>();
 
     private Selector selector;
@@ -39,8 +41,11 @@ public class IOThread extends Thread implements MultiConnPool {
         serverChannel.configureBlocking(false);
         selectorLock.lock();
         try {
+            initLatch.await();
             selector.wakeup();
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (InterruptedException e) {
+            log.error(e);
         } finally {
             selectorLock.unlock();
         }
@@ -53,8 +58,11 @@ public class IOThread extends Thread implements MultiConnPool {
         messenger.post(() -> messenger.onConnect(conn));
         selectorLock.lock();
         try {
+            initLatch.await();
             selector.wakeup();
             conn.channel.register(selector, SelectionKey.OP_READ, conn);
+        } catch (InterruptedException e) {
+            log.error(e);
         } finally {
             selectorLock.unlock();
         }
@@ -80,9 +88,9 @@ public class IOThread extends Thread implements MultiConnPool {
     public final void run() {
         try (Selector selector = Selector.open()) {
             this.selector = selector;
+            initLatch.countDown();
             while (true) {
                 if (isClose) return;
-
                 try {
                     selectorLock.lock();
                     selectorLock.unlock();

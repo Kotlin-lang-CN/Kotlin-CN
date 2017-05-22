@@ -1,6 +1,7 @@
 package tech.kotlin.account.test
 
 import org.junit.Test
+import tech.kotlin.account.API
 import tech.kotlin.common.exceptions.Abort
 import tech.kotlin.common.exceptions.Err
 import tech.kotlin.common.serialize.Json
@@ -15,8 +16,8 @@ import tech.kotlin.service.account.*
  *********************************************************************/
 class BasicTest {
 
-    val accountService: AccountService by lazy { Node["account"][AccountService::class.java] }
-    val tokenService: TokenService by lazy { Node["account"][TokenService::class.java] }
+    val accountService: AccountService by lazy { Node[API.ACCOUNT][AccountService::class.java] }
+    val tokenService: TokenService by lazy { Node[API.ACCOUNT][TokenService::class.java] }
 
     @Test
     fun register() {
