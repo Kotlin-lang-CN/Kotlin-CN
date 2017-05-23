@@ -4,18 +4,15 @@ import com.relops.snowflake.Snowflake
 import tech.kotlin.dao.account.AccountDao
 import tech.kotlin.dao.account.UserInfoDao
 import tech.kotlin.model.domain.Account
-import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.CreateAccountReq
-import tech.kotlin.model.request.CreateSessionReq
-import tech.kotlin.model.request.FreezeAccountReq
-import tech.kotlin.model.request.LoginReq
+import tech.kotlin.model.request.*
 import tech.kotlin.model.response.CreateAccountResp
+import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.response.LoginResp
-import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.algorithm.MD5
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
+import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.properties.Props
 import tech.kotlin.utils.properties.str
 import java.util.*
@@ -27,9 +24,8 @@ import kotlin.properties.Delegates
  *********************************************************************/
 object AccountService {
 
-    val properties: Properties = Props.loads("project.properties")
-    val passwordSalt: String = properties str "account.pwd.salt"
-
+    private val properties: Properties = Props.loads("project.properties")
+    private val passwordSalt: String = properties str "account.pwd.salt"
     private fun encrypt(password: String) = MD5.hash("$password$passwordSalt")
 
     fun create(req: CreateAccountReq): CreateAccountResp {
@@ -86,7 +82,7 @@ object AccountService {
         }
 
         //校验密码
-        if (account.password == req.password) abort(Err.ILLEGAL_PASSWORD)
+        if (account.password != encrypt(req.password)) abort(Err.ILLEGAL_PASSWORD)
 
         //执行登录, 更新登录时间，禁用缓存
         Mysql.write { AccountDao.saveOrUpdate(it, account.apply { lastLogin = System.currentTimeMillis() }) }
@@ -100,14 +96,21 @@ object AccountService {
         }
     }
 
-    fun freeze(req: FreezeAccountReq): EmptyResp {
+    fun changeState(req: FreezeAccountReq): EmptyResp {
         Mysql.write {
             val user = AccountDao.getById(it, req.uid) ?: abort(Err.UNAUTHORIZED)
             if (user.role != Account.Role.ADMIN) abort(Err.UNAUTHORIZED)
 
             req.opeation.forEach { uid, state ->
-                AccountDao.update(it, uid, HashMap<String, Any>().apply { this["state"] = state })
+                AccountDao.update(it, uid, hashMapOf<String, Any>("state" to state))
             }
+        }
+        return EmptyResp()
+    }
+
+    fun updatePassword(req: UpdatePasswordReq): EmptyResp {
+        Mysql.write {
+            AccountDao.update(it, req.id, hashMapOf<String, Any>("password" to encrypt(req.password)))
         }
         return EmptyResp()
     }

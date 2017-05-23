@@ -60,3 +60,21 @@ CREATE TABLE IF NOT EXISTS article (
   COMMENT '账号',
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;
+
+CREATE TABLE IF NOT EXISTS text_content (
+  id          BIGINT PRIMARY KEY    NOT NULL
+  COMMENT '用户id',
+  content     TEXT                  NOT NULL
+  COMMENT '数据内容',
+  type        TINYINT               NOT NULL  DEFAULT 0
+  COMMENT '数据类型',
+  create_time BIGINT                NOT NULL
+  COMMENT '数据创建时间',
+  alias_id    BIGINT                NOT NULL
+  COMMENT '关联id',
+  INDEX alias_index(type, alias_id),
+  INDEX time_index(create_time)
+)
+  COMMENT '文本内容',
+  DEFAULT CHARSET utf8,
+  ENGINE = Innodb;

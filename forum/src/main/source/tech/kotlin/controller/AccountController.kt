@@ -4,10 +4,7 @@ import spark.Route
 import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.Device
 import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.CheckTokenReq
-import tech.kotlin.model.request.CreateAccountReq
-import tech.kotlin.model.request.LoginReq
-import tech.kotlin.model.request.QueryUserReq
+import tech.kotlin.model.request.*
 import tech.kotlin.service.account.AccountService
 import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
@@ -52,18 +49,13 @@ object AccountController {
     }
 
     val getUserInfo = Route { req, _ ->
-        val query = req.params(":uid")
-                .check(Err.PARAMETER, "非法的用户请求") { it.toLong(); true }
+        val uid = req.params(":uid")
+                .check(Err.PARAMETER, "uid错误") { it.toLong(); true }
                 .toLong()
 
-        val checkTokenResp = TokenService.checkToken(CheckTokenReq(req))
-        if (query != checkTokenResp.account.id
-                && checkTokenResp.account.role != Account.Role.ADMIN)
-            abort(Err.UNAUTHORIZED, "未授权访问该用户信息")
-
-        val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(query) })
-        val info = queryUser.info[query] ?: abort(Err.SYSTEM)
-        val account = queryUser.account[query] ?: abort(Err.SYSTEM)
+        val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
+        val info = queryUser.info[uid] ?: abort(Err.SYSTEM)
+        val account = queryUser.account[uid] ?: abort(Err.SYSTEM)
 
         return@Route ok {
             it["username"] = info.username
@@ -75,4 +67,56 @@ object AccountController {
             it["create_time"] = account.createTime
         }
     }
+
+    val alterPassword = Route { req, _ ->
+        val uid = req.params(":uid")
+                .check(Err.PARAMETER, "uid错误") { it.toLong();true }
+                .toLong()
+
+        val password = req.queryParams("password")
+                .check(Err.PARAMETER, "密码长度过短") { !it.isNullOrBlank() && it.length >= 8 }
+        password.chars().forEach { it ->
+            if ('a'.toInt() <= it && it <= 'z'.toInt()) return@forEach
+            if ('A'.toInt() <= it && it <= 'Z'.toInt()) return@forEach
+            if ('0'.toInt() <= it && it <= '9'.toInt()) return@forEach
+            abort(Err.PARAMETER, "密码格式有误")
+        }
+
+        TokenService.checkToken(CheckTokenReq(req)).account
+                .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
+
+        AccountService.updatePassword(UpdatePasswordReq().apply {
+            this.id = uid
+            this.password = password
+        })
+
+        return@Route ok()
+    }
+
+    val updateUserInfo = Route { req, _ ->
+        val uid = req.params(":uid")
+                .check(Err.PARAMETER, "uid错误") { it.toLong();true }
+                .toLong()
+
+        val username = req.queryParams("username") ?: ""
+        val email = req.queryParams("email") ?: ""
+        val logo = req.queryParams("logo") ?: ""
+
+        if (username.isNullOrBlank() && email.isNullOrBlank() && logo.isNullOrBlank())
+            abort(Err.PARAMETER)
+
+        TokenService.checkToken(CheckTokenReq(req)).account
+                .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
+
+        UserService.updateById(UpdateUserReq().apply {
+            this.id = uid
+            this.args = HashMap<String, String>().apply {
+                if (!username.isNullOrBlank()) this["username"] = username
+                if (!email.isNullOrBlank()) this["email"] = email
+                if (!logo.isNullOrBlank()) this["logo"] = logo
+            }
+        })
+        return@Route ok()
+    }
+
 }

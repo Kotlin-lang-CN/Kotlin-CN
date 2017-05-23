@@ -27,9 +27,9 @@ import java.util.*
  *********************************************************************/
 object TokenService {
 
-    val properties: Properties = Props.loads("project.properties")
-    val jwtToken: String = properties str "account.jwt.token"
-    val jwtExpire: Long = properties long "account.jwt.expire"
+    private val properties: Properties = Props.loads("project.properties")
+    private val jwtToken: String = properties str "account.jwt.token"
+    private val jwtExpire: Long = properties long "account.jwt.expire"
 
     private fun key(uid: Long) = "session:$uid"
 
@@ -48,7 +48,7 @@ object TokenService {
 
         //validate session
         val cachedSession = tryExec(Err.TOKEN_FAIL) {
-            Json.loads<SessionContent>(Redis.read { it.get(key(content.id)) })
+            Json.loads<SessionContent>(Redis { it.get(key(content.id)) })
         }
         cachedSession.check(Err.TOKEN_FAIL) { it.isEqual(content) }
 
@@ -70,16 +70,17 @@ object TokenService {
             uid = req.uid
         }
 
-        //get account state
+        //invoke account state
         val account = Mysql.read {
             AccountDao.getById(it, req.uid, useCache = false, updateCache = true)
         } ?: abort(Err.USER_NOT_EXISTS)
         account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
         //save session in redis
-        Redis.write {
+        Redis {
             val pip = it.pipelined()
             pip.set(key(content.id), Json.dumps(content))
+            pip.expire(key(content.id), (jwtExpire / 1000).toInt())
             pip.sync()
         }
 

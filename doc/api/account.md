@@ -84,6 +84,30 @@ password: <string>用户密码
 }
 ```
 
+## 更换登录密码
+
+> POST
+
+```
+/account/user/:uid/password
+```
+
+> Parameter
+
+```
+:uid: <long>用户id
+password: <string>用户密码
+```
+
+> Response 
+
+```json
+{ 
+    "code": 0,
+    "msg": ""
+}
+```
+
 ## 更新我的用户信息
 
 > POST

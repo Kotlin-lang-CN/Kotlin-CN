@@ -136,7 +136,7 @@ class BasicTest {
             this.device = account.device
         })
 
-        AccountService.freeze(FreezeAccountReq().apply {
+        AccountService.changeState(FreezeAccountReq().apply {
             this.uid = 6271234829191217152L
             opeation = HashMap<Long, Int>().apply { this[result.account.id] = Account.State.BAN }
         })
@@ -150,7 +150,7 @@ class BasicTest {
             assert(err.model.code == Err.UNAUTHORIZED.code)
         }
 
-        AccountService.freeze(FreezeAccountReq().apply {
+        AccountService.changeState(FreezeAccountReq().apply {
             this.uid = 6271234829191217152L
             opeation = HashMap<Long, Int>().apply { this[result.account.id] = Account.State.NORMAL }
         })

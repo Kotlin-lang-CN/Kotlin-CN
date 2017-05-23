@@ -3,9 +3,11 @@ package tech.kotlin.dao.account
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.annotations.Update
+import org.apache.ibatis.annotations.UpdateProvider
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.utils.mysql.Mysql
+import tech.kotlin.utils.redis.Redis
 import tech.kotlin.utils.serialize.Json
 
 /*********************************************************************
@@ -53,18 +55,24 @@ object UserInfoDao {
         }
     }
 
+    fun update(session: SqlSession, uid: Long, args: HashMap<String, String>) {
+        val mapper = session.getMapper(UserInfoMapper::class.java)
+        Cache.drop(uid)
+        mapper.updateWithArgs(args = args.apply { this["uid"] = "$uid" })
+    }
+
     internal object Cache {
 
         fun key(uid: Long) = "user_info:$uid"
 
         fun getById(uid: Long): UserInfo? {
-            val userMap = tech.kotlin.utils.redis.Redis read { it.hgetAll(Cache.key(uid)) }
+            val userMap = Redis { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<UserInfo>(userMap) else null
         }
 
         fun update(userInfo: UserInfo) {
             val key = Cache.key(userInfo.uid)
-            tech.kotlin.utils.redis.Redis write {
+            Redis {
                 val pip = it.pipelined()
                 Json.reflect(userInfo) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
                 pip.sync()
@@ -73,7 +81,7 @@ object UserInfoDao {
 
         fun drop(uid: Long) {
             val key = Cache.key(uid)
-            tech.kotlin.utils.redis.Redis write {
+            Redis {
                 val pip = it.pipelined()
                 Json.reflect<UserInfo> { name, _ -> pip.hdel(key, name) }
                 pip.sync()
@@ -121,5 +129,23 @@ object UserInfoDao {
         uid = #{uid}
         """)
         fun update(user: UserInfo)
+
+        @UpdateProvider(type = SQLGenerator::class, method = "updateWithArgs")
+        fun updateWithArgs(args: Map<String, String>)
+
+        class SQLGenerator {
+
+            fun updateWithArgs(args: Map<String, String>): String {
+                return """
+                UPDATE user_info SET
+                ${StringBuilder().apply {
+                    args.forEach { k, _ -> append("$k = #{$k} ,") }
+                    setLength(length - ",".length)
+                }}
+                WHERE uid = #{uid}
+                """
+            }
+        }
+
     }
 }

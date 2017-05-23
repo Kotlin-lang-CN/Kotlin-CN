@@ -108,7 +108,7 @@ class RedisDaoTest {
         fun key(uid: Long) = "account:test:$uid"
 
         fun get(uid: Long): Account? {
-            val account = Redis read { it.hgetAll(key(uid)) }
+            val account = Redis  { it.hgetAll(key(uid)) }
             if (!account.isEmpty()) {
                 return Json.rawConvert<Account>(account)
             } else {
@@ -118,7 +118,7 @@ class RedisDaoTest {
 
         fun insertOrUpdate(account: Account) {
             val key = key(account.id)
-            Redis write {
+            Redis {
                 val pip = it.pipelined()
                 Json.reflect(account) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
                 pip.sync()

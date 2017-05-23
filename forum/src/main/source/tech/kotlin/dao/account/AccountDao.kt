@@ -51,13 +51,13 @@ object AccountDao {
         fun key(uid: Long) = "account:$uid"
 
         fun getById(uid: Long): Account? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
+            val userMap = Redis { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<Account>(userMap) else null
         }
 
         fun update(account: Account) {
             val key = key(account.id)
-            Redis write {
+            Redis {
                 val pip = it.pipelined()
                 Json.reflect(account) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
                 pip.sync()
@@ -66,7 +66,7 @@ object AccountDao {
 
         fun drop(uid: Long) {
             val key = key(uid)
-            Redis write {
+            Redis {
                 val pip = it.pipelined()
                 Json.reflect<Account> { name, _ -> pip.hdel(key, name) }
                 pip.sync()

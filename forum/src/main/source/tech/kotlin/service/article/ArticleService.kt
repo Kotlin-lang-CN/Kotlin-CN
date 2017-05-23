@@ -74,8 +74,5 @@ object ArticleService {
         }
     }
 
-    fun queryInOrder(req: QueryArticleInOrderReq): QueryArticleInOrderResp {
-        abort(Err.SYSTEM, "not implements yet")
-    }
 
 }

@@ -5,7 +5,11 @@ import tech.kotlin.dao.account.UserInfoDao
 import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.QueryUserReq
+import tech.kotlin.model.request.UpdateUserReq
+import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.response.QueryUserResp
+import tech.kotlin.utils.exceptions.Err
+import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.mysql.Mysql
 
 /*********************************************************************
@@ -32,5 +36,31 @@ object UserService {
         }
     }
 
+    fun updateById(req: UpdateUserReq): EmptyResp {
+        if (req.args.isEmpty()) return EmptyResp()
+
+        Mysql.write { session ->
+            val args = HashMap<String, String>().apply { putAll(req.args) }
+
+            if (args.containsKey("username")) {
+                val user = UserInfoDao.getByName(session, args["username"]!!)
+                if (user != null) abort(Err.USER_NAME_EXISTS)
+            }
+            if (args.containsKey("email")) {
+                val user = UserInfoDao.getByEmail(session, args["email"]!!)
+                if (user != null) abort(Err.USER_EMAIL_EXISTS)
+
+                if (user?.email == args["email"]) {
+                    args.remove("email")
+                } else {
+                    args["email_state"] = "${UserInfo.EmailState.TO_BE_VERIFY}"
+                }
+            }
+            UserInfoDao.update(session, uid = req.id, args = args)
+        }
+        return EmptyResp()
+    }
 }
+
+
 
