@@ -43,7 +43,8 @@ object ArticleDao {
         @Results(
                 Result(property = "createTime", column = "create_time"),
                 Result(property = "lastEdit", column = "last_edit_time"),
-                Result(property = "lastEditUID", column = "last_edit_uid")
+                Result(property = "lastEditUID", column = "last_edit_uid"),
+                Result(property = "contentId", column = "content_id")
         )
         fun queryById(id: Long): Article?
 
@@ -51,7 +52,7 @@ object ArticleDao {
         INSERT INTO article
         VALUES
         (#{id}, #{title}, #{author}, #{createTime}, #{category}, #{tags},
-         #{lastEdit}, #{lastEditUID}, #{state})
+         #{lastEdit}, #{lastEditUID}, #{state}, #{contentId})
         """)
         fun insert(article: Article)
 
@@ -64,7 +65,8 @@ object ArticleDao {
         tags = #{tags},
         last_edit_time = #{lastEdit},
         last_edit_uid = #{lastEditUID},
-        state = #{state}
+        state = #{state},
+        content_id = #{contentId}
         WHERE
         id = #{id}
         """)

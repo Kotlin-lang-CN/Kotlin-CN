@@ -5,15 +5,13 @@ import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.model.domain.Account
+import tech.kotlin.model.domain.TextContent
 import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.CheckTokenReq
-import tech.kotlin.model.request.QueryUserReq
+import tech.kotlin.model.request.*
 import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
 import tech.kotlin.service.article.ArticleService
-import tech.kotlin.model.request.CreateArticleReq
-import tech.kotlin.model.request.QueryArticleByIdReq
-import tech.kotlin.model.request.UpdateArticleReq
+import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.ok
 
 /*********************************************************************
@@ -23,22 +21,35 @@ import tech.kotlin.utils.ok
 object ArticleController {
 
     val postArticle = Route { req, _ ->
-        val title = req.queryParams("title").check(Err.PARAMETER, "无效的用户名") { it.isNullOrBlank() }
-        val author = req.queryParams("author").check(Err.PARAMETER, "无效的用户") { it.toLong() > 0 }.toLong()
-        val category = req.queryParams("category").check(Err.PARAMETER, "无效的文章类型") { it.toInt() >= 0 }.toInt()
+        val title = req.queryParams("title")
+                .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
+        val author = req.queryParams("author")
+                .check(Err.PARAMETER, "无效的用户") { it.toLong() > 0 }.toLong()
+        val category = req.queryParams("category")
+                .check(Err.PARAMETER, "无效的文章类型") { it.toInt() >= 0 }.toInt()
         val tags = req.queryParams("tags") ?: ""
+
+        val content = req.queryParams("content")
+                .check(Err.PARAMETER, "无效的文章内容") { !it.isNullOrBlank() }
+                .check(Err.PARAMETER, "文章内容过短") { it.length >= 30 }
 
         val account = TokenService.checkToken(CheckTokenReq(req)).account
         account.check(Err.UNAUTHORIZED) { it.id == author }
 
-        val article = ArticleService.create(CreateArticleReq().apply {
+        val id = ArticleService.create(CreateArticleReq().apply {
             this.title = title
             this.author = author
             this.category = category
             this.tags = tags
-        }).article
 
-        return@Route ok { it["article"] = article }
+            this.content = content
+        }).articleId
+
+        ArticleService.queryById(QueryArticleByIdReq().apply {
+            this.ids = arrayListOf(id)
+        }).articles[id] ?: abort(Err.SYSTEM)
+
+        return@Route ok()
     }
 
     val updateArticle = Route { req, _ ->
@@ -46,26 +57,36 @@ object ArticleController {
         val title = req.queryParams("title") ?: ""
         val category = req.queryParams("category").check(Err.PARAMETER) { it.toInt();true }.toInt()
         val tags = req.queryParams("tags") ?: ""
+        val content = req.queryParams("content") ?: ""
 
-        val account = TokenService.checkToken(CheckTokenReq(req)).account
+        val me = TokenService.checkToken(CheckTokenReq(req)).account
         val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
 
-        if (account.role != Account.Role.ADMIN || article.author != account.id) abort(Err.UNAUTHORIZED)
+        if (me.role != Account.Role.ADMIN || article.author != me.id) abort(Err.UNAUTHORIZED)
 
-        val newArticle = ArticleService.update(UpdateArticleReq().apply {
+        var contentId = 0L
+        if (!content.isNullOrBlank()) {
+            contentId = ArticleService.updateContent(UpdateArticleContentReq().apply {
+                this.content = content
+                this.editorUid = me.id
+            }).contentId
+        }
+
+        ArticleService.updateMeta(UpdateArticleReq().apply {
             this.id = id
             this.args = HashMap<String, String>().apply {
                 if (!title.isNullOrBlank()) this += "title" to title
                 if (category > 0) this += "category" to "$category"
                 if (!tags.isNullOrBlank()) this += "tags" to tags
                 this += "last_edit_time" to "${System.currentTimeMillis()}"
-                this += "last_edit_uid" to "${account.id}"
+                this += "last_edit_uid" to "${me.id}"
+                if (contentId != 0L) this += "content_id" to "$contentId"
             }
-        }).article
+        })
 
-        return@Route ok { it["article"] = newArticle }
+        return@Route ok()
     }
 
     val getArticleById = Route { req, _ ->
@@ -79,9 +100,14 @@ object ArticleController {
             this.id = arrayListOf(article.author)
         }).account[article.author] ?: UserInfo()
 
+        val content = TextService.getById(QueryTextReq().apply {
+            this.id = article.contentId
+        }).result[article.contentId] ?: TextContent()
+
         return@Route ok {
             it["author"] = author
             it["article"] = article
+            it["content"] = content
         }
     }
 }

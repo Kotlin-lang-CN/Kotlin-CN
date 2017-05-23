@@ -46,6 +46,10 @@ class Article {
     @JsonProperty("state")
     var state: Int = State.NORMAL
 
+    @Protobuf(order = 10, required = true, fieldType = FieldType.UINT64, description = "文章内容")
+    @JsonProperty("content_id")
+    var contentId: Long = 0
+
     object State {
         const val NORMAL = 0
         const val BAN = 1

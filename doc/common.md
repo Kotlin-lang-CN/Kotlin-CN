@@ -41,6 +41,6 @@ http://api.kotlin-cn.org
 
 |name|prefix|process status|
 |---|---|---|
-|account|/account|0/0|
+|account|/account|5/5|
 |article|/article|0/0|
 |reply|/reply|0/0|

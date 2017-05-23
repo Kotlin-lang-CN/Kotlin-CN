@@ -28,7 +28,7 @@ fun main(vararg args: String) {
     Spark.post("/account/login", AccountController.login.gate())
     Spark.post("/account/register", AccountController.register.gate())
     Spark.get("/account/user/:uid", AccountController.getUserInfo.gate())
-    Spark.post("/account/user/:uid/password", AccountController.alterPassword.gate(true))
+    Spark.post("/account/user/:uid/password", AccountController.alterPassword.gate())
     Spark.post("/account/user/:uid/update", AccountController.updateUserInfo.gate())
 
     Spark.post("/article/post", ArticleController.postArticle.gate())
@@ -36,7 +36,7 @@ fun main(vararg args: String) {
     Spark.get("/article/post/:id", ArticleController.getArticleById.gate())
 }
 
-fun Route.gate(log: Boolean = false): Route {
+fun Route.gate(log: Boolean = true): Route {
     return Route { request, response ->
         if (log) {
             val url = request.url()

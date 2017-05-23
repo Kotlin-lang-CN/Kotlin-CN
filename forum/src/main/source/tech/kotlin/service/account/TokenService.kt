@@ -3,7 +3,7 @@ package tech.kotlin.service.account
 import com.relops.snowflake.Snowflake
 import tech.kotlin.dao.account.AccountDao
 import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.SessionContent
+import tech.kotlin.model.domain.Session
 import tech.kotlin.model.request.CheckTokenReq
 import tech.kotlin.model.request.CreateSessionReq
 import tech.kotlin.model.response.CheckTokenResp
@@ -34,9 +34,9 @@ object TokenService {
     private fun key(uid: Long) = "session:$uid"
 
     fun checkToken(req: CheckTokenReq): CheckTokenResp {
-        val content: SessionContent
+        val content: Session
         try {
-            content = JWT.loads<SessionContent>(key = jwtToken, jwt = req.token, expire = jwtExpire)
+            content = JWT.loads<Session>(key = jwtToken, jwt = req.token, expire = jwtExpire)
         } catch (err: JWT.ExpiredError) {
             abort(Err.LOGIN_EXPIRE)//登录会话过期
         } catch (err: JWT.DecodeError) {
@@ -48,7 +48,7 @@ object TokenService {
 
         //validate session
         val cachedSession = tryExec(Err.TOKEN_FAIL) {
-            Json.loads<SessionContent>(Redis { it.get(key(content.id)) })
+            Json.loads<Session>(Redis { it.get(key(content.id)) })
         }
         cachedSession.check(Err.TOKEN_FAIL) { it.isEqual(content) }
 
@@ -64,7 +64,7 @@ object TokenService {
     }
 
     fun createSession(req: CreateSessionReq): CreateSessionResp {
-        val content = SessionContent().apply {
+        val content = Session().apply {
             id = Snowflake(0).next()
             device = req.device
             uid = req.uid

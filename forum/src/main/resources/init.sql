@@ -51,8 +51,10 @@ CREATE TABLE IF NOT EXISTS article (
   COMMENT '上次编辑时间',
   last_edit_uid  BIGINT                NOT NULL
   COMMENT '上次编辑人',
-  state          TINYINT               NOT NULL DEFAULT 0 -- NORMAL --
+  state          TINYINT               NOT NULL DEFAULT 0
   COMMENT '文章状态',
+  content_id     BIGINT                NOT NULL
+  COMMENT '文章内容',
   INDEX title_index (title(128)),
   INDEX author_index(author),
   INDEX category_index(category)
@@ -72,8 +74,8 @@ CREATE TABLE IF NOT EXISTS text_content (
   COMMENT '数据创建时间',
   alias_id    BIGINT                NOT NULL
   COMMENT '关联id',
-  INDEX alias_index(type, alias_id),
-  INDEX time_index(create_time)
+  INDEX alias_index(alias_id),
+  INDEX time_index(create_time, alias_id)
 )
   COMMENT '文本内容',
   DEFAULT CHARSET utf8,

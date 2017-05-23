@@ -6,20 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 class CreateArticleReq {
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 1, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.STRING, description = "标题")
-    @com.fasterxml.jackson.annotation.JsonProperty("title")
+    @Protobuf(order = 1, required = true, fieldType = FieldType.STRING, description = "标题")
+    @JsonProperty("title")
     var title: String = ""
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 2, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.UINT64, description = "作者uid")
-    @com.fasterxml.jackson.annotation.JsonProperty("author")
+    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT64, description = "作者uid")
+    @JsonProperty("author")
     var author: Long = 0
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 3, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.UINT32, description = "文章分类id")
-    @com.fasterxml.jackson.annotation.JsonProperty("category")
+    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT32, description = "文章分类id")
+    @JsonProperty("category")
     var category: Int = 0
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 4, required = false, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.STRING, description = "标签")
-    @com.fasterxml.jackson.annotation.JsonProperty("tags")
+    @Protobuf(order = 4, required = false, fieldType = FieldType.STRING, description = "标签")
+    @JsonProperty("tags")
     var tags: String = ""
 
+    @Protobuf(order = 5, required = true, fieldType = FieldType.STRING, description = "文章内容")
+    @JsonProperty("content")
+    var content: String = ""
 }

@@ -75,6 +75,7 @@ object UserInfoDao {
             Redis {
                 val pip = it.pipelined()
                 Json.reflect(userInfo) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
+                pip.expire(key, 2 * 60 * 60)//cache for 2 hours
                 pip.sync()
             }
         }

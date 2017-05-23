@@ -7,12 +7,12 @@ import tech.kotlin.model.domain.Article
 
 class ChangeArticleStateReq {
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 1, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.UINT64, description = "文章id")
-    @com.fasterxml.jackson.annotation.JsonProperty("id")
+    @Protobuf(order = 1, required = true, fieldType = FieldType.UINT64, description = "文章id")
+    @JsonProperty("id")
     var id: Long = 0
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 2, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.UINT32, description = "修改封禁状态")
-    @com.fasterxml.jackson.annotation.JsonProperty("state")
-    var state: Int = tech.kotlin.model.domain.Article.State.NORMAL
+    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "修改封禁状态")
+    @JsonProperty("state")
+    var state: Int = Article.State.NORMAL
 
 }

@@ -7,8 +7,8 @@ import tech.kotlin.model.domain.Article
 
 class QueryArticleByIdResp {
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 1, required = false, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.MAP, description = "文章查询结果")
-    @com.fasterxml.jackson.annotation.JsonProperty("articles")
-    var articles: Map<Long, tech.kotlin.model.domain.Article> = HashMap()
+    @Protobuf(order = 1, required = false, fieldType = FieldType.MAP, description = "文章查询结果")
+    @JsonProperty("articles")
+    var articles: Map<Long, Article> = HashMap()
 
 }

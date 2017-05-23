@@ -13,4 +13,5 @@ class UpdateArticleReq {
     @Protobuf(order = 2, required = true, fieldType = FieldType.MAP, description = "修改内容")
     @JsonProperty("args")
     var args: Map<String, String> = HashMap()
+
 }
