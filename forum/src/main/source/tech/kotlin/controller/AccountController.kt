@@ -54,7 +54,7 @@ object AccountController {
                 .toLong()
 
         val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
-        val info = queryUser.info[uid] ?: abort(Err.SYSTEM)
+        val info = queryUser.info[uid] ?: abort(Err.USER_NOT_EXISTS)
         val account = queryUser.account[uid] ?: abort(Err.SYSTEM)
 
         return@Route ok {

@@ -25,15 +25,15 @@ fun main(vararg args: String) {
 
     Spark.port(properties int "deploy.port")
     Spark.init()
-    Spark.post("/account/login", AccountController.login.gate())
-    Spark.post("/account/register", AccountController.register.gate())
-    Spark.get("/account/user/:uid", AccountController.getUserInfo.gate())
-    Spark.post("/account/user/:uid/password", AccountController.alterPassword.gate())
-    Spark.post("/account/user/:uid/update", AccountController.updateUserInfo.gate())
+    Spark.post("/api/account/login", AccountController.login.gate())
+    Spark.post("/api/account/register", AccountController.register.gate())
+    Spark.get("/api/account/user/:uid", AccountController.getUserInfo.gate())
+    Spark.post("/api/account/user/:uid/password", AccountController.alterPassword.gate())
+    Spark.post("/api/account/user/:uid/update", AccountController.updateUserInfo.gate())
 
-    Spark.post("/article/post", ArticleController.postArticle.gate())
-    Spark.post("/article/post/:id/update", ArticleController.updateArticle.gate())
-    Spark.get("/article/post/:id", ArticleController.getArticleById.gate())
+    Spark.post("/api/article/post", ArticleController.postArticle.gate())
+    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
+    Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate())
 }
 
 fun Route.gate(log: Boolean = true): Route {
