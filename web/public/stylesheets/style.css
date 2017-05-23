@@ -1,0 +1,24 @@
+/** gobal style **/
+a{text-decoration: none;color: #333;font-weight: normal;}
+body{background: #e9eaed;margin: 0px;color: #333;font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;}
+li{list-style: none;padding: 0;margin: 0;}
+
+/** header **/
+#nav-bar{background: white;padding: 0px 8px 0px 8px;box-shadow: 0 1px 1px rgba(0,0,0,0.21);}
+#nav-bar div{display: inline-block;}
+#nav-bar .menu-header b {color:#eb5424; font-weight: normal;}
+
+/** footer **/
+#foot{text-align: center; margin:auto;color: #999;}
+
+/** home page **/
+#home {margin: 16px 16px 8px 16px;}
+#home .value-post > div{background: #fafafa;font-size: 14px;padding: 4px 16px;color: #999;}
+#home .value-post ul{margin: 0px;padding: 0px;}
+#home .value-post li{border-bottom: 1px solid #e9eaed;background: white;padding: 12px 16px;}
+#home .value-post li:nth-last-child(1){border-bottom: 0px;}
+#home .value-post li > img{width: 40px;height: 40px;vertical-align: middle;}
+#home .value-post li > div{display: inline-block;margin: auto;vertical-align: middle;}
+#home .value-post li span {color: #999;display: inline-block;margin-right: 8px;}
+#home .value-post li > div> div:nth-child(2){font-size: 12px;}
+#home .value-post div.reply{color: white;border-radius: 6px;background: #ddd;font-size: 10px;padding: 0px 6px;float: right;margin-top:12px;}
