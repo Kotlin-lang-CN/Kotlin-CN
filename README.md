@@ -18,15 +18,8 @@ Kotlin China 论坛
 
 诚如所言, Kotlin-China 将一个 Kotlin in product 的网站. 
 
-## 开发者文档
+## 开发群号
 
-- [x] [我想参与开发](doc/before-develop.md)
+> QQ: 561490348
 
-- [x] [网站后台模块 web 开发者文档](doc/web.md)
-
-- [x] [网站前端模块 web-ui 开发者文档](doc/web-ui.md)
-
-- [x] [restful 接口文档](doc/restful.md)
-
-
-
+社区正在开发中，欢迎参与kotlin学习讨论, 或是参与论坛开发...
