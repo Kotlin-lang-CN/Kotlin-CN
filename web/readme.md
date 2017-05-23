@@ -17,5 +17,5 @@ npm install && DEBUG=kotlin-cn-app-web:* npm start
 
 The app starts a server and listens on port 3000 for connections,check:
 
->http://localhost:3000
+> http://localhost:3000
 

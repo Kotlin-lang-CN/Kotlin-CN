@@ -10,3 +10,6 @@ local.properties
 out
 !build.release
 npm-debug.log
+node_modules
+forum/src/main/source/tech/kotlin/utils/text/
+web/node_modules/
