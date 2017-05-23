@@ -1,21 +1,34 @@
-{{> header }}
+<div id="account">
+	<div id="rigister">
+		<div class="list-head">注册新用户</div>
+		<form action="/account" accept-charset="utf-8" method="post">
+		<div><input type="email" name="user" placeholder="用户名"></div>
+			
+			<div><input type="text" name="name" placeholder="名字"></div>
+			<div><input type="text" name="email" placeholder="邮箱"></div>
+			<div><input type="password" name="password" placeholder="密码"></div>
+			<div><input type="password" name="password_confirm" placeholder="确认密码"></div>
 
-<div id="rigister">
-
-	<textarea name="account"></textarea>
-	<textarea name="user name"></textarea>
-	<textarea name="user email"></textarea>
-
-	<textarea name="password"></textarea>
-	<textarea name="password again"></textarea>
-</div>
-
-<div id="login" style="display: none;">
-	<textarea name="account/email"></textarea>
-	<textarea name="password"></textarea>
-	<div>
-		LOGIN	
+			<div><input type="submit" name="commit" value="提交注册"></div>
+		</form>
+	</div>
+	<div id="login" >
+		<div class="list-head">登录</div>
+		<form action="/account" accept-charset="utf-8" method="post">
+			<div><input type="email" name="user" placeholder="用户名／邮箱"></div>
+			<div><input type="password" name="password" placeholder="密码"></div>
+			<div class="div-checkbox"><input type="checkbox" value="1" name="user"><div>记住登录状态</div></div>
+			<div><input type="submit" name="commit" value="登录"></div>
+		</form>
+	</div>
+	<div id="login-three-party" style="display:none">
+		<div class="list-head">用其他平台账号登录</div>
+		<form action="/account" accept-charset="utf-8" method="post">
+			<div><input type="submit" name="commit" value="GITHUB登录"></div>
+		</form>
 	</div>
 </div>
+<script type="text/javascript">
 
-{{> footer }}
+
+</script>
