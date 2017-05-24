@@ -14,39 +14,29 @@ class Reply {
     @JsonProperty("id")
     var id: Long = 0
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "评论类型")
-    @JsonProperty("target_type")
-    var targetType: Int = TargetType.ARTICLE
+    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT64, description = "评论池id")
+    @JsonProperty("reply_pool_id")
+    var replyPoolId: String = ""
 
-    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "评论对象id")
-    @JsonProperty("target_id")
-    var targetId: Long = 0
+    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "评论者用户uid")
+    @JsonProperty("owner_uid")
+    var ownerUID: Long = 0
 
-    @Protobuf(order = 4, required = true, fieldType = FieldType.UINT64, description = "评论者用户uid")
-    @JsonProperty("owner")
-    var owner: Long = 0
-
-    @Protobuf(order = 5, required = true, fieldType = FieldType.UINT64, description = "创建时间")
+    @Protobuf(order = 4, required = true, fieldType = FieldType.UINT64, description = "创建时间")
     @JsonProperty("create_time")
     var createTime: Long = 0
 
-    @Protobuf(order = 6, required = false, fieldType = FieldType.UINT64, description = "上次编辑用户")
-    @JsonProperty("last_edit_uid")
-    var lastEditUIDr: Long = 0
-
-    @Protobuf(order = 7, required = false, fieldType = FieldType.UINT64, description = "上次编辑时间")
-    @JsonProperty("last_edit_time")
-    var lastEditTime: Long = 0
-
-    @Protobuf(order = 8, required = true, fieldType = FieldType.UINT32, description = "回复状态")
+    @Protobuf(order = 5, required = true, fieldType = FieldType.UINT32, description = "回复状态")
     @JsonProperty("state")
     var state: Int = State.NORMAL
 
-    object TargetType {
-        const val ARTICLE = 0
-        const val REPLY = 1
-        const val USER = 2
-    }
+    @Protobuf(order = 6, required = true, fieldType = FieldType.UINT64, description = "内容id")
+    @JsonProperty("content_id")
+    var contentId: Long = 0
+
+    @Protobuf(order = 7, required = false, fieldType = FieldType.UINT64, description = "关联id")
+    @JsonProperty("alias_id")
+    var aliasId: Long = 0
 
     object State {
         const val NORMAL = 0

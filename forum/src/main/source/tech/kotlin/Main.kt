@@ -4,6 +4,7 @@ import spark.Route
 import spark.Spark
 import tech.kotlin.controller.AccountController
 import tech.kotlin.controller.ArticleController
+import tech.kotlin.controller.ReplyController
 import tech.kotlin.utils.exceptions.Abort
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.log.Log
@@ -25,6 +26,7 @@ fun main(vararg args: String) {
 
     Spark.port(properties int "deploy.port")
     Spark.init()
+
     Spark.post("/api/account/login", AccountController.login.gate())
     Spark.post("/api/account/register", AccountController.register.gate())
     Spark.get("/api/account/user/:uid", AccountController.getUserInfo.gate())
@@ -32,34 +34,39 @@ fun main(vararg args: String) {
     Spark.post("/api/account/user/:uid/update", AccountController.updateUserInfo.gate())
 
     Spark.post("/api/article/post", ArticleController.postArticle.gate())
-    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
     Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate())
+    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
 
+    Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate())
+    Spark.post("/api/article/:id/reply", ReplyController.createReply.gate())
+    Spark.post("/api/article/:id/reply/:reply_id/delete", ReplyController.delReply.gate())
+    Spark.post("/api/article/:id/reply/:reply_id/change_state", ReplyController.control.gate())
 }
 
 fun Route.gate(log: Boolean = true): Route {
     return Route { request, response ->
+        val requestId = System.nanoTime()
         if (log) {
             val url = request.url()
             val method = request.requestMethod()
             val headers = request.headers().map { it to request.headers(it) }.toMap()
             val params = request.params()
             val queryParams = request.queryParams().map { it to request.queryParams(it) }.toMap()
-            Log.d("Request", Json.dumps(mapOf(
+            Log.d("Request", "$requestId: ${Json.dumps(mapOf(
                     "url" to url,
                     "method" to method,
                     "headers" to headers,
                     "params" to params,
                     "query_params" to queryParams
-            )))
+            ))}")
         }
         var result: String
         try {
             result = this.handle(request, response) as String
-            if (log) Log.d("Response", result)
+            if (log) Log.d("Response", "$requestId: $result")
         } catch (err: Abort) {
             result = Json.dumps(err.model)
-            if (log) Log.d("Response", result)
+            if (log) Log.d("Response", "$requestId: $result")
         } catch (err: Throwable) {
             result = Json.dumps(mapOf("code" to Err.SYSTEM.code, "msg" to Err.SYSTEM.msg))
             Log.e("Response", err)

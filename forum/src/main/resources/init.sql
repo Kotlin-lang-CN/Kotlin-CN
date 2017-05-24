@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS account (
   COMMENT '密码(加密值)',
   last_login  BIGINT                NOT NULL
   COMMENT '上次登录时间',
-  state       TINYINT               NOT NULL DEFAULT 0 -- NORMAL --
+  state       TINYINT               NOT NULL DEFAULT 0
   COMMENT '账号状态',
-  role        TINYINT               NOT NULL DEFAULT 0 -- NORMAL --
+  role        TINYINT               NOT NULL DEFAULT 0
   COMMENT '账号角色',
   create_time BIGINT                NOT NULL
   COMMENT '创建时间'
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS user_info (
   COMMENT '用户logo',
   email       VARCHAR(128)          NOT NULL
   COMMENT '用户email',
-  email_state TINYINT               NOT NULL DEFAULT 0 -- NONE --
+  email_state TINYINT               NOT NULL DEFAULT 0
   COMMENT '用户email验证',
   INDEX name_index (username(128)),
   INDEX email_index(email(128))
@@ -59,23 +59,40 @@ CREATE TABLE IF NOT EXISTS article (
   INDEX author_index(author),
   INDEX category_index(category)
 )
-  COMMENT '账号',
+  COMMENT '文章',
+  DEFAULT CHARSET utf8,
+  ENGINE = Innodb;
+
+CREATE TABLE IF NOT EXISTS reply (
+  id            BIGINT PRIMARY KEY NOT NULL
+  COMMENT '回复id',
+  reply_pool_id VARCHAR(128)       NOT NULL
+  COMMENT '评论池id',
+  owner_uid     BIGINT             NOT NULL
+  COMMENT '评论人id',
+  create_time   BIGINT             NOT NULL
+  COMMENT '创建时间',
+  state         TINYINT            NOT NULL DEFAULT 0
+  COMMENT '评论状态',
+  content_id    BIGINT             NOT NULL
+  COMMENT '评论内容',
+  alias_id      BIGINT             NOT NULL DEFAULT 0
+  COMMENT '关联评论id'
+)
+  COMMENT '用户评论',
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;
 
 CREATE TABLE IF NOT EXISTS text_content (
-  id          BIGINT PRIMARY KEY    NOT NULL
+  id           BIGINT PRIMARY KEY    NOT NULL
   COMMENT '用户id',
-  content     TEXT                  NOT NULL
+  content      TEXT                  NOT NULL
   COMMENT '数据内容',
-  type        TINYINT               NOT NULL  DEFAULT 0
-  COMMENT '数据类型',
-  create_time BIGINT                NOT NULL
+  serialize_id VARCHAR(128)          NOT NULL
+  COMMENT '文本关联序列化id',
+  create_time  BIGINT                NOT NULL
   COMMENT '数据创建时间',
-  alias_id    BIGINT                NOT NULL
-  COMMENT '关联id',
-  INDEX alias_index(alias_id),
-  INDEX time_index(create_time, alias_id)
+  INDEX serialize_index(serialize_id(128))
 )
   COMMENT '文本内容',
   DEFAULT CHARSET utf8,

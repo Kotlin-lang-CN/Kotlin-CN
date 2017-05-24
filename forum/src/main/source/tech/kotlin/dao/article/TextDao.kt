@@ -1,9 +1,10 @@
 package tech.kotlin.dao.article
 
-import org.apache.ibatis.annotations.*
+import org.apache.ibatis.annotations.Insert
+import org.apache.ibatis.annotations.Result
+import org.apache.ibatis.annotations.Results
+import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.session.SqlSession
-import tech.kotlin.dao.account.AccountDao
-import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.TextContent
 import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.mysql.get
@@ -46,7 +47,7 @@ object TextDao {
             val key = Cache.key(content.id)
             Redis write {
                 Json.reflect(content) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
-                it.expire(key, 2 * 60 * 60)//cache for 2 hours
+                it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
 
@@ -57,18 +58,17 @@ object TextDao {
         @Insert("""
         INSERT INTO text_content
         VALUES
-        (#{id}, #{content}, #{type}, #{createTime}, #{aliasId})
+        (#{id}, #{content}, #{serializeId}, #{createTime})
         """)
         fun insert(content: TextContent)
-
 
         @Select("""
         SELECT * FROM text_content
         WHERE id = #{id}
         """)
         @Results(
-                Result(column = "create_time", property = "createTime"),
-                Result(column = "alias_id", property = "aliasId")
+                Result(column = "serialize_id", property = "serializeId"),
+                Result(column = "create_time", property = "createTime")
         )
         fun queryById(id: Long): TextContent?
 

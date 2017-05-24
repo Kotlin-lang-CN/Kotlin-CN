@@ -5,10 +5,7 @@ import tech.kotlin.dao.article.ArticleDao
 import tech.kotlin.dao.article.TextDao
 import tech.kotlin.model.domain.Article
 import tech.kotlin.model.domain.TextContent
-import tech.kotlin.model.request.CreateArticleReq
-import tech.kotlin.model.request.QueryArticleByIdReq
-import tech.kotlin.model.request.UpdateArticleContentReq
-import tech.kotlin.model.request.UpdateArticleReq
+import tech.kotlin.model.request.*
 import tech.kotlin.model.response.ArticleResp
 import tech.kotlin.model.response.QueryArticleByIdResp
 import tech.kotlin.utils.exceptions.Err
@@ -22,31 +19,28 @@ import tech.kotlin.utils.mysql.Mysql
 object ArticleService {
 
     fun create(req: CreateArticleReq): ArticleResp {
-        val current = System.currentTimeMillis()
-        val contentId = Snowflake(0).next()
         val articleId = Snowflake(0).next()
-        val article = Article().apply {
-            this.id = articleId
-            this.title = req.title
-            this.author = req.author
-            this.createTime = current
-            this.category = req.category
-            this.tags = req.tags
-            this.lastEdit = current
-            this.lastEditUID = req.author
-            this.state = Article.State.NORMAL
-            this.contentId = contentId
-        }
-        val textContent = TextContent().apply {
-            this.id = contentId
+        val current = System.currentTimeMillis()
+        //调用文本服务创建新的文本对象
+        val contentId = TextService.createContent(CreateTextContentReq().apply {
             this.content = req.content
-            this.type = TextContent.Type.ARTICLE
-            this.createTime = current
-            this.aliasId = article.id
-        }
+            this.serializeId = "article:$articleId"
+        }).id
+
+        //存储文本数据
         Mysql.write {
-            ArticleDao.createOrUpdate(it, article)
-            TextDao.create(it, textContent)
+            ArticleDao.createOrUpdate(it, Article().apply {
+                this.id = articleId
+                this.title = req.title
+                this.author = req.author
+                this.createTime = current
+                this.category = req.category
+                this.tags = req.tags
+                this.lastEdit = current
+                this.lastEditUID = req.author
+                this.state = Article.State.NORMAL
+                this.contentId = contentId
+            })
         }
         return ArticleResp().apply {
             this.articleId = articleId
@@ -68,28 +62,21 @@ object ArticleService {
     }
 
     fun updateContent(req: UpdateArticleContentReq): ArticleResp {
-        val article = Mysql.write {
-            val article = ArticleDao.getById(it, req.articleId) ?: abort(Err.ARTICLE_NOT_EXISTS)
-            val current = System.currentTimeMillis()
-            val textContent = TextContent().apply {
-                this.id = Snowflake(0).next()
-                this.content = req.content
-                this.type = TextContent.Type.ARTICLE
-                this.createTime = current
-                this.aliasId = article.id
-            }
-            TextDao.create(it, textContent)
-            ArticleDao.createOrUpdate(it, article.apply {
-                this.lastEdit = current
-                this.lastEditUID = req.editorUid
-                this.contentId = textContent.id
-            })
-            return@write article
-        }
-        return ArticleResp().apply {
-            this.articleId = article.id
-            this.contentId = article.contentId
-        }
+        //调用文本服务创建新的文本对象
+        val contentID = TextService.createContent(CreateTextContentReq().apply {
+            this.content = req.content
+            this.serializeId = "article:${req.articleId}"
+        }).id
+
+        //更新文章元数据
+        return updateMeta(UpdateArticleReq().apply {
+            this.id = req.articleId
+            this.args = hashMapOf(
+                    "last_edit_time" to "${System.currentTimeMillis()}",
+                    "last_edit_uid" to "${req.editorUid}",
+                    "content_id" to "$contentID"
+            )
+        })
     }
 
     fun queryById(req: QueryArticleByIdReq): QueryArticleByIdResp {
