@@ -5,8 +5,18 @@
 			<li><a href="/topics" title="社区">社区</a></li>
 		</ul>
 	</div>
-	<div class="menu-authen">
+	<div class="menu-authen menu-right">
 		<a href="/account" title="注册">注册</a>
 		<a href="/account" title="登录">登录</a>
 	</div>
+	<div class="menu-user menu-right"></div>
 </div>
+
+<script type="text/javascript">
+$(function(){
+	if(App.LoginMgr.isLogin){
+		$('#nav-bar .menu-authen').hide();
+		$('#nav-bar .menu-user').text('你好!' + App.LoginMgr.username);
+	}
+})
+</script>

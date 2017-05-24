@@ -4,9 +4,10 @@ body{background: #e9eaed;margin: 0px;color: #333;font: 16px "Lucida Grande", Hel
 li{list-style: none;padding: 0;margin: 0;}
 
 /** header **/
-#nav-bar{background: white;padding: 0px 8px 0px 8px;box-shadow: 0 1px 1px rgba(0,0,0,0.21);margin-bottom: 8px;}
+#nav-bar{background: white;padding: 0px 16px;box-shadow: 0 1px 1px rgba(0,0,0,0.21);margin-bottom: 8px;}
 #nav-bar div{display: inline-block;}
 #nav-bar .menu-header b {color:#eb5424; font-weight: normal;}
+#nav-bar .menu-right{float: right;margin: 16px 16px;}
 
 /** footer **/
 #foot{text-align: center; margin:auto;color: #999;margin-top: 48px;}
