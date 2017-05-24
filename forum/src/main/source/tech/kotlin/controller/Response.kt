@@ -11,3 +11,5 @@ fun ok(init: (HashMap<String, Any>) -> Unit = {}): String {
     init(map)
     return Json.dumps(map)
 }
+
+fun todo() = ok { it["code"] = -1; it["msg"] = "todo" }

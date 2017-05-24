@@ -4,6 +4,7 @@ import spark.Route
 import spark.Spark
 import tech.kotlin.controller.AccountController
 import tech.kotlin.controller.ArticleController
+import tech.kotlin.controller.ArticleViewController
 import tech.kotlin.controller.ReplyController
 import tech.kotlin.utils.exceptions.Abort
 import tech.kotlin.utils.exceptions.Err
@@ -36,6 +37,11 @@ fun main(vararg args: String) {
     Spark.post("/api/article/post", ArticleController.postArticle.gate())
     Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate())
     Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
+
+    Spark.get("/api/article/list", ArticleViewController.getList.gate())
+    Spark.get("/api/article/fine", ArticleViewController.getFine.gate())
+    Spark.get("/api/article/category/:category_id", ArticleViewController.getByCategory.gate())
+    Spark.get("/api/article/mine", ArticleViewController.getMine.gate())
 
     Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate())
     Spark.post("/api/article/:id/reply", ReplyController.createReply.gate())
