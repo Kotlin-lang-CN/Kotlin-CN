@@ -69,7 +69,7 @@ object ArticleService {
 
     fun updateContent(req: UpdateArticleContentReq): ArticleResp {
         val article = Mysql.write {
-            val article = ArticleDao.getById(it, req.id) ?: abort(Err.ARTICLE_NOT_EXISTS)
+            val article = ArticleDao.getById(it, req.articleId) ?: abort(Err.ARTICLE_NOT_EXISTS)
             val current = System.currentTimeMillis()
             val textContent = TextContent().apply {
                 this.id = Snowflake(0).next()
@@ -78,6 +78,7 @@ object ArticleService {
                 this.createTime = current
                 this.aliasId = article.id
             }
+            TextDao.create(it, textContent)
             ArticleDao.createOrUpdate(it, article.apply {
                 this.lastEdit = current
                 this.lastEditUID = req.editorUid
@@ -95,7 +96,7 @@ object ArticleService {
         val result = HashMap<Long, Article>()
         Mysql.read { session ->
             req.ids.forEach { id ->
-                val article = ArticleDao.getById(session, id)
+                val article = ArticleDao.getById(session, id, useCache = true, updateCache = true)
                 if (article != null) result[id] = article
             }
         }

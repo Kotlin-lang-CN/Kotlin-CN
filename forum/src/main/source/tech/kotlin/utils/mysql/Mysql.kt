@@ -1,5 +1,6 @@
 package tech.kotlin.utils.mysql
 
+import org.apache.ibatis.annotations.*
 import org.apache.ibatis.io.Resources
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.session.SqlSession
@@ -11,9 +12,14 @@ import tech.kotlin.utils.exceptions.Abort
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.log.Log
+import tech.kotlin.utils.serialize.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.lang.reflect.Proxy
 import java.util.*
+import kotlin.reflect.KClass
 
 
 /*********************************************************************
@@ -71,4 +77,53 @@ object Mysql {
             }
         }
     }
+}
+
+operator fun <T : Any> SqlSession.get(kClass: KClass<T>): T {
+    val clazz = kClass.java
+    val mapper = getMapper(clazz)
+    @Suppress("UNCHECKED_CAST")
+    return Proxy.newProxyInstance(javaClass.classLoader, arrayOf(clazz)) { _, method, args ->
+        try {
+            val sqlGen: (KClass<*>, String) -> String = { clazz, methodName ->
+                val generator = clazz.java.newInstance()
+                val provider = clazz.java.getMethod(methodName, *method.parameterTypes)
+                provider(generator, *args) as String
+            }
+            when {
+                method.isAnnotationPresent(Select::class.java) ->
+                    Log.d("SQL", method.getAnnotation(Select::class.java).value[0].trimIndent().replace("\n", " "))
+                method.isAnnotationPresent(Insert::class.java) ->
+                    Log.d("SQL", method.getAnnotation(Insert::class.java).value[0].trimIndent().replace("\n", " "))
+                method.isAnnotationPresent(Update::class.java) ->
+                    Log.d("SQL", method.getAnnotation(Update::class.java).value[0].trimIndent().replace("\n", " "))
+                method.isAnnotationPresent(Delete::class.java) ->
+                    Log.d("SQL", method.getAnnotation(Delete::class.java).value[0].trimIndent().replace("\n", " "))
+                method.isAnnotationPresent(SelectProvider::class.java) -> {
+                    val annotation = method.getAnnotation(SelectProvider::class.java)
+                    val sql = sqlGen(annotation.type, annotation.method)
+                    Log.d("SQL", sql.trimIndent().replace("\n", " "))
+                }
+                method.isAnnotationPresent(InsertProvider::class.java) -> {
+                    val annotation = method.getAnnotation(InsertProvider::class.java)
+                    val sql = sqlGen(annotation.type, annotation.method)
+                    Log.d("SQL", sql.trimIndent().replace("\n", " "))
+                }
+                method.isAnnotationPresent(UpdateProvider::class.java) -> {
+                    val annotation = method.getAnnotation(UpdateProvider::class.java)
+                    val sql = sqlGen(annotation.type, annotation.method)
+                    Log.d("SQL", sql.trimIndent().replace("\n", " "))
+                }
+                method.isAnnotationPresent(DeleteProvider::class.java) -> {
+                    val annotation = method.getAnnotation(DeleteProvider::class.java)
+                    val sql = sqlGen(annotation.type, annotation.method)
+                    Log.d("SQL", sql.trimIndent().replace("\n", " "))
+                }
+            }
+            Log.d("SQL", Json.dumps(args[0]))
+        } catch (err: Throwable) {
+            Log.e(err)
+        }
+        return@newProxyInstance method.invoke(mapper, *args)
+    } as T
 }

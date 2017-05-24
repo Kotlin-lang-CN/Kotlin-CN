@@ -1,9 +1,6 @@
 package tech.kotlin.controller
 
 import spark.Route
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.abort
-import tech.kotlin.utils.exceptions.check
 import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.TextContent
 import tech.kotlin.model.domain.UserInfo
@@ -12,7 +9,9 @@ import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
 import tech.kotlin.service.article.ArticleService
 import tech.kotlin.service.article.TextService
-import tech.kotlin.utils.ok
+import tech.kotlin.utils.exceptions.Err
+import tech.kotlin.utils.exceptions.abort
+import tech.kotlin.utils.exceptions.check
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -45,32 +44,43 @@ object ArticleController {
             this.content = content
         }).articleId
 
-        ArticleService.queryById(QueryArticleByIdReq().apply {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.SYSTEM)
 
-        return@Route ok()
+        return@Route ok { it["id"] = article.id }
     }
 
     val updateArticle = Route { req, _ ->
-        val id = req.queryParams(":id").check(Err.PARAMETER) { it.toLong() > 0 }.toLong()
+        val id = req.params(":id")
+                .check(Err.PARAMETER, "无效的文章id") { it.toLong();true }.toLong()
+
         val title = req.queryParams("title") ?: ""
-        val category = req.queryParams("category").check(Err.PARAMETER) { it.toInt();true }.toInt()
+
+        val category = req.queryParams("category")?.apply {
+            check(Err.PARAMETER, "无效的文章类别") { it.toInt();true }
+        }?.toInt() ?: -1
+
         val tags = req.queryParams("tags") ?: ""
-        val content = req.queryParams("content") ?: ""
+
+        val content = req.queryParams("content")?.apply {
+            check(Err.PARAMETER, "内容过短") { it.length >= 30 }
+        } ?: ""
 
         val me = TokenService.checkToken(CheckTokenReq(req)).account
+
         val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
 
-        if (me.role != Account.Role.ADMIN || article.author != me.id) abort(Err.UNAUTHORIZED)
+        if (me.role != Account.Role.ADMIN && article.author != me.id) abort(Err.UNAUTHORIZED)
 
         var contentId = 0L
         if (!content.isNullOrBlank()) {
             contentId = ArticleService.updateContent(UpdateArticleContentReq().apply {
                 this.content = content
                 this.editorUid = me.id
+                this.articleId = article.id
             }).contentId
         }
 
@@ -90,7 +100,7 @@ object ArticleController {
     }
 
     val getArticleById = Route { req, _ ->
-        val id = req.queryParams(":id").check(Err.PARAMETER) { it.toLong() > 0 }.toLong()
+        val id = req.params(":id").check(Err.PARAMETER) { it.toLong();true }.toLong()
 
         val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)

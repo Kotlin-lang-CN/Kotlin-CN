@@ -1,12 +1,12 @@
 package tech.kotlin.dao.article
 
-import org.apache.ibatis.annotations.Insert
-import org.apache.ibatis.annotations.Select
-import org.apache.ibatis.annotations.Update
+import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.dao.account.AccountDao
 import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.TextContent
+import tech.kotlin.utils.mysql.Mysql
+import tech.kotlin.utils.mysql.get
 import tech.kotlin.utils.redis.Redis
 import tech.kotlin.utils.serialize.Json
 
@@ -16,20 +16,20 @@ import tech.kotlin.utils.serialize.Json
  *********************************************************************/
 object TextDao {
 
-    fun getById(session: SqlSession, id: Long, useCache: Boolean = false, updateCache: Boolean = false): TextContent? {
-        if (useCache) {
-            val cached = Cache.getById(id)
-            if (cached != null) return cached
-            val result = session.getMapper(TextMapper::class.java).queryById(id)
-            if (result != null && updateCache) Cache.update(result)
-            return result
-        } else {
-            return session.getMapper(TextMapper::class.java).queryById(id)
-        }
+    init {
+        Mysql.register(TextMapper::class.java)
+    }
+
+    fun getById(session: SqlSession, id: Long): TextContent? {
+        val cached = Cache.getById(id)
+        if (cached != null) return cached
+        val result = session[TextMapper::class].queryById(id)
+        if (result != null) Cache.update(result)
+        return result
     }
 
     fun create(session: SqlSession, content: TextContent) {
-        val mapper = session.getMapper(TextMapper::class.java)
+        val mapper = session[TextMapper::class]
         mapper.insert(content)
     }
 
@@ -38,28 +38,18 @@ object TextDao {
         fun key(id: Long) = "text_content:$id"
 
         fun getById(uid: Long): TextContent? {
-            val userMap = Redis { it.hgetAll(key(uid)) }
+            val userMap = Redis read { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<TextContent>(userMap) else null
         }
 
         fun update(content: TextContent) {
             val key = Cache.key(content.id)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect(content) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
-                pip.expire(key, 2 * 60 * 60)//cache for 2 hours
-                pip.sync()
+            Redis write {
+                Json.reflect(content) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+                it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
-        fun drop(uid: Long) {
-            val key = key(uid)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect<TextContent> { name, _ -> pip.hdel(key, name) }
-                pip.sync()
-            }
-        }
     }
 
     interface TextMapper {
@@ -76,6 +66,10 @@ object TextDao {
         SELECT * FROM text_content
         WHERE id = #{id}
         """)
+        @Results(
+                Result(column = "create_time", property = "createTime"),
+                Result(column = "alias_id", property = "aliasId")
+        )
         fun queryById(id: Long): TextContent?
 
     }

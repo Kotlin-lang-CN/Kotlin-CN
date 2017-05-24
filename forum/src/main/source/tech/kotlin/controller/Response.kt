@@ -1,4 +1,4 @@
-package tech.kotlin.utils
+package tech.kotlin.controller
 
 import tech.kotlin.utils.serialize.Json
 

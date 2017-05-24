@@ -20,7 +20,7 @@ import tech.kotlin.utils.serialize.Json
 val properties = Props.loads("project.properties")
 
 fun main(vararg args: String) {
-    Redis.init(config = "redis.json")
+    Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
 
     Spark.port(properties int "deploy.port")
@@ -34,6 +34,7 @@ fun main(vararg args: String) {
     Spark.post("/api/article/post", ArticleController.postArticle.gate())
     Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
     Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate())
+
 }
 
 fun Route.gate(log: Boolean = true): Route {

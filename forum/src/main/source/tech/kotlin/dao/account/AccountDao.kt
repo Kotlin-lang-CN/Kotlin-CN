@@ -5,6 +5,7 @@ import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.domain.Account
 import tech.kotlin.utils.serialize.Json
 import tech.kotlin.utils.mysql.Mysql
+import tech.kotlin.utils.mysql.get
 import tech.kotlin.utils.redis.Redis
 
 /*********************************************************************
@@ -21,16 +22,16 @@ object AccountDao {
         if (useCache) {
             val cached = Cache.getById(id)
             if (cached != null) return cached
-            val result = session.getMapper(AccountMapper::class.java).getById(id)
+            val result = session[AccountMapper::class].getById(id)
             if (result != null && updateCache) Cache.update(result)
             return result
         } else {
-            return session.getMapper(AccountMapper::class.java).getById(id)
+            return session[AccountMapper::class].getById(id)
         }
     }
 
     fun saveOrUpdate(session: SqlSession, account: Account) {
-        val mapper = session.getMapper(AccountMapper::class.java)
+        val mapper = session[AccountMapper::class]
         val mayBeNull = mapper.getById(account.id)
         if (mayBeNull == null) {
             mapper.insert(account)
@@ -41,7 +42,7 @@ object AccountDao {
     }
 
     fun update(session: SqlSession, uid: Long, args: HashMap<String, Any>) {
-        val mapper = session.getMapper(AccountMapper::class.java)
+        val mapper = session[AccountMapper::class]
         Cache.drop(uid)
         mapper.updateWithArgs(args = args.apply { this["id"] = uid })
     }
@@ -51,27 +52,21 @@ object AccountDao {
         fun key(uid: Long) = "account:$uid"
 
         fun getById(uid: Long): Account? {
-            val userMap = Redis { it.hgetAll(key(uid)) }
+            val userMap = Redis read { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<Account>(userMap) else null
         }
 
         fun update(account: Account) {
             val key = key(account.id)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect(account) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
-                pip.expire(key, 2 * 60 * 60)//cache for 2 hours
-                pip.sync()
+            Redis write {
+                Json.reflect(account) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+                it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
         fun drop(uid: Long) {
             val key = key(uid)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect<Account> { name, _ -> pip.hdel(key, name) }
-                pip.sync()
-            }
+            Redis write { Json.reflect<Account> { name, _ -> it.hdel(key, name) } }
         }
     }
 
@@ -116,8 +111,8 @@ object AccountDao {
                 return """
                 UPDATE account SET
                 ${StringBuilder().apply {
-                    args.forEach { k, _ -> append("$k = #{$k} ,") }
-                    setLength(length - ",".length)
+                    args.forEach { k, _ -> append("$k = #{$k}, ") }
+                    setLength(length - ", ".length)
                 }}
                 WHERE id = #{id}
                 """

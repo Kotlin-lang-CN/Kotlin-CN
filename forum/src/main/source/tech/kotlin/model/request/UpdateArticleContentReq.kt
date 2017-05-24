@@ -11,8 +11,8 @@ class UpdateArticleContentReq {
     var editorUid: Long = 1
 
     @Protobuf(required = true, order = 2, fieldType = FieldType.UINT64, description = "文章id")
-    @JsonProperty("id")
-    var id: Long = 0
+    @JsonProperty("article_id")
+    var articleId: Long = 0
 
     @Protobuf(required = true, order = 3, fieldType = FieldType.STRING, description = "文章内容")
     @JsonProperty("content")

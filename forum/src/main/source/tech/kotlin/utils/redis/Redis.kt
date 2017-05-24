@@ -1,11 +1,12 @@
 package tech.kotlin.utils.redis
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
-import tech.kotlin.utils.properties.Props
-
+import redis.clients.jedis.Pipeline
+import tech.kotlin.utils.properties.int
+import tech.kotlin.utils.properties.str
+import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -13,31 +14,22 @@ import tech.kotlin.utils.properties.Props
  *********************************************************************/
 object Redis {
 
-    lateinit var readWritePool: JedisPool
+    lateinit var pool: JedisPool
 
-    fun init(config: String) {
-        val conf = Props.loadJson<RedisConfig>(config)
-        readWritePool = JedisPool(JedisPoolConfig().apply {
-            maxIdle = conf.master.maxConn; maxTotal = conf.master.maxConn
-        }, conf.master.host, conf.master.port)
+    fun init(prop: Properties) {
+        pool = JedisPool(JedisPoolConfig(), prop str "redis.host", prop int "redis.port")
     }
 
-    inline fun <reified T> eval(vararg args: Any?, crossinline action: (Jedis) -> String): T {
-        val strKeys = ArrayList<String>()
-        val strArgs = args.map { if (it == null) null else "$it" }.toList()
-        return readWritePool.resource.use { it.eval(action(it), strKeys, strArgs) as T }
+    infix fun <T> read(action: (Jedis) -> T): T {
+        return pool.resource.use(action)
     }
 
-    operator fun <T> invoke(action: (Jedis) -> T): T = readWritePool.resource.use(action)
-
-    class RedisConfig {
-        @JsonProperty("master") var master = Address()
-        @JsonProperty("slave") var slave = ArrayList<Address>()
+    infix fun write(action: (Pipeline) -> Unit) {
+        pool.resource.use {
+            val pip = it.pipelined()
+            action(pip)
+            pip.sync()
+        }
     }
 
-    class Address {
-        @JsonProperty("host") var host = ""
-        @JsonProperty("port") var port = 0
-        @JsonProperty("max_conn") var maxConn = 20
-    }
 }

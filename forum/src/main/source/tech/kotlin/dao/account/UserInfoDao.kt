@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.UpdateProvider
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.utils.mysql.Mysql
+import tech.kotlin.utils.mysql.get
 import tech.kotlin.utils.redis.Redis
 import tech.kotlin.utils.serialize.Json
 
@@ -24,28 +25,28 @@ object UserInfoDao {
         if (useCache) {
             val cached = Cache.getById(uid)
             if (cached != null) return cached
-            val result = session.getMapper(UserInfoMapper::class.java).getById(uid)
+            val result = session[UserInfoMapper::class].getById(uid)
             if (result != null && updateCache) Cache.update(result)
             return result
         } else {
-            return session.getMapper(UserInfoMapper::class.java).getById(uid)
+            return session[UserInfoMapper::class].getById(uid)
         }
     }
 
     fun getByName(session: SqlSession, name: String, updateCache: Boolean = false): UserInfo? {
-        val result = session.getMapper(UserInfoMapper::class.java).getByName(name)
+        val result = session[UserInfoMapper::class].getByName(name)
         if (result != null && updateCache) Cache.update(result)
         return result
     }
 
     fun getByEmail(session: SqlSession, email: String, updateCache: Boolean = false): UserInfo? {
-        val result = session.getMapper(UserInfoMapper::class.java).getByEmail(email)
+        val result = session[UserInfoMapper::class].getByEmail(email)
         if (result != null && updateCache) Cache.update(result)
         return result
     }
 
     fun saveOrUpdate(session: SqlSession, user: UserInfo) {
-        val mapper = session.getMapper(UserInfoMapper::class.java)
+        val mapper = session[UserInfoMapper::class]
         val mayBeNull = mapper.getById(user.uid)
         if (mayBeNull == null) {
             mapper.insert(user)
@@ -56,7 +57,7 @@ object UserInfoDao {
     }
 
     fun update(session: SqlSession, uid: Long, args: HashMap<String, String>) {
-        val mapper = session.getMapper(UserInfoMapper::class.java)
+        val mapper = session[UserInfoMapper::class]
         Cache.drop(uid)
         mapper.updateWithArgs(args = args.apply { this["uid"] = "$uid" })
     }
@@ -66,27 +67,21 @@ object UserInfoDao {
         fun key(uid: Long) = "user_info:$uid"
 
         fun getById(uid: Long): UserInfo? {
-            val userMap = Redis { it.hgetAll(key(uid)) }
+            val userMap = Redis read { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<UserInfo>(userMap) else null
         }
 
         fun update(userInfo: UserInfo) {
             val key = Cache.key(userInfo.uid)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect(userInfo) { obj, name, field -> pip.hset(key, name, "${field.get(obj)}") }
-                pip.expire(key, 2 * 60 * 60)//cache for 2 hours
-                pip.sync()
+            Redis write {
+                Json.reflect(userInfo) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+                it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
         fun drop(uid: Long) {
             val key = Cache.key(uid)
-            Redis {
-                val pip = it.pipelined()
-                Json.reflect<UserInfo> { name, _ -> pip.hdel(key, name) }
-                pip.sync()
-            }
+            Redis write { Json.reflect<UserInfo> { name, _ -> it.hdel(key, name) } }
         }
     }
 
@@ -140,8 +135,8 @@ object UserInfoDao {
                 return """
                 UPDATE user_info SET
                 ${StringBuilder().apply {
-                    args.forEach { k, _ -> append("$k = #{$k} ,") }
-                    setLength(length - ",".length)
+                    args.forEach { k, _ -> append("$k = #{$k}, ") }
+                    setLength(length - ", ".length)
                 }}
                 WHERE uid = #{uid}
                 """

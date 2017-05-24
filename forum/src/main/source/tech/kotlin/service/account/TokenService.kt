@@ -13,6 +13,7 @@ import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
+import tech.kotlin.utils.log.Log
 import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.redis.Redis
 import tech.kotlin.utils.serialize.Json
@@ -48,7 +49,7 @@ object TokenService {
 
         //validate session
         val cachedSession = tryExec(Err.TOKEN_FAIL) {
-            Json.loads<Session>(Redis { it.get(key(content.id)) })
+            Json.loads<Session>(Redis read { it.get(key(content.id)) })
         }
         cachedSession.check(Err.TOKEN_FAIL) { it.isEqual(content) }
 
@@ -77,11 +78,10 @@ object TokenService {
         account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
         //save session in redis
-        Redis {
-            val pip = it.pipelined()
-            pip.set(key(content.id), Json.dumps(content))
-            pip.expire(key(content.id), (jwtExpire / 1000).toInt())
-            pip.sync()
+        Redis write {
+            it.set(key(content.id), Json.dumps(content))
+            val expire = (jwtExpire / 1000).toInt()
+            it.expire(key(content.id), expire)
         }
 
         return CreateSessionResp().apply {
