@@ -17,6 +17,7 @@ import tech.kotlin.utils.mysql.Mysql
  *********************************************************************/
 object TextService {
 
+    //通过id批量查询文本对象
     fun getById(req: QueryTextReq): QueryTextResp {
         val result = HashMap<Long, TextContent>()
         Mysql.read { session ->
@@ -30,6 +31,7 @@ object TextService {
         }
     }
 
+    //创建文本对象
     fun createContent(req: CreateTextContentReq): CreateTextContentResp {
         val content = TextContent().apply {
             this.id = Snowflake(0).next()

@@ -55,23 +55,6 @@ object ReplyController {
         return@Route ok()
     }
 
-    val control = Route { req, _ ->
-        val replyId = req.params(":reply_id").check(Err.PARAMETER) { it.toLong();true }.toLong()
-        val state = req.queryParams("state").check(Err.PARAMETER) { s ->
-            arrayOf(Reply.State.NORMAL, Reply.State.BAN, Reply.State.DELETE).any { it == s.toInt() }
-        }.toInt()
-
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
-
-        if (owner.role == Account.Role.ADMIN) {
-            ReplyService.changeState(ChangeReplyStateReq().apply {
-                this.replyId = replyId
-                this.state = state
-            })
-        }
-        return@Route ok()
-    }
-
     val queryReply = Route { req, _ ->
         val articleId = req.params(":id").check(Err.PARAMETER) { it.toLong();true }.toLong()
         val offset = req.queryParams("offset")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0

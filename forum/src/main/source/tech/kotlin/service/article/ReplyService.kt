@@ -21,6 +21,7 @@ import tech.kotlin.utils.mysql.Mysql
  *********************************************************************/
 object ReplyService {
 
+    //创建一则文章回复
     fun create(req: CreateArticleReplyReq): CreateReplyResp {
         if (req.aliasId != 0L) {
             Mysql.read {
@@ -57,11 +58,13 @@ object ReplyService {
         }
     }
 
+    //改变回复状态
     fun changeState(req: ChangeReplyStateReq): EmptyResp {
         Mysql.write { ReplyDao.update(it, req.replyId, args = hashMapOf("state" to "${req.state}")) }
         return EmptyResp()
     }
 
+    //通过id批量查询回复
     fun getReplyById(req: QueryReplyByIdReq): QueryReplyByIdResp {
         val result = HashMap<Long, Reply>()
         Mysql.read { session ->
@@ -73,6 +76,7 @@ object ReplyService {
         return QueryReplyByIdResp().apply { this.result = result }
     }
 
+    //查询一篇文章的所有回复
     fun getReplyByArticle(req: QueryReplyByArticleReq): QueryReplyByArticleResp {
         val result = Mysql.read {
             PageHelper.startPage<Reply>(req.offset + 1, req.limit

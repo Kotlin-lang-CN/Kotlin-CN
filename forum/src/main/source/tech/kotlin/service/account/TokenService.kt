@@ -34,6 +34,7 @@ object TokenService {
 
     private fun key(uid: Long) = "session:$uid"
 
+    //校验用户会话
     fun checkToken(req: CheckTokenReq): CheckTokenResp {
         val content: Session
         try {
@@ -64,6 +65,7 @@ object TokenService {
         }
     }
 
+    //创建登录会话
     fun createSession(req: CreateSessionReq): CreateSessionResp {
         val content = Session().apply {
             id = Snowflake(0).next()

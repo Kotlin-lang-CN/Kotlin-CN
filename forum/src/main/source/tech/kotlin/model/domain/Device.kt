@@ -4,6 +4,9 @@ import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
 import spark.Request
+import tech.kotlin.utils.exceptions.Err
+import tech.kotlin.utils.exceptions.abort
+import tech.kotlin.utils.exceptions.check
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -28,13 +31,18 @@ class Device() {
     var system: String = ""
 
     constructor(req: Request) : this() {
-        token = req.headers("X-App-Device")
-        platform = req.headers("X-App-Platform").toInt()
-        vendor = req.headers("X-App-Vendor")
-        system = req.headers("X-App-System")
-        assert(!token.isNullOrBlank())
-        assert(!vendor.isNullOrBlank())
-        assert(!system.isNullOrBlank())
+        token = (req.headers("X-App-Device") ?: "")
+                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
+
+        platform = req.headers("X-App-Platform")?.apply {
+            check(Err.PARAMETER, "缺失设备信息") { it.toInt();true }
+        }?.toInt() ?: 0
+
+        vendor = (req.headers("X-App-Vendor") ?: "")
+                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
+
+        system = (req.headers("X-App-System") ?: "")
+                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
     }
 
     fun isEquals(device: Device): Boolean {

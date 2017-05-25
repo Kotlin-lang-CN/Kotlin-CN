@@ -1,11 +1,11 @@
 package tech.kotlin.service.article
 
+import com.github.pagehelper.PageHelper
 import com.relops.snowflake.Snowflake
 import tech.kotlin.dao.article.ArticleDao
-import tech.kotlin.dao.article.TextDao
 import tech.kotlin.model.domain.Article
-import tech.kotlin.model.domain.TextContent
 import tech.kotlin.model.request.*
+import tech.kotlin.model.response.ArticleListResp
 import tech.kotlin.model.response.ArticleResp
 import tech.kotlin.model.response.QueryArticleByIdResp
 import tech.kotlin.utils.exceptions.Err
@@ -18,6 +18,7 @@ import tech.kotlin.utils.mysql.Mysql
  *********************************************************************/
 object ArticleService {
 
+    //创建一篇文章
     fun create(req: CreateArticleReq): ArticleResp {
         val articleId = Snowflake(0).next()
         val current = System.currentTimeMillis()
@@ -48,6 +49,7 @@ object ArticleService {
         }
     }
 
+    //更新文章元数据
     fun updateMeta(req: UpdateArticleReq): ArticleResp {
         val article = Mysql.write {
             ArticleDao.getById(it, req.id) ?: abort(Err.ARTICLE_NOT_EXISTS)
@@ -61,6 +63,7 @@ object ArticleService {
         }
     }
 
+    //更新文章内容
     fun updateContent(req: UpdateArticleContentReq): ArticleResp {
         //调用文本服务创建新的文本对象
         val contentID = TextService.createContent(CreateTextContentReq().apply {
@@ -68,7 +71,6 @@ object ArticleService {
             this.serializeId = "article:${req.articleId}"
         }).id
 
-        //更新文章元数据
         return updateMeta(UpdateArticleReq().apply {
             this.id = req.articleId
             this.args = hashMapOf(
@@ -79,6 +81,7 @@ object ArticleService {
         })
     }
 
+    //通过id批量查询文章
     fun queryById(req: QueryArticleByIdReq): QueryArticleByIdResp {
         val result = HashMap<Long, Article>()
         Mysql.read { session ->
@@ -92,5 +95,20 @@ object ArticleService {
         }
     }
 
+    //查询最新的文章
+    fun getLatest(req: QueryLatestArticleReq): ArticleListResp {
+        val result = Mysql.read {
+            PageHelper.startPage<Article>(req.offset + 1, req.limit
+            ).doSelectPageInfo<Article> {
+                ArticleDao.getLatest(it, args = HashMap<String, String>().apply {
+                    if (!req.category.isNullOrBlank()) this["category"] = req.category
+                    if (!req.state.isNullOrBlank()) this["state"] = req.state
+                }, updateCache = true)
+            }.list
+        }
+        return ArticleListResp().apply {
+            this.result = result
+        }
+    }
 }
 

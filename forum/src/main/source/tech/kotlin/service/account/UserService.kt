@@ -18,6 +18,7 @@ import tech.kotlin.utils.mysql.Mysql
  *********************************************************************/
 object UserService {
 
+    //通过id批量查询用户
     fun queryById(req: QueryUserReq): QueryUserResp {
         if (req.id.isEmpty()) return QueryUserResp()
 
@@ -36,6 +37,7 @@ object UserService {
         }
     }
 
+    //更新用户信息
     fun updateById(req: UpdateUserReq): EmptyResp {
         if (req.args.isEmpty()) return EmptyResp()
 

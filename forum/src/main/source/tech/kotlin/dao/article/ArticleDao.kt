@@ -2,9 +2,7 @@ package tech.kotlin.dao.article
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
-import tech.kotlin.dao.account.AccountDao
 import tech.kotlin.model.domain.Article
-import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.mysql.get
 import tech.kotlin.utils.redis.Redis
@@ -30,6 +28,12 @@ object ArticleDao {
         } else {
             return session[ArticleMapper::class].queryById(id)
         }
+    }
+
+    fun getLatest(session: SqlSession, args: HashMap<String, String>, updateCache: Boolean = false): List<Article> {
+        val result = session[ArticleMapper::class].queryLatest(args)
+        if (updateCache) result.forEach { Cache.update(it) }
+        return result
     }
 
     fun createOrUpdate(session: SqlSession, article: Article) {
@@ -71,6 +75,7 @@ object ArticleDao {
         }
     }
 
+    @Suppress("unused")
     interface ArticleMapper {
 
         @Select("""
@@ -86,11 +91,20 @@ object ArticleDao {
         )
         fun queryById(id: Long): Article?
 
+        @SelectProvider(type = SqlGenerator::class, method = "queryLatest")
+        @Results(
+                Result(property = "createTime", column = "create_time"),
+                Result(property = "lastEdit", column = "last_edit_time"),
+                Result(property = "lastEditUID", column = "last_edit_uid"),
+                Result(property = "contentId", column = "content_id")
+        )
+        fun queryLatest(args: HashMap<String, String>): List<Article>
+
         @Insert("""
         INSERT INTO article
         VALUES
         (#{id}, #{title}, #{author}, #{createTime}, #{category}, #{tags},
-         #{lastEdit}, #{lastEditUID}, #{state}, #{contentId})
+        #{lastEdit}, #{lastEditUID}, #{state}, #{contentId})
         """)
         fun insert(article: Article)
 
@@ -115,6 +129,7 @@ object ArticleDao {
 
         class SqlGenerator {
 
+            //更新文章内容
             fun updateByArgs(args: HashMap<String, Any>): String {
                 return """
                 UPDATE article SET
@@ -123,6 +138,35 @@ object ArticleDao {
                     setLength(length - ", ".length)
                 }}
                 WHERE id = #{id}
+                """
+            }
+
+            //查询文章内容
+            fun queryLatest(args: HashMap<String, String>): String {
+                val whereCause = when {
+                    args.isEmpty() -> ""
+                    else -> {
+                        val sb = StringBuilder("WHERE")
+                        args.forEach { k, v ->
+                            if (k == "state" || k == "category") {
+                                sb.append(" (")
+                                v.split(",").forEach {
+                                    sb.append("$k = $it OR ")
+                                }
+                                sb.setLength(sb.length - "OR ".length)
+                                sb.append(") AND ")
+                            } else {
+                                sb.append("$k = #{k} AND ")
+                            }
+                        }
+                        sb.setLength(sb.length - "AND ".length)
+                        sb.toString()
+                    }
+                }
+                return """
+                SELECT * from article
+                $whereCause
+                ORDER BY create_time DESC
                 """
             }
         }

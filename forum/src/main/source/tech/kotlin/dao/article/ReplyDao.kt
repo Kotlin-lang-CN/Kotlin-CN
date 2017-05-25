@@ -91,8 +91,8 @@ object ReplyDao {
 
         @Select("""
         SELECT * FROM reply
-        WHERE reply_pool_id = #{pool}
-        AND state = ${Reply.State.NORMAL}
+        WHERE (reply_pool_id = #{replyPoolId} AND state = ${Reply.State.NORMAL})
+        ORDER BY create_time DESC
         """)
         @Results(
                 Result(column = "reply_pool_id", property = "replyPoolId"),
@@ -101,7 +101,7 @@ object ReplyDao {
                 Result(column = "content_id", property = "contentId"),
                 Result(column = "alias_id", property = "aliasId")
         )
-        fun queryByPool(pool: String): List<Reply>
+        fun queryByPool(replyPoolId: String): List<Reply>
 
         @UpdateProvider(type = SqlGenerator::class, method = "updateByArgs")
         fun updateByArgs(args: HashMap<String, String>)

@@ -2,10 +2,7 @@ package tech.kotlin
 
 import spark.Route
 import spark.Spark
-import tech.kotlin.controller.AccountController
-import tech.kotlin.controller.ArticleController
-import tech.kotlin.controller.ArticleViewController
-import tech.kotlin.controller.ReplyController
+import tech.kotlin.controller.*
 import tech.kotlin.utils.exceptions.Abort
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.log.Log
@@ -28,28 +25,31 @@ fun main(vararg args: String) {
     Spark.port(properties int "deploy.port")
     Spark.init()
 
-    Spark.post("/api/account/login", AccountController.login.gate())
-    Spark.post("/api/account/register", AccountController.register.gate())
-    Spark.get("/api/account/user/:uid", AccountController.getUserInfo.gate())
-    Spark.post("/api/account/user/:uid/password", AccountController.alterPassword.gate())
-    Spark.post("/api/account/user/:uid/update", AccountController.updateUserInfo.gate())
+    Spark.post("/api/account/login", AccountController.login.gate("用户登录"))
+    Spark.post("/api/account/register", AccountController.register.gate("用户注册"))
+    Spark.get("/api/account/user/:uid", AccountController.getUserInfo.gate("查询用户信息"))
+    Spark.post("/api/account/user/:uid/password", AccountController.alterPassword.gate("修改密码"))
+    Spark.post("/api/account/user/:uid/update", AccountController.updateUserInfo.gate("更新用户信息"))
 
-    Spark.post("/api/article/post", ArticleController.postArticle.gate())
-    Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate())
-    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate())
+    Spark.post("/api/article/post", ArticleController.postArticle.gate("发布文章"))
+    Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate("获取文章详细内容"))
+    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate("更新文章"))
 
-    Spark.get("/api/article/list", ArticleViewController.getList.gate())
-    Spark.get("/api/article/fine", ArticleViewController.getFine.gate())
-    Spark.get("/api/article/category/:category_id", ArticleViewController.getByCategory.gate())
-    Spark.get("/api/article/mine", ArticleViewController.getMine.gate())
+    Spark.get("/api/article/list", ArticleViewController.getList.gate("获取最新文章列表"))
+    Spark.get("/api/article/fine", ArticleViewController.getFine.gate("获取精品文章"))
+    Spark.get("/api/article/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
 
-    Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate())
-    Spark.post("/api/article/:id/reply", ReplyController.createReply.gate())
-    Spark.post("/api/article/reply/:reply_id/delete", ReplyController.delReply.gate())
-    Spark.post("/api/article/reply/:reply_id/change_state", ReplyController.control.gate())
+    Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
+    Spark.post("/api/article/:id/reply", ReplyController.createReply.gate("参与文章评论"))
+    Spark.post("/api/article/reply/:reply_id/delete", ReplyController.delReply.gate("删除评论"))
+
+    Spark.post("/api/admin/user/:id/state", AdminController.userState.gate("修改用户状态"))
+    Spark.post("/api/admin/user/:id/setting", AdminController.userSetting.gate("修改用户信息"))
+    Spark.post("/api/admin/article/:id/state", AdminController.articleSetting.gate("修改文章状态"))
+    Spark.post("/api/admin/reply/:id/state", AdminController.replySetting.gate("修改评论状态"))
 }
 
-fun Route.gate(log: Boolean = true): Route {
+fun Route.gate(desc: String, log: Boolean = true): Route {
     return Route { request, response ->
         val requestId = System.nanoTime()
         if (log) {
@@ -58,7 +58,7 @@ fun Route.gate(log: Boolean = true): Route {
             val headers = request.headers().map { it to request.headers(it) }.toMap()
             val params = request.params()
             val queryParams = request.queryParams().map { it to request.queryParams(it) }.toMap()
-            Log.d("Request", "$requestId: ${Json.dumps(mapOf(
+            Log.d("Request", "$desc($requestId): ${Json.dumps(mapOf(
                     "url" to url,
                     "method" to method,
                     "headers" to headers,
@@ -69,10 +69,10 @@ fun Route.gate(log: Boolean = true): Route {
         var result: String
         try {
             result = this.handle(request, response) as String
-            if (log) Log.d("Response", "$requestId: $result")
+            if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Abort) {
             result = Json.dumps(err.model)
-            if (log) Log.d("Response", "$requestId: $result")
+            if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Throwable) {
             result = Json.dumps(mapOf("code" to Err.SYSTEM.code, "msg" to Err.SYSTEM.msg))
             Log.e("Response", err)

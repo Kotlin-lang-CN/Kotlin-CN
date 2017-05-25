@@ -28,8 +28,8 @@ object AccountService {
     private val passwordSalt: String = properties str "account.pwd.salt"
     private fun encrypt(password: String) = MD5.hash("$password$passwordSalt")
 
+    //创建账号
     fun create(req: CreateAccountReq): CreateAccountResp {
-        //创建原始数据
         val current = System.currentTimeMillis()
         val account = Account().apply {
             id = Snowflake(0).next()
@@ -69,6 +69,7 @@ object AccountService {
         }
     }
 
+    //使用用户名或邮箱登录
     fun loginWithName(req: LoginReq): LoginResp {
         var userInfo: UserInfo by Delegates.notNull<UserInfo>()
         //查询账号
@@ -96,6 +97,7 @@ object AccountService {
         }
     }
 
+    //修改用户状态
     fun changeState(req: FreezeAccountReq): EmptyResp {
         Mysql.write {
             val user = AccountDao.getById(it, req.uid) ?: abort(Err.UNAUTHORIZED)
@@ -108,6 +110,7 @@ object AccountService {
         return EmptyResp()
     }
 
+    //修改用户密码
     fun updatePassword(req: UpdatePasswordReq): EmptyResp {
         Mysql.write {
             AccountDao.update(it, req.id, hashMapOf<String, Any>("password" to encrypt(req.password)))

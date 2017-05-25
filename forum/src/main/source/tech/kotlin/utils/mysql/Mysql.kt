@@ -120,10 +120,14 @@ operator fun <T : Any> SqlSession.get(kClass: KClass<T>): T {
                     Log.d("SQL", sql.trimIndent().replace("\n", " "))
                 }
             }
-            Log.d("SQL", Json.dumps(args[0]))
         } catch (err: Throwable) {
             Log.e(err)
         }
-        return@newProxyInstance method.invoke(mapper, *args)
+        if (args == null || args.isEmpty()) {
+            method.invoke(mapper)
+        } else {
+            Log.d("SQL", "args:${Json.dumps(args)}")
+            method.invoke(mapper, *args)
+        }
     } as T
 }

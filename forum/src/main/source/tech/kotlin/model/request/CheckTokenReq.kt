@@ -5,6 +5,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
 import spark.Request
 import tech.kotlin.model.domain.Device
+import tech.kotlin.utils.exceptions.Err
+import tech.kotlin.utils.exceptions.abort
 
 class CheckTokenReq() {
 
@@ -18,7 +20,6 @@ class CheckTokenReq() {
 
     constructor(req: Request) : this() {
         device = Device(req)
-        token = req.headers("X-App-Token") ?: req.cookie("X-App-Token")
-        assert(!token.isNullOrBlank())
+        token = req.headers("X-App-Token") ?: req.cookie("X-App-Token") ?: abort(Err.PARAMETER, "缺失登录信息")
     }
 }
