@@ -1,18 +1,19 @@
 package tech.kotlin.service.article
 
-import com.baidu.bjf.remoting.protobuf.FieldType
-import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.github.pagehelper.PageHelper
 import com.relops.snowflake.Snowflake
+import tech.kotlin.dao.article.ArticleDao
 import tech.kotlin.dao.article.ReplyDao
 import tech.kotlin.model.domain.Reply
-import tech.kotlin.model.request.CreateArticleReplyReq
-import tech.kotlin.model.request.CreateTextContentReq
+import tech.kotlin.model.request.*
 import tech.kotlin.model.response.CreateReplyResp
 import tech.kotlin.model.response.EmptyResp
+import tech.kotlin.model.response.QueryReplyByArticleResp
+import tech.kotlin.model.response.QueryReplyByIdResp
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.mysql.Mysql
+
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -22,16 +23,26 @@ object ReplyService {
 
     fun create(req: CreateArticleReplyReq): CreateReplyResp {
         if (req.aliasId != 0L) {
-            Mysql.read { ReplyDao.getById(it, req.aliasId) } ?: abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+            Mysql.read {
+                val reply = ReplyDao.getById(it, req.aliasId) ?:
+                        abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+
+                if (reply.aliasId != req.aliasId)
+                    abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+
+                ArticleDao.getById(it, req.articleId, useCache = true, updateCache = true) ?:
+                        abort(Err.ARTICLE_NOT_EXISTS)
+            }
         }
 
+        val replyId = Snowflake(0).next()
         val contentId = TextService.createContent(CreateTextContentReq().apply {
-            this.serializeId = "s"
+            this.serializeId = "reply:$replyId"
             this.content = req.content
         }).id
 
         val reply = Reply().apply {
-            this.id = Snowflake(0).next()
+            this.id = replyId
             this.replyPoolId = "article:${req.articleId}"
             this.ownerUID = req.ownerUID
             this.createTime = System.currentTimeMillis()
@@ -51,18 +62,28 @@ object ReplyService {
         return EmptyResp()
     }
 
-}
+    fun getReplyById(req: QueryReplyByIdReq): QueryReplyByIdResp {
+        val result = HashMap<Long, Reply>()
+        Mysql.read { session ->
+            req.id.forEach {
+                val reply = ReplyDao.getById(session, it) ?: return@forEach
+                result[it] = reply
+            }
+        }
+        return QueryReplyByIdResp().apply { this.result = result }
+    }
 
-class ChangeReplyStateReq {
-
-    @Protobuf(order = 1, required = true, fieldType = FieldType.UINT64, description = "评论id")
-    @JsonProperty("reply_id")
-    var replyId = 0L
-
-    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "状态")
-    @JsonProperty("state")
-    var state: Int = Reply.State.NORMAL
-
+    fun getReplyByArticle(req: QueryReplyByArticleReq): QueryReplyByArticleResp {
+        val result = Mysql.read {
+            PageHelper.startPage<Reply>(req.offset + 1, req.limit
+            ).doSelectPageInfo<Reply> {
+                ReplyDao.getByPool(it, "article:${req.articleId}")
+            }.list
+        }
+        return QueryReplyByArticleResp().apply {
+            this.result = result
+        }
+    }
 }
 
 

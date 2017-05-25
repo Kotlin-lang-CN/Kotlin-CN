@@ -37,6 +37,12 @@ object ReplyDao {
         mapper.updateByArgs(args.apply { this["id"] = "$id" })
     }
 
+    fun getByPool(session: SqlSession, replyPoolId: String): List<Reply> {
+        val result = session[ReplyMapper::class].queryByPool(replyPoolId)
+        result.forEach { Cache.update(it) }
+        return result
+    }
+
     internal object Cache {
 
         fun key(id: Long) = "reply:$id"
@@ -64,14 +70,14 @@ object ReplyDao {
     interface ReplyMapper {
 
         @Insert("""
-        INSERT INTO text_content
+        INSERT INTO reply
         VALUES
-        (#{id}, #{replyPoolId}, #{ownerUID}, #{createTime}, #{state}, #{contentId}, #{aliasId)
+        (#{id}, #{replyPoolId}, #{ownerUID}, #{createTime}, #{state}, #{contentId}, #{aliasId})
         """)
         fun insert(content: Reply)
 
         @Select("""
-        SELECT * FROM text_content
+        SELECT * FROM reply
         WHERE id = #{id}
         """)
         @Results(
@@ -82,6 +88,20 @@ object ReplyDao {
                 Result(column = "alias_id", property = "aliasId")
         )
         fun queryById(id: Long): Reply?
+
+        @Select("""
+        SELECT * FROM reply
+        WHERE reply_pool_id = #{pool}
+        AND state = ${Reply.State.NORMAL}
+        """)
+        @Results(
+                Result(column = "reply_pool_id", property = "replyPoolId"),
+                Result(column = "owner_uid", property = "ownerUID"),
+                Result(column = "create_time", property = "createTime"),
+                Result(column = "content_id", property = "contentId"),
+                Result(column = "alias_id", property = "aliasId")
+        )
+        fun queryByPool(pool: String): List<Reply>
 
         @UpdateProvider(type = SqlGenerator::class, method = "updateByArgs")
         fun updateByArgs(args: HashMap<String, String>)

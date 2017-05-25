@@ -45,8 +45,8 @@ fun main(vararg args: String) {
 
     Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate())
     Spark.post("/api/article/:id/reply", ReplyController.createReply.gate())
-    Spark.post("/api/article/:id/reply/:reply_id/delete", ReplyController.delReply.gate())
-    Spark.post("/api/article/:id/reply/:reply_id/change_state", ReplyController.control.gate())
+    Spark.post("/api/article/reply/:reply_id/delete", ReplyController.delReply.gate())
+    Spark.post("/api/article/reply/:reply_id/change_state", ReplyController.control.gate())
 }
 
 fun Route.gate(log: Boolean = true): Route {

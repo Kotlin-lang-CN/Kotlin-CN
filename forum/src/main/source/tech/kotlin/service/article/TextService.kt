@@ -18,9 +18,15 @@ import tech.kotlin.utils.mysql.Mysql
 object TextService {
 
     fun getById(req: QueryTextReq): QueryTextResp {
-        val result = Mysql.read { TextDao.getById(it, req.id) }
+        val result = HashMap<Long, TextContent>()
+        Mysql.read { session ->
+            req.id.forEach {
+                val content = TextDao.getById(session, it) ?: return@forEach
+                result[it] = content
+            }
+        }
         return QueryTextResp().apply {
-            if (result != null) this.result = hashMapOf(req.id to result)
+            this.result = result
         }
     }
 

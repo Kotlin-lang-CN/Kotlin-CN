@@ -111,7 +111,7 @@ object ArticleController {
         }).account[article.author] ?: UserInfo()
 
         val content = TextService.getById(QueryTextReq().apply {
-            this.id = article.contentId
+            this.id = arrayListOf(article.contentId)
         }).result[article.contentId] ?: TextContent()
 
         return@Route ok {
