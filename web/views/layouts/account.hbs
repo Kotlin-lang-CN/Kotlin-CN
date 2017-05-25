@@ -104,6 +104,7 @@ var controller = {
             url: form.attr('action'),
             data: request,
             headers: App.Headers.get(),
+            dataType:'text',
             success: function(data) {
                 var result = JSON.parse(data);
                 if (result.code == 0) {

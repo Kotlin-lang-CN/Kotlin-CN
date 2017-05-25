@@ -1,1 +1,34 @@
-<p>TODO:edit</p>
+<script type="text/javascript" src="/javascripts/Markdown.Converter.js"></script>
+<script type="text/javascript" src="/javascripts/Markdown.Sanitizer.js"></script>
+<script type="text/javascript" src="/javascripts/Markdown.Editor.js"></script>
+<script type="text/javascript" src="/javascripts/Markdown.Extra.js"></script>
+<script type="text/javascript" src="/javascripts/prettify.js"></script>
+<link rel='stylesheet' href='/stylesheets/markdown.css' />
+
+<div id="kt-eidtor">
+    <div id="wmd-button-bar"></div>
+    <div class="kt-viewer">
+        <div class="wmd-panel">
+            <textarea class="wmd-input" id="wmd-input"></textarea>
+        </div>
+        <div id="wmd-preview" class="wmd-panel wmd-preview wmd-preview-cont"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var converter = new Markdown.Converter();
+    converter.hooks.chain("preConversion", function(text) {
+        return text.replace(/\b(a\w*)/gi, "*$1*");
+    });
+    converter.hooks.chain("plainLinkText", function(url) {
+        return "This is a link to " + url.replace(/^https?:\/\//, "");
+    });
+    Markdown.Extra.init(converter, {
+        highlighter: "prettify"
+    });
+    var editor = new Markdown.Editor(converter);
+    editor.hooks.chain("onPreviewRefresh", prettyPrint);
+    editor.run();
+})();
+</script>
