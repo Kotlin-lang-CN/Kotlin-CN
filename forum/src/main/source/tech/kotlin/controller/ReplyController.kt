@@ -51,6 +51,8 @@ object ReplyController {
                 this.replyId = replyId
                 this.state = Reply.State.DELETE
             })
+        } else {
+            abort(Err.UNAUTHORIZED)
         }
         return@Route ok()
     }
