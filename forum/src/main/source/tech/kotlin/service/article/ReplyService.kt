@@ -60,7 +60,10 @@ object ReplyService {
 
     //改变回复状态
     fun changeState(req: ChangeReplyStateReq): EmptyResp {
-        Mysql.write { ReplyDao.update(it, req.replyId, args = hashMapOf("state" to "${req.state}")) }
+        Mysql.write {
+            ReplyDao.getById(it, req.replyId) ?: abort(Err.REPLY_NOT_EXISTS)
+            ReplyDao.update(it, req.replyId, args = hashMapOf("state" to "${req.state}"))
+        }
         return EmptyResp()
     }
 

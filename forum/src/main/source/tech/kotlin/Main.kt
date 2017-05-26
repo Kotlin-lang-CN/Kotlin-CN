@@ -32,8 +32,9 @@ fun main(vararg args: String) {
     Spark.post("/api/account/user/:uid/update", AccountController.updateUserInfo.gate("更新用户信息"))
 
     Spark.post("/api/article/post", ArticleController.postArticle.gate("发布文章"))
-    Spark.get("/api/article/post/:id", ArticleController.getArticleById.gate("获取文章详细内容"))
-    Spark.post("/api/article/post/:id/update", ArticleController.updateArticle.gate("更新文章"))
+    Spark.get("/api/article/:id", ArticleController.getArticleById.gate("获取文章详细内容"))
+    Spark.post("/api/article/:id/update", ArticleController.updateArticle.gate("更新文章"))
+    Spark.post("/api/article/:id/delete", ArticleController.deleteArticle.gate("删除文章"))
 
     Spark.get("/api/article/list", ArticleViewController.getList.gate("获取最新文章列表"))
     Spark.get("/api/article/fine", ArticleViewController.getFine.gate("获取精品文章"))
@@ -41,12 +42,12 @@ fun main(vararg args: String) {
 
     Spark.get("/api/article/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
     Spark.post("/api/article/:id/reply", ReplyController.createReply.gate("参与文章评论"))
-    Spark.post("/api/article/reply/:reply_id/delete", ReplyController.delReply.gate("删除评论"))
+    Spark.post("/api/article/reply/:id/delete", ReplyController.delReply.gate("删除评论"))
 
     Spark.post("/api/admin/user/:id/state", AdminController.userState.gate("修改用户状态"))
-    Spark.post("/api/admin/user/:id/setting", AdminController.userSetting.gate("修改用户信息"))
-    Spark.post("/api/admin/article/:id/state", AdminController.articleSetting.gate("修改文章状态"))
-    Spark.post("/api/admin/reply/:id/state", AdminController.replySetting.gate("修改评论状态"))
+    Spark.post("/api/admin/article/:id/state", AdminController.articleState.gate("修改文章状态"))
+    Spark.post("/api/admin/reply/:id/state", AdminController.replyState.gate("修改评论状态"))
+    Spark.get("/api/admin/article/list", AdminController.getArticleList.gate("管理员获取文章列表"))
 }
 
 fun Route.gate(desc: String, log: Boolean = true): Route {

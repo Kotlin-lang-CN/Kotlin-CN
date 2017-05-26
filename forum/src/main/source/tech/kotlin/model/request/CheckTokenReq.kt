@@ -20,6 +20,6 @@ class CheckTokenReq() {
 
     constructor(req: Request) : this() {
         device = Device(req)
-        token = req.headers("X-App-Token") ?: req.cookie("X-App-Token") ?: abort(Err.PARAMETER, "缺失登录信息")
+        token = req.headers("X-App-Token") ?: req.cookie("X-App-Token") ?: abort(Err.TOKEN_FAIL, "缺失登录信息")
     }
 }

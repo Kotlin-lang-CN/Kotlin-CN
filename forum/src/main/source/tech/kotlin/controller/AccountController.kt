@@ -22,8 +22,12 @@ object AccountController {
     val login = Route { req, _ ->
         val resp = AccountService.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
-            this.loginName = req.queryParams("login_name").check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
-            this.password = req.queryParams("password").check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
+
+            this.loginName = req.queryParams("login_name")
+                    .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
+
+            this.password = req.queryParams("password")
+                    .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
         })
         return@Route ok {
             it["uid"] = resp.userInfo.uid
@@ -31,14 +35,27 @@ object AccountController {
             it["username"] = resp.userInfo.username
             it["email"] = resp.userInfo.email
             it["is_email_validate"] = resp.userInfo.emailState == UserInfo.EmailState.VERIFIED
+            it["role"] = resp.account.role
         }
     }
 
     val register = Route { req, _ ->
         val resp = AccountService.create(CreateAccountReq().apply {
-            this.username = req.queryParams("username").check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() }
-            this.password = req.queryParams("password").check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
-            this.email = req.queryParams("email").check(Err.PARAMETER, "无效的邮箱") { !it.isNullOrBlank() }
+
+            this.username = req.queryParams("username")
+                    .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
+
+            this.password = req.queryParams("password")
+                    .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() && it.length >= 8 }
+
+            this.email = req.queryParams("email")
+                    .check(Err.PARAMETER, "无效的邮箱") {
+                        !it.isNullOrBlank()
+                                && it.matches(Regex(
+                                "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
+                        ))
+                    }
+
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
         })
         return@Route ok {
@@ -51,6 +68,9 @@ object AccountController {
         val uid = req.params(":uid")
                 .check(Err.PARAMETER, "uid错误") { it.toLong(); true }
                 .toLong()
+
+        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN || it.id == uid }
 
         val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
         val info = queryUser.info[uid] ?: abort(Err.USER_NOT_EXISTS)
@@ -74,6 +94,7 @@ object AccountController {
 
         val password = req.queryParams("password")
                 .check(Err.PARAMETER, "密码长度过短") { !it.isNullOrBlank() && it.length >= 8 }
+
         password.chars().forEach { it ->
             if ('a'.toInt() <= it && it <= 'z'.toInt()) return@forEach
             if ('A'.toInt() <= it && it <= 'Z'.toInt()) return@forEach

@@ -17,8 +17,15 @@ import tech.kotlin.utils.exceptions.check
 object ArticleViewController {
 
     val getList = Route { req, _ ->
-        val offset = req.queryParams("offset")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val limit = req.queryParams("limit")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 20
+        val offset = req.queryParams("offset")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
+
+        val limit = req.queryParams("limit")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
@@ -48,9 +55,20 @@ object ArticleViewController {
     }
 
     val getByCategory = Route { req, _ ->
-        val category = req.params(":id")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val offset = req.queryParams("offset")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val limit = req.queryParams("limit")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 20
+        val category = req.params(":id")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
+
+        val offset = req.queryParams("offset")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
+
+        val limit = req.queryParams("limit")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
@@ -82,14 +100,19 @@ object ArticleViewController {
     }
 
     val getFine = Route { req, _ ->
-        val category = req.params(":category_id")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val offset = req.queryParams("offset")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val limit = req.queryParams("limit")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 20
+        val offset = req.queryParams("offset")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
+
+        val limit = req.queryParams("limit")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
             this.limit = limit
-            this.category = "$category"
             this.state = "${Article.State.FINE}"
         }).result
 

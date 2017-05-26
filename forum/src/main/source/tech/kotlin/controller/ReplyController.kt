@@ -1,10 +1,7 @@
 package tech.kotlin.controller
 
 import spark.Route
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.Reply
-import tech.kotlin.model.domain.TextContent
-import tech.kotlin.model.domain.UserInfo
+import tech.kotlin.model.domain.*
 import tech.kotlin.model.request.*
 import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
@@ -14,6 +11,7 @@ import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
+import tech.kotlin.utils.exceptions.tryExec
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -22,9 +20,17 @@ import tech.kotlin.utils.exceptions.check
 object ReplyController {
 
     val createReply = Route { req, _ ->
-        val articleId = req.params(":id").check(Err.PARAMETER) { it.toLong(); true }.toLong()
-        val content = req.queryParams("content").check(Err.PARAMETER, "评论内容为空") { !it.isNullOrBlank() }
-        val aliasId = req.queryParams("alias_id")?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }?.toLong() ?: 0
+        val articleId = req.params(":id")
+                .check(Err.PARAMETER) { it.toLong(); true }
+                .toLong()
+
+        val content = req.queryParams("content")
+                .check(Err.PARAMETER, "评论内容为空") { !it.isNullOrBlank() && it.trim().length >= 10 }
+
+        val aliasId = req.queryParams("alias_id")
+                ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
+                ?.toLong()
+                ?: 0
 
         val owner = TokenService.checkToken(CheckTokenReq(req)).account
 
@@ -39,14 +45,15 @@ object ReplyController {
     }
 
     val delReply = Route { req, _ ->
-        val replyId = req.params(":reply_id").check(Err.PARAMETER) { it.toLong();true }.toLong()
+        val replyId = req.params(":id")
+                .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
         val owner = TokenService.checkToken(CheckTokenReq(req)).account
         val reply = ReplyService.getReplyById(QueryReplyByIdReq().apply {
             this.id = arrayListOf(replyId)
         }).result[replyId] ?: abort(Err.REPLY_NOT_EXISTS)
 
-        if (reply.ownerUID == owner.id || owner.role == Account.Role.ADMIN) {
+        if (reply.ownerUID == owner.id) {
             ReplyService.changeState(ChangeReplyStateReq().apply {
                 this.replyId = replyId
                 this.state = Reply.State.DELETE
@@ -58,9 +65,18 @@ object ReplyController {
     }
 
     val queryReply = Route { req, _ ->
-        val articleId = req.params(":id").check(Err.PARAMETER) { it.toLong();true }.toLong()
-        val offset = req.queryParams("offset")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 0
-        val limit = req.queryParams("limit")?.apply { check(Err.PARAMETER) { it.toInt();true } }?.toInt() ?: 20
+        val articleId = req.params(":id")
+                .check(Err.PARAMETER) { it.toLong();true }.toLong()
+
+        val offset = req.queryParams("offset")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
+
+        val limit = req.queryParams("limit")
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
             this.articleId = articleId
@@ -79,11 +95,19 @@ object ReplyController {
             }).result)
         }
 
+        //只有管理员才能看到封禁和删除的文章内容
+        var isUserAdmin = false
+        try {
+            val account = TokenService.checkToken(CheckTokenReq(req)).account
+            isUserAdmin = account.role == Account.Role.ADMIN
+        } catch (ignore: Throwable) {
+        }
+
         return@Route ok {
             it["reply"] = reply.map {
                 hashMapOf(
                         "meta" to it,
-                        "content" to (contents[it.contentId] ?: TextContent()),
+                        "content" to (if (isUserAdmin) (contents[it.contentId] ?: TextContent()) else TextContent()),
                         "user" to (users[it.ownerUID] ?: UserInfo())
                 )
             }

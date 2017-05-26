@@ -91,7 +91,7 @@ object ReplyDao {
 
         @Select("""
         SELECT * FROM reply
-        WHERE (reply_pool_id = #{replyPoolId} AND state = ${Reply.State.NORMAL})
+        WHERE reply_pool_id = #{replyPoolId}
         ORDER BY create_time DESC
         """)
         @Results(

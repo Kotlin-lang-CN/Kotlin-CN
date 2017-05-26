@@ -58,7 +58,8 @@ object TokenService {
         val account = Mysql.read {
             AccountDao.getById(it, content.uid, useCache = true, updateCache = true)
         } ?: abort(Err.TOKEN_FAIL)
-        account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
+
+        account.check(Err.USER_BAN) { it.state != Account.State.BAN }
 
         return CheckTokenResp().apply {
             this.account = account

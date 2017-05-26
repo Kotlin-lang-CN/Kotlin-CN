@@ -11,6 +11,7 @@ enum class Err(val code: Int, val msg: String) {
     TOKEN_FAIL(3, "非法请求"),
     UNAUTHORIZED(4, "用户权限限制"),
     LOGIN_EXPIRE(5, "登录过期"),
+    USER_BAN(6, "用户被冻结"),
 
     USER_NAME_EXISTS(30, "用户已存在"),
     USER_EMAIL_EXISTS(31, "用户邮箱已经存在"),

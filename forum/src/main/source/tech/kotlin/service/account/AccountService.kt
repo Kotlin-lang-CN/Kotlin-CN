@@ -86,7 +86,10 @@ object AccountService {
         if (account.password != encrypt(req.password)) abort(Err.ILLEGAL_PASSWORD)
 
         //执行登录, 更新登录时间，禁用缓存
-        Mysql.write { AccountDao.saveOrUpdate(it, account.apply { lastLogin = System.currentTimeMillis() }) }
+        val currentAccount = Mysql.write {
+            AccountDao.saveOrUpdate(it, account.apply { lastLogin = System.currentTimeMillis() })
+            AccountDao.getById(it, account.id)!!
+        }
 
         return LoginResp().apply {
             this.token = TokenService.createSession(CreateSessionReq().apply {
@@ -94,18 +97,15 @@ object AccountService {
                 this.uid = account.id
             }).token
             this.userInfo = userInfo
+            this.account = currentAccount
         }
     }
 
     //修改用户状态
-    fun changeState(req: FreezeAccountReq): EmptyResp {
+    fun changeUserState(req: ChangeUserStateReq): EmptyResp {
         Mysql.write {
-            val user = AccountDao.getById(it, req.uid) ?: abort(Err.UNAUTHORIZED)
-            if (user.role != Account.Role.ADMIN) abort(Err.UNAUTHORIZED)
-
-            req.opeation.forEach { uid, state ->
-                AccountDao.update(it, uid, hashMapOf<String, Any>("state" to state))
-            }
+            AccountDao.getById(it, req.uid) ?: abort(Err.UNAUTHORIZED)
+            AccountDao.update(it, req.uid, hashMapOf("state" to "${req.state}"))
         }
         return EmptyResp()
     }
@@ -113,10 +113,9 @@ object AccountService {
     //修改用户密码
     fun updatePassword(req: UpdatePasswordReq): EmptyResp {
         Mysql.write {
-            AccountDao.update(it, req.id, hashMapOf<String, Any>("password" to encrypt(req.password)))
+            AccountDao.update(it, req.id, hashMapOf("password" to encrypt(req.password)))
         }
         return EmptyResp()
     }
-
 }
 
