@@ -28,7 +28,6 @@ module.exports = {
     rules: [
       {
         test: /\.(js|vue)$/,
-        //loader: 'babel-loader?presets=es2015',
         loader: 'eslint-loader',
         enforce: 'pre',
         include: [resolve('src'), resolve('test')],
@@ -44,6 +43,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
+        //loader: 'babel-loader?presets=es2015',
         include: [resolve('src'), resolve('test')]
       },
       {
