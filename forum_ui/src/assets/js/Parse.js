@@ -375,6 +375,6 @@ var json_parse = function (options) {
       : result;
   };
 }
-var bigJSON = {};
+let bigJSON = {};
 bigJSON.parse = json_parse({storeAsString: true});
 module.exports = bigJSON;
