@@ -12,6 +12,7 @@ enum class Err(val code: Int, val msg: String) {
     UNAUTHORIZED(4, "用户权限限制"),
     LOGIN_EXPIRE(5, "登录过期"),
     USER_BAN(6, "用户被冻结"),
+    GITHUB_AUTH_ERR(7, "无效的github token"),
 
     USER_NAME_EXISTS(30, "用户已存在"),
     USER_EMAIL_EXISTS(31, "用户邮箱已经存在"),

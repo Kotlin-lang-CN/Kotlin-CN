@@ -38,28 +38,24 @@ object TokenService {
     fun checkToken(req: CheckTokenReq): CheckTokenResp {
         val content: Session
         try {
+            //validate session
             content = JWT.loads<Session>(key = jwtToken, jwt = req.token, expire = jwtExpire)
+            tryExec(Err.TOKEN_FAIL) {
+                assert(content.device.isEquals(req.device))
+                val result = Json.loads<Session>(Redis read { it.get(key(content.id)) })
+                assert(content.isEqual(result))
+                return@tryExec result
+            }
         } catch (err: JWT.ExpiredError) {
             abort(Err.LOGIN_EXPIRE)//登录会话过期
         } catch (err: JWT.DecodeError) {
             abort(Err.TOKEN_FAIL)//token解析失败，无效的token
         }
 
-        //validate device
-        content.check(Err.TOKEN_FAIL) { it.device.isEquals(req.device) }
-
-        //validate session
-        val cachedSession = tryExec(Err.TOKEN_FAIL) {
-            Json.loads<Session>(Redis read { it.get(key(content.id)) })
-        }
-        cachedSession.check(Err.TOKEN_FAIL) { it.isEqual(content) }
-
         //validate account state
-        val account = Mysql.read {
-            AccountDao.getById(it, content.uid, useCache = true, updateCache = true)
-        } ?: abort(Err.TOKEN_FAIL)
-
-        account.check(Err.USER_BAN) { it.state != Account.State.BAN }
+        val account = Mysql.read { AccountDao.getById(it, content.uid, useCache = true, updateCache = true) }
+                ?.check(Err.USER_BAN) { it.state != Account.State.BAN }
+                ?: abort(Err.TOKEN_FAIL)
 
         return CheckTokenResp().apply {
             this.account = account

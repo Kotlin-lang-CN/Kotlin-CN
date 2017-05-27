@@ -12,6 +12,8 @@ import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
+import tech.kotlin.utils.properties.Props
+import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -19,8 +21,8 @@ import tech.kotlin.utils.exceptions.tryExec
  *********************************************************************/
 object AccountController {
 
-    val login = Route { req, _ ->
-        val resp = AccountService.loginWithName(LoginReq().apply {
+    val login = Route { req, resp ->
+        val loginResp = AccountService.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
             this.loginName = req.queryParams("login_name")
@@ -29,18 +31,21 @@ object AccountController {
             this.password = req.queryParams("password")
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
         })
+
+        resp.cookie("X-App-UID", "${loginResp.userInfo.uid}")
+        resp.cookie("X-App-Token", loginResp.token)
         return@Route ok {
-            it["uid"] = resp.userInfo.uid
-            it["token"] = resp.token
-            it["username"] = resp.userInfo.username
-            it["email"] = resp.userInfo.email
-            it["is_email_validate"] = resp.userInfo.emailState == UserInfo.EmailState.VERIFIED
-            it["role"] = resp.account.role
+            it["uid"] = loginResp.userInfo.uid
+            it["token"] = loginResp.token
+            it["username"] = loginResp.userInfo.username
+            it["email"] = loginResp.userInfo.email
+            it["is_email_validate"] = loginResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
+            it["role"] = loginResp.account.role
         }
     }
 
-    val register = Route { req, _ ->
-        val resp = AccountService.create(CreateAccountReq().apply {
+    val register = Route { req, resp ->
+        val createResp = AccountService.create(CreateAccountReq().apply {
 
             this.username = req.queryParams("username")
                     .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
@@ -58,9 +63,12 @@ object AccountController {
 
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
         })
+
+        resp.cookie("X-App-UID", "${createResp.userInfo.uid}")
+        resp.cookie("X-App-Token", createResp.token)
         return@Route ok {
-            it["uid"] = resp.account.id
-            it["token"] = resp.token
+            it["uid"] = createResp.account.id
+            it["token"] = createResp.token
         }
     }
 

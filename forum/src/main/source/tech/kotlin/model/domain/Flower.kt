@@ -14,19 +14,15 @@ class Flower {
     @JsonProperty("id")
     var id: Long = 0
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "点赞类型")
-    @JsonProperty("type")
-    var type: Int = Type.ARTICLE
-
-    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "点赞对象id")
-    @JsonProperty("target_id")
+    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT64, description = "点赞对象id")
+    @JsonProperty("flower_pool_id")
     var target: Long = 0
 
-    @Protobuf(order = 4, required = true, fieldType = FieldType.UINT64, description = "点赞人")
+    @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "点赞人")
     @JsonProperty("owner")
     var owner: Long = 0
 
-    @Protobuf(order = 5, required = true, fieldType = FieldType.UINT64, description = "点赞时间(毫秒)")
+    @Protobuf(order = 4, required = true, fieldType = FieldType.UINT64, description = "点赞时间(毫秒)")
     @JsonProperty("create_time")
     var createTime: Long = 0
 

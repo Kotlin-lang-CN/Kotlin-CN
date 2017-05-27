@@ -34,6 +34,35 @@ CREATE TABLE IF NOT EXISTS user_info (
   DEFAULT CHARSET utf8,
   ENGINE = Innodb;
 
+CREATE TABLE IF NOT EXISTS github_user_info (
+  uid            BIGINT PRIMARY KEY    NOT NULL
+  COMMENT '用户id',
+  access_token   TEXT                  NOT NULL
+  COMMENT 'github token',
+  id             BIGINT                NOT NULL
+  COMMENT 'github id',
+  name           TEXT                  NOT NULL
+  COMMENT 'github username',
+  email          VARCHAR(128)          NOT NULL
+  COMMENT 'github email',
+  avatar         VARCHAR(512)          NOT NULL
+  COMMENT '用户logo',
+  login          VARCHAR(128)          NOT NULL
+  COMMENT 'github 登录用户名',
+  blog           TEXT                  NOT NULL
+  COMMENT '个人博客',
+  location       TEXT                  NOT NULL
+  COMMENT '地址',
+  follower_count INTEGER               NOT NULL DEFAULT 0
+  COMMENT 'github follower数',
+  company        TEXT                  NOT NULL
+  COMMENT '公司信息',
+  INDEX github_id (id)
+)
+  COMMENT 'github用户',
+  DEFAULT CHARSET utf8,
+  ENGINE = Innodb;
+
 CREATE TABLE IF NOT EXISTS article (
   id             BIGINT PRIMARY KEY    NOT NULL
   COMMENT '用户id',
