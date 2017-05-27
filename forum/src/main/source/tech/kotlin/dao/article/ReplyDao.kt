@@ -19,10 +19,10 @@ object ReplyDao {
     }
 
     fun getById(session: SqlSession, id: Long): Reply? {
-        val cached = Cache.getById(id)
+        val cached = ReplyCache.getById(id)
         if (cached != null) return cached
         val result = session[ReplyMapper::class].queryById(id)
-        if (result != null) Cache.update(result)
+        if (result != null) ReplyCache.update(result)
         return result
     }
 
@@ -33,17 +33,25 @@ object ReplyDao {
 
     fun update(session: SqlSession, id: Long, args: HashMap<String, String>) {
         val mapper = session[ReplyMapper::class]
-        Cache.drop(id)
+        ReplyCache.invalid(id)
         mapper.updateByArgs(args.apply { this["id"] = "$id" })
     }
 
     fun getByPool(session: SqlSession, replyPoolId: String): List<Reply> {
         val result = session[ReplyMapper::class].queryByPool(replyPoolId)
-        result.forEach { Cache.update(it) }
+        result.forEach { ReplyCache.update(it) }
         return result
     }
 
-    internal object Cache {
+    fun getCountByPoolId(session: SqlSession, replyPoolId: String): Int {
+        if (!replyPoolId.isNullOrBlank()) {
+            return session[ReplyMapper::class].queryCountByPool(replyPoolId)
+        } else {
+            return session[ReplyMapper::class].queryCount()
+        }
+    }
+
+    internal object ReplyCache {
 
         fun key(id: Long) = "reply:$id"
 
@@ -53,18 +61,17 @@ object ReplyDao {
         }
 
         fun update(reply: Reply) {
-            val key = Cache.key(reply.id)
+            val key = ReplyCache.key(reply.id)
             Redis write {
                 Json.reflect(reply) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
                 it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
 
-        fun drop(aid: Long) {
-            val key = Cache.key(aid)
+        fun invalid(aid: Long) {
+            val key = ReplyCache.key(aid)
             Redis write { Json.reflect<Reply> { name, _ -> it.hdel(key, name) } }
         }
-
     }
 
     interface ReplyMapper {
@@ -102,6 +109,17 @@ object ReplyDao {
                 Result(column = "alias_id", property = "aliasId")
         )
         fun queryByPool(replyPoolId: String): List<Reply>
+
+        @Select("""
+        SELECT COUNT(id) FROM reply
+        WHERE reply_pool_id = #{replyPoolId}
+        """)
+        fun queryCountByPool(replyPoolId: String): Int
+
+        @Select("""
+        SELECT COUNT(id) FROM reply
+        """)
+        fun queryCount(): Int
 
         @UpdateProvider(type = SqlGenerator::class, method = "updateByArgs")
         fun updateByArgs(args: HashMap<String, String>)

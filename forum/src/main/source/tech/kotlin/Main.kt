@@ -51,6 +51,7 @@ fun main(vararg args: String) {
             Spark.get("/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
             Spark.post("/:id/reply", ReplyController.createReply.gate("参与文章评论"))
             Spark.post("/reply/:id/delete", ReplyController.delReply.gate("删除评论"))
+            Spark.get("/reply/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
         }
 
         Spark.path("/admin") {

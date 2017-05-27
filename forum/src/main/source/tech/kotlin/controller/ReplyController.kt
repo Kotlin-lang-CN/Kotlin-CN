@@ -115,4 +115,19 @@ object ReplyController {
         }
     }
 
+    val queryReplyCount = Route { req, _ ->
+        val queryId = req.queryParams("id")
+                ?.check(Err.PARAMETER) { it.split(',').map { it.toLong() };true }
+                ?.split(',')
+                ?.map { it.toLong() }
+                ?: listOf(0L)
+
+        val result = ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+            this.id = queryId
+        })
+        return@Route ok {
+            it["data"] = result.result
+        }
+    }
+
 }

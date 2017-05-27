@@ -6,10 +6,7 @@ import tech.kotlin.dao.article.ArticleDao
 import tech.kotlin.dao.article.ReplyDao
 import tech.kotlin.model.domain.Reply
 import tech.kotlin.model.request.*
-import tech.kotlin.model.response.CreateReplyResp
-import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.model.response.QueryReplyByArticleResp
-import tech.kotlin.model.response.QueryReplyByIdResp
+import tech.kotlin.model.response.*
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.mysql.Mysql
@@ -23,19 +20,6 @@ object ReplyService {
 
     //创建一则文章回复
     fun create(req: CreateArticleReplyReq): CreateReplyResp {
-        if (req.aliasId != 0L) {
-            Mysql.read {
-                val reply = ReplyDao.getById(it, req.aliasId) ?:
-                        abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-
-                if (reply.aliasId != req.aliasId)
-                    abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-
-                ArticleDao.getById(it, req.articleId, useCache = true, updateCache = true) ?:
-                        abort(Err.ARTICLE_NOT_EXISTS)
-            }
-        }
-
         val replyId = Snowflake(0).next()
         val contentId = TextService.createContent(CreateTextContentReq().apply {
             this.serializeId = "reply:$replyId"
@@ -51,7 +35,14 @@ object ReplyService {
             this.contentId = contentId
             this.aliasId = req.aliasId
         }
-        Mysql.write { ReplyDao.create(it, reply) }
+        Mysql.write {
+            if (reply.aliasId != 0L) {
+                val alias = ReplyDao.getById(it, req.aliasId) ?: abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+                if (alias.replyPoolId != "article:${req.articleId}") abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+            }
+            ArticleDao.getById(it, req.articleId, useCache = true, updateCache = true) ?: abort(Err.ARTICLE_NOT_EXISTS)
+            ReplyDao.create(it, reply)
+        }
         return CreateReplyResp().apply {
             this.replyId = reply.id
             this.contentId = contentId
@@ -91,8 +82,15 @@ object ReplyService {
             this.result = result
         }
     }
+
+    //获取文章评论数量
+    fun getReplyCountByArticle(req: QueryReplyCountByArticleReq): QueryReplyCountByArticleResp {
+        val result = Mysql.read { session ->
+            req.id.map { it to ReplyDao.getCountByPoolId(session, if (it == 0L) "" else "article:$it") }.toMap()
+        }
+        return QueryReplyCountByArticleResp().apply {
+            this.result = result
+        }
+    }
 }
-
-
-
 

@@ -9,6 +9,7 @@ import tech.kotlin.model.request.*
 import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
 import tech.kotlin.service.article.ArticleService
+import tech.kotlin.service.article.ReplyService
 import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
@@ -139,11 +140,11 @@ object ArticleController {
 
         val author = UserService.queryById(QueryUserReq().apply {
             this.id = arrayListOf(article.author)
-        }).account[article.author] ?: UserInfo()
+        }).info[article.author] ?: UserInfo()
 
         val lastEditor = UserService.queryById(QueryUserReq().apply {
             this.id = arrayListOf(article.lastEditUID)
-        }).account[article.author] ?: UserInfo()
+        }).info[article.author] ?: UserInfo()
 
         val content = TextService.getById(QueryTextReq().apply {
             this.id = arrayListOf(article.contentId)
