@@ -20,9 +20,11 @@ const config = {
       fine: '/article/fine'
     }
   },
-  ui: {
+  UI: {
     root: '#/',
     account: '#/account',
+    register: '#/register',
+    login: '#/login',
     edit: '#/edit',
     topics: '#/topics',
     manager: '#/manager'

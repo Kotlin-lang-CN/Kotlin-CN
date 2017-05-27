@@ -2,6 +2,7 @@ import bigJSON from './Parse.js';
 import Cookie from './Cookie.js';
 import Config from './Config.js';
 import LoginMgr from './LoginMgr.js';
+import Event from './Event.js';
 
 class Net {
   constructor() {
@@ -31,26 +32,29 @@ class Net {
         'X-App-Vendor': this.vendor,
         'X-App-System': this.system,
         'Content-Type': this.contentType,
-        'X-App-Token': LoginMgr.token
+        'X-App-Token': LoginMgr.getToken()
       }
     }
   }
 
-  ajax(i, e) {
+  ajax(request, success) {
     let header = this.Header.get();
     $.ajax({
-      url: Config.API + i.url,
+      url: Config.API + request.url,
       cache: !1,
-      type: i.type,
+      type: request.type,
       dataType: "text",
       headers: header,
-      data: i.condition,
-      success: function (i) {
-        if (i = bigJSON.parse(i), 0 !== i.code) throw i.msg;
-        e(i)
+      data: request.condition,
+      success: function (data) {
+        if (data = bigJSON.parse(data), 0 !== data.code) {
+          Event.on('error', data.msg);
+          return;
+        }
+        success(data)
       },
-      error: function (i) {
-        throw "error" + i;
+      error: function (error) {
+        Event.on('error', error);
       }
     })
   }
