@@ -71,57 +71,62 @@
   };
 </script>
 <style scoped lang="less">
-    .register {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      margin-top: 20px;
-      padding-bottom: 12px;
+  .register {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    margin-top: 20px;
+    padding-bottom: 12px;
+  }
+
+  .list-head {
+    background: #fafafa;
+    font-size: 14px;
+    padding: 4px 16px;
+    color: #999;
+  }
+
+  .form {
+    margin: 6px 0;
+    > div {
+      box-sizing: border-box;
+      margin: 4px 16px;
+      border: 1px solid #f1f1f1;
+      padding-left: 8px;
     }
-    .list-head {
-      background: #fafafa;
-      font-size: 14px;
-      padding: 4px 16px;
-      color: #999;
-    }
-    .form {
-      margin: 6px 0;
-      > div {
-        box-sizing: border-box;
-        margin: 4px 16px;
-        border: 1px solid #f1f1f1;
-        padding-left: 8px;
+    > div.div-checkbox {
+      border: 0;
+      font-size: 12px;
+      color: #666;
+      margin: 12px 8px;
+      div {
+        display: inline-block;
+        margin-left: 8px;
       }
-      > div.div-checkbox {
-        border: 0;
-        font-size: 12px;
-        color: #666;
-        margin: 12px 8px;
-        div {
-          display: inline-block;
-          margin-left: 8px;
-        }
-      }
     }
-    input {
-      line-height: 38px;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      outline: none;
-      border-width: 0;
-      font-size: 15px;
-    }
-    input[type="checkbox"] {
-      display: inline-block;
-      width: initial;
-    }
-    .button {
-      line-height: 36px;
-      border-radius: 5px;
-      height: 36px;
-      background: white;
-      border-color: #f1f1f1;
-      color: #eb5424;
-    }
+  }
+
+  input {
+    line-height: 38px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    outline: none;
+    border-width: 0;
+    font-size: 15px;
+  }
+
+  input[type="checkbox"] {
+    display: inline-block;
+    width: initial;
+  }
+
+  .button {
+    line-height: 36px;
+    border-radius: 5px;
+    height: 36px;
+    background: white;
+    border-color: #f1f1f1;
+    color: #eb5424;
+  }
 </style>

@@ -5,19 +5,19 @@ const config = {
     account: {
       register: '/account/register',
       login: '/account/login',
-      user: '/account/user/{1}',
-      password: '/account/user/{1}/password',
-      update: '/account/user/{1}/update'
+      user: '/account/user/{0}',
+      password: '/account/user/{0}/password',
+      update: '/account/user/{0}/update'
     },
     article: {
       post: '/article/post',
-      detail: '/article/{1}',
-      update: '/article/{1}/update',
-      reply: '/article/{1}/reply',
-      delete: '/article/{1}/delete',
-      list: '/article/list',
-      category: '/article/category/{1}',
-      fine: '/article/fine'
+      detail: '/article/post/{0}',
+      update: '/article/post/{0}/update',
+      delete: '/article/post/{0}/delete',
+      reply: '/article/{0}/reply',
+      list: '/article/list',//获取最新文章列表
+      fine: '/article/fine', //获取精品文章列表
+      category: '/article/category/{0}'//获取特定类别最新文章列表
     }
   },
   UI: {
@@ -27,7 +27,8 @@ const config = {
     login: '#/login',
     edit: '#/edit',
     topics: '#/topics',
-    manager: '#/manager'
+    manager: '#/manager',
+    topic: '#/topic'
   }
 };
 export default config;

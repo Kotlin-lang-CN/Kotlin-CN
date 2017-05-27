@@ -15,6 +15,7 @@
 
 <style scoped>
   div {
+    min-width: 320px;
     text-align: center;
     margin: auto;
     color: #999;

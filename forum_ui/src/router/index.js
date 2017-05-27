@@ -35,6 +35,12 @@ export default new Router({
       require(['@/views/Login.vue'], resolve);
     }
   }, {
+    path: '/topic/:id',
+    name: 'Topic',
+    component: function (resolve) {
+      require(['@/views/Topic.vue'], resolve);
+    }
+  },{
     path: '/topics',
     name: 'Topics',
     component: function (resolve) {

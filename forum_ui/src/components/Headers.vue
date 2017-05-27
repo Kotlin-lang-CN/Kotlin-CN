@@ -55,6 +55,10 @@
 </script>
 
 <style scoped lang="less">
+  .header{
+    min-width: 320px;
+  }
+
   .toast {
     background: lightcoral;
     color: white;
