@@ -35,6 +35,9 @@ dependencies {
     //redis
     compile 'redis.clients:jedis:2.9.0'
 
+    //zookeeper
+    //compile 'org.apache.zookeeper:zookeeper:3.4.10'
+
     compile 'com.relops:snowflake:1.1'
     compile 'com.sparkjava:spark-core:2.6.0'
     compile 'org.apache.logging.log4j:log4j-api:2.8.2'

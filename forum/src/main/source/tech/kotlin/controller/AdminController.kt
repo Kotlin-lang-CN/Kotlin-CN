@@ -120,48 +120,4 @@ object AdminController {
             it["next_offset"] = offset + articles.size
         }
     }
-
-
-    val queryReply = Route { req, _ ->
-        val articleId = req.params(":id")
-                .check(Err.PARAMETER) { it.toLong();true }.toLong()
-
-        val offset = req.queryParams("offset")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 0
-
-        val limit = req.queryParams("limit")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 20
-
-        val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
-            this.articleId = articleId
-            this.offset = offset
-            this.limit = limit
-        }).result
-
-        val users = HashMap<Long, UserInfo>()
-        val contents = HashMap<Long, TextContent>()
-        if (reply.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
-                this.id = reply.map { it.ownerUID }.toList()
-            }).info)
-            contents.putAll(TextService.getById(QueryTextReq().apply {
-                this.id = reply.map { it.contentId }.toList()
-            }).result)
-        }
-
-        return@Route ok {
-            it["reply"] = reply.map {
-                hashMapOf(
-                        "meta" to it,
-                        "content" to (contents[it.contentId] ?: TextContent()),
-                        "user" to (users[it.ownerUID] ?: UserInfo())
-                )
-            }
-            it["next_offset"] = offset + reply.size
-        }
-    }
 }
