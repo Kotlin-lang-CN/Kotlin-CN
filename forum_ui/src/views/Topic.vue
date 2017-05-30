@@ -38,15 +38,13 @@
         topic: null,
         content: '',
         reply: [],
-        toReplyContent:''
+        toReplyContent: ''
       }
     },
     created(){
       this.id = this.$route.params.id;
 
       this.getArticle();
-
-      debugger;
       this.getReply(0);
     },
     computed: {
@@ -56,9 +54,8 @@
     },
     methods: {
       getArticle(){
-        let url = Config.URL.article.detail.format(this.id);
         let request = {
-          url: url,
+          url: Config.URL.article.detail.format(this.id),
           type: "GET",
           condition: {}
         };
@@ -68,9 +65,8 @@
         })
       },
       getReply(index){
-        let url = Config.URL.article.reply.format(this.id);
         let request = {
-          url: url,
+          url: Config.URL.article.reply.format(this.id),
           type: "GET",
           condition: {
             offset: index,
@@ -78,10 +74,11 @@
           }
         };
         Net.ajax(request, (data) => {
-          debugger;
           let list = data.reply;
           if (!Array.isArray(list))return;
-          if(index === 0){this.reply = [];}
+          if (index === 0) {
+            this.reply = [];
+          }
           this.reply = Array.concat(this.reply, list);
           //TODO 循环取的时候长度有问题
           //if (list.length > 0) {
@@ -94,9 +91,8 @@
           Event.emit("error", '评论不能为空');
           return;
         }
-        let url = Config.URL.article.reply.format(this.id);
         let request = {
-          url: url,
+          url: Config.URL.article.reply.format(this.id),
           type: "POST",
           condition: {
             content: this.toReplyContent

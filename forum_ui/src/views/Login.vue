@@ -4,10 +4,10 @@
       <div class="list-head">登录</div>
       <div class="form">
         <div>
-          <input v-model="loginUser" type="text" name="user" placeholder="用户名／邮箱">
+          <input v-model="loginUser" type="text" name="user" placeholder="用户名／邮箱"/>
         </div>
         <div>
-          <input v-model="loginPass" type="password" name="password" placeholder="密码">
+          <input v-model="loginPass" type="password" name="password" placeholder="密码"/>
         </div>
         <div class="button" v-on:click="login">登录</div>
       </div>

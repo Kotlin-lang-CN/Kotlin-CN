@@ -26,9 +26,11 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin: 1px auto;
-    max-width: 1000px;
 
+    >div{
+      max-width: 1000px;
+      margin: 1px auto;
+    }
   }
 
   a {
