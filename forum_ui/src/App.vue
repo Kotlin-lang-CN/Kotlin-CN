@@ -48,9 +48,16 @@
     margin: 0;
   }
 
-  textarea{
+  textarea {
     outline: none;
     border-radius: 8px;
     border: 1px #f1f1f1 solid;
+  }
+
+  .button {
+    line-height: 36px;
+    height: 36px;
+    color: #eb5424;
+    padding: 6px 12px;
   }
 </style>

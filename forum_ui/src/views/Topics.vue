@@ -91,10 +91,6 @@
 
   .button {
     border-left: 1px #f1f1f1 solid;
-    line-height: 36px;
-    border-radius: 5px;
-    height: 36px;
-    color: #eb5424;
     padding: 6px 12px;
     float: right;
   }
