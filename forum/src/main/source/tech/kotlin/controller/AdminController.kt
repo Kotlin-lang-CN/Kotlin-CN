@@ -8,9 +8,9 @@ import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
 import tech.kotlin.service.article.ArticleService
 import tech.kotlin.service.article.ReplyService
-import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.check
+import tech.kotlin.utils.serialize.dict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -111,11 +111,11 @@ object AdminController {
 
         return@Route ok {
             it["articles"] = articles.map {
-                hashMapOf(
-                        "meta" to it,
-                        "author" to (users[it.author] ?: UserInfo()),
-                        "last_editor" to (users[it.lastEditUID] ?: UserInfo())
-                )
+                dict {
+                    this["meta"] = it
+                    this["author"] = users[it.author] ?: UserInfo()
+                    this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                }
             }
             it["next_offset"] = offset + articles.size
         }

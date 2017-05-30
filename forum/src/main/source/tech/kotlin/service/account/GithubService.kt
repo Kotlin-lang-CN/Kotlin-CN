@@ -13,10 +13,11 @@ import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.CreateAuthSessionReq
 import tech.kotlin.model.request.GithubAuthReq
 import tech.kotlin.model.response.CreateAuthSessionResp
+import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.response.GithubAuthResp
+import tech.kotlin.model.request.GithubBindReq
 import tech.kotlin.utils.algorithm.JWT
 import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
 import tech.kotlin.utils.http.Http
@@ -24,7 +25,6 @@ import tech.kotlin.utils.mysql.Mysql
 import tech.kotlin.utils.properties.Props
 import tech.kotlin.utils.properties.long
 import tech.kotlin.utils.properties.str
-import tech.kotlin.utils.redis.Redis
 import tech.kotlin.utils.serialize.Json
 import java.util.*
 
@@ -44,45 +44,22 @@ object GithubService {
     private val redirectUrl: String = properties str "github.auth.redirect.url"
     private val userUrl: String = properties str "github.user.url"
 
-    private fun key(id: Long) = "github:$id"
-
     fun createAuthSession(req: CreateAuthSessionReq): CreateAuthSessionResp {
-        val content = Session().apply {
-            id = Snowflake(0).next()
-            device = req.device
-            uid = 0
-        }
-
-        //save github session in redis
-        Redis write {
-            it.set(key(content.id), Json.dumps(content))
-            val expire = (jwtExpire / 1000).toInt()
-            it.expire(key(content.id), expire)
-        }
-
         return CreateAuthSessionResp().apply {
-            state = JWT.dumps(key = jwtToken, content = content)
+            state = JWT.dumps(key = jwtToken, content = Session().apply {
+                id = Snowflake(0).next()
+                device = req.device
+                uid = 0
+            })
         }
     }
 
     fun handleAuthCallback(req: GithubAuthReq): GithubAuthResp {
-        val content: Session
-        try {
-            content = JWT.loads<Session>(key = jwtToken, jwt = req.state, expire = jwtExpire)
-            tryExec(Err.TOKEN_FAIL) {
-                assert(content.device.isEquals(req.device))
-                val result = Json.loads<Session>(Redis read { it.get(key(content.id)) })
-                assert(result.isEqual(content))
-                return@tryExec result
-            }
-        } catch (err: JWT.ExpiredError) {
-            abort(Err.LOGIN_EXPIRE)//登录会话过期
-        } catch (err: JWT.DecodeError) {
-            abort(Err.TOKEN_FAIL)//token解析失败，无效的token
+        tryExec(Err.GITHUB_AUTH_ERR) {
+            val session = JWT.loads<Session>(key = jwtToken, jwt = req.state, expire = jwtExpire)
+            assert(session.device.isEquals(req.device))
         }
-
         val githubInfo = getUser(req.code, req.state)
-
         var account = Account()
         var userInfo = UserInfo()
         val needBind = Mysql.read {
@@ -92,12 +69,16 @@ object GithubService {
             account = AccountDao.getById(it, result.uid, useCache = true, updateCache = true)!!
             return@read false
         }
-        if (needBind) Mysql.write { GithubUserInfoDao.saveOrUpdate(it, githubInfo) }
         return GithubAuthResp().apply {
             this.github = githubInfo
-            this.needBindAccount = needBind
+            this.hasAccount = !needBind
             this.userInfo = userInfo
             this.account = account
+            this.sessionToken = JWT.dumps(key = jwtToken, content = Session().apply {
+                id = Snowflake(0).next()
+                device = req.device
+                uid = github.id
+            })
         }
     }
 

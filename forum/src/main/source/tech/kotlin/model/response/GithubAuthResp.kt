@@ -14,8 +14,8 @@ class GithubAuthResp {
     var github = GithubUser()
 
     @Protobuf(order = 2, required = true, fieldType = FieldType.BOOL, description = "是否需要绑定账号")
-    @JsonProperty("need_bind_account")
-    var needBindAccount = false
+    @JsonProperty("has_account")
+    var hasAccount = false
 
     @Protobuf(order = 3, required = true, fieldType = FieldType.OBJECT, description = "已绑定账号")
     @JsonProperty("account")
@@ -24,5 +24,9 @@ class GithubAuthResp {
     @Protobuf(order = 4, required = true, fieldType = FieldType.OBJECT, description = "用户信息")
     @JsonProperty("user_info")
     var userInfo = UserInfo()
+
+    @Protobuf(order = 5, required = true, fieldType = FieldType.STRING, description = "第三方账号登录token")
+    @JsonProperty("session_token")
+    var sessionToken = ""
 
 }

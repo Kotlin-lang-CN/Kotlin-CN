@@ -3,7 +3,7 @@ package tech.kotlin
 import spark.Spark.*
 import tech.kotlin.controller.*
 import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.os.LooperApp.start
+import tech.kotlin.utils.os.LooperApp
 import tech.kotlin.utils.properties.Props
 import tech.kotlin.utils.properties.int
 import tech.kotlin.utils.redis.Redis
@@ -14,7 +14,7 @@ import tech.kotlin.utils.redis.Redis
  *********************************************************************/
 val properties = Props.loads("project.properties")
 
-fun main(vararg args: String) = start({
+fun main(vararg args: String) = LooperApp.start({
     Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
 
@@ -57,5 +57,4 @@ fun main(vararg args: String) = start({
             post("/reply/:id/state", AdminController.replyState.gate("修改评论状态"))
         }
     }
-    true
 }, args)

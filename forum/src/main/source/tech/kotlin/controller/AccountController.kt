@@ -12,8 +12,7 @@ import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
-import tech.kotlin.utils.properties.Props
-import java.util.*
+import tech.kotlin.utils.serialize.strDict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -45,14 +44,12 @@ object AccountController {
     }
 
     val register = Route { req, resp ->
+        //创建账号
         val createResp = AccountService.create(CreateAccountReq().apply {
-
             this.username = req.queryParams("username")
                     .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
-
             this.password = req.queryParams("password")
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() && it.length >= 8 }
-
             this.email = req.queryParams("email")
                     .check(Err.PARAMETER, "无效的邮箱") {
                         !it.isNullOrBlank()
@@ -60,9 +57,19 @@ object AccountController {
                                 "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
                         ))
                     }
-
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
         })
+
+        //修改头像
+        val logo = req.queryParams("logo") ?: ""
+        if (!logo.isNullOrBlank()) {
+            UserService.updateById(UpdateUserReq().apply {
+                this.id = createResp.account.id
+                this.args = strDict {
+                    if (!logo.isNullOrBlank()) this["logo"] = logo
+                }
+            })
+        }
 
         resp.cookie("X-App-UID", "${createResp.userInfo.uid}")
         resp.cookie("X-App-Token", createResp.token)
@@ -138,7 +145,7 @@ object AccountController {
 
         UserService.updateById(UpdateUserReq().apply {
             this.id = uid
-            this.args = HashMap<String, String>().apply {
+            this.args = strDict {
                 if (!username.isNullOrBlank()) this["username"] = username
                 if (!email.isNullOrBlank()) this["email"] = email
                 if (!logo.isNullOrBlank()) this["logo"] = logo

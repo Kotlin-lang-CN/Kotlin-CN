@@ -9,12 +9,12 @@ import tech.kotlin.model.request.*
 import tech.kotlin.service.account.TokenService
 import tech.kotlin.service.account.UserService
 import tech.kotlin.service.article.ArticleService
-import tech.kotlin.service.article.ReplyService
 import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
+import tech.kotlin.utils.serialize.strDict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -90,12 +90,12 @@ object ArticleController {
         //更新文章元数据
         ArticleService.updateMeta(UpdateArticleReq().apply {
             this.id = id
-            this.args = HashMap<String, String>().apply {
+            this.args = strDict {
                 if (!title.isNullOrBlank()) this += "title" to title
                 if (category > 0) this += "category" to "$category"
                 if (!tags.isNullOrBlank()) this += "tags" to tags
-                this += "last_edit_time" to "${System.currentTimeMillis()}"
-                this += "last_edit_uid" to "${me.id}"
+                this["last_edit_time"] = "${System.currentTimeMillis()}"
+                this["last_edit_uid"] = "${me.id}"
                 if (contentId != 0L) this += "content_id" to "$contentId"
             }
         })

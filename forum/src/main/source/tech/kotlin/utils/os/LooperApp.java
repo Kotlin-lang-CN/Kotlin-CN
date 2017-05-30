@@ -1,7 +1,6 @@
 package tech.kotlin.utils.os;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import tech.kotlin.utils.log.Log;
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -9,27 +8,23 @@ import org.apache.logging.log4j.Logger;
  *********************************************************************/
 public final class LooperApp {
 
-    private static final Logger log = LogManager.getLogger(Looper.class.getSimpleName());
-
-    public static void start(AppTask task, Runnable onDestroy, String... args) {
+    public static void start(AppTask task, String... args) throws InterruptedException {
         Looper.prepareMain();
         try {
-            if (task.onStart(args)) {
-                Looper.loop();
-            }
+            task.onStart(args);
         } catch (Throwable error) {
-            log.error(error);
+            Log.e(error);
+            return;
+        }
+        try {
+            Looper.loop();
         } finally {
             Looper.quiteMain();
-            if (onDestroy != null) onDestroy.run();
         }
     }
 
-    public static void start(AppTask task, String... args) {
-        start(task, null, args);
+    public interface AppTask {
+        void onStart(String... args) throws Throwable;
     }
 
-    public interface AppTask {
-        boolean onStart(String... args) throws Throwable;
-    }
 }

@@ -13,6 +13,7 @@ import tech.kotlin.service.article.TextService
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
+import tech.kotlin.utils.serialize.dict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -106,11 +107,15 @@ object ReplyController {
 
         return@Route ok {
             it["reply"] = reply.map {
-                hashMapOf(
-                        "meta" to it,
-                        "content" to (if (isUserAdmin) (contents[it.contentId] ?: TextContent()) else TextContent()),
-                        "user" to (users[it.ownerUID] ?: UserInfo())
-                )
+                dict {
+                    this["meta"] = it
+                    this["user"] = users[it.ownerUID] ?: UserInfo()
+                    this["content"] =
+                            if (isUserAdmin || it.state == Reply.State.NORMAL)
+                                contents[it.contentId] ?: TextContent()
+                            else
+                                TextContent()
+                }
             }
             it["next_offset"] = offset + reply.size
         }

@@ -34,8 +34,8 @@ object GithubController {
             this.code = code
             this.state = state
         })
-        if (authResp.needBindAccount) {
-            resp.redirect("http://www.baidu.com/?github_id=${authResp.github.id}&state=$state")
+        if (!authResp.hasAccount) {
+
         } else {
             val token = TokenService.createSession(CreateSessionReq().apply {
                 this.uid = authResp.account.id
@@ -44,8 +44,9 @@ object GithubController {
             resp.cookie("X-App-UID", "${authResp.account.id}")
             resp.cookie("X-App-Token", token)
         }
-        resp.redirect("", 302)
-        return@Route ok()
+        return@Route ok {
+
+        }
     }
 
 }
