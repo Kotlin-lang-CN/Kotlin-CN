@@ -26,18 +26,19 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    margin: 1px auto;
+    max-width: 1000px;
+
   }
 
   a {
     text-decoration: none;
-    color: #333;
+    color: #2c3e50;
     font-weight: normal;
   }
 
   body {
-    background: #e9eaed;
-    margin: 0px;
-    color: #333;
+    margin: 0;
     font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
   }
 
@@ -45,5 +46,11 @@
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+
+  textarea{
+    outline: none;
+    border-radius: 8px;
+    border: 1px #f1f1f1 solid;
   }
 </style>

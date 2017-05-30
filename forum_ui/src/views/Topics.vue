@@ -47,6 +47,7 @@
 
   .content {
     padding: 16px;
+    display: flex;
     box-sizing: border-box;
   }
 
@@ -89,13 +90,13 @@
   }
 
   .button {
+    border-left: 1px #f1f1f1 solid;
     line-height: 36px;
     border-radius: 5px;
     height: 36px;
-    background: #eb5424;
-    border-color: #f1f1f1;
-    color: white;
-    margin: 0 6px;
+    color: #eb5424;
+    padding: 6px 12px;
+    float: right;
   }
 
 </style>

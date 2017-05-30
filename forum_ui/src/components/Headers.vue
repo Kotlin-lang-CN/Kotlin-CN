@@ -71,7 +71,7 @@
   .nav-bar {
     background: white;
     padding: 0 16px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.21);
+    border-bottom: 1px #f1f1f1 solid;
     > div {
       display: inline-block;
     }
