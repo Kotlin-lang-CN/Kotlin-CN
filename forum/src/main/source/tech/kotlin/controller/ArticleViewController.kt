@@ -4,8 +4,8 @@ import spark.Route
 import tech.kotlin.model.domain.Article
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.QueryUserReq
-import tech.kotlin.service.account.UserService
-import tech.kotlin.service.article.ArticleService
+import tech.kotlin.service.account.Users
+import tech.kotlin.service.article.Articles
 import tech.kotlin.model.request.QueryLatestArticleReq
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.check
@@ -28,14 +28,14 @@ object ArticleViewController {
                 ?.toInt()
                 ?: 20
 
-        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
+        val articles = Articles.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
             this.limit = limit
         }).result
 
         val users = HashMap<Long, UserInfo>()
         if (articles.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
+            users.putAll(Users.queryById(QueryUserReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.author })
                     addAll(articles.map { it.lastEditUID })
@@ -71,7 +71,7 @@ object ArticleViewController {
                 ?.toInt()
                 ?: 20
 
-        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
+        val articles = Articles.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
             this.limit = limit
             this.category = "$category"
@@ -80,7 +80,7 @@ object ArticleViewController {
 
         val users = HashMap<Long, UserInfo>()
         if (articles.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
+            users.putAll(Users.queryById(QueryUserReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.author })
                     addAll(articles.map { it.lastEditUID })
@@ -111,7 +111,7 @@ object ArticleViewController {
                 ?.toInt()
                 ?: 20
 
-        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
+        val articles = Articles.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
             this.limit = limit
             this.state = "${Article.State.FINE}"
@@ -119,7 +119,7 @@ object ArticleViewController {
 
         val users = HashMap<Long, UserInfo>()
         if (articles.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
+            users.putAll(Users.queryById(QueryUserReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.author })
                     addAll(articles.map { it.lastEditUID })

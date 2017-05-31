@@ -5,14 +5,21 @@ import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.Device
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.*
-import tech.kotlin.service.account.AccountService
-import tech.kotlin.service.account.TokenService
-import tech.kotlin.service.account.UserService
+import tech.kotlin.service.account.Accounts
+import tech.kotlin.service.account.EmailActivates
+import tech.kotlin.service.account.Sessions
+import tech.kotlin.service.account.Users
+import tech.kotlin.service.mail.Emails
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.exceptions.tryExec
+import tech.kotlin.utils.log.Log
+import tech.kotlin.utils.properties.Props
+import tech.kotlin.utils.properties.str
 import tech.kotlin.utils.serialize.strDict
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -20,8 +27,11 @@ import tech.kotlin.utils.serialize.strDict
  *********************************************************************/
 object AccountController {
 
+    val properties = Props.loads("project.properties")
+    val cgiHost = properties str "cgi.host"
+
     val login = Route { req, resp ->
-        val loginResp = AccountService.loginWithName(LoginReq().apply {
+        val loginResp = Accounts.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
             this.loginName = req.queryParams("login_name")
@@ -44,32 +54,51 @@ object AccountController {
     }
 
     val register = Route { req, resp ->
+        val username = req.queryParams("username")
+                .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
+        val password = req.queryParams("password")
+                .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() && it.length >= 8 }
+        val email = req.queryParams("email")
+                .check(Err.PARAMETER, "无效的邮箱") {
+                    !it.isNullOrBlank() && it.matches(Regex(
+                            "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
+                    ))
+                }
+
         //创建账号
-        val createResp = AccountService.create(CreateAccountReq().apply {
-            this.username = req.queryParams("username")
-                    .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
-            this.password = req.queryParams("password")
-                    .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() && it.length >= 8 }
-            this.email = req.queryParams("email")
-                    .check(Err.PARAMETER, "无效的邮箱") {
-                        !it.isNullOrBlank()
-                                && it.matches(Regex(
-                                "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
-                        ))
-                    }
+        val createResp = Accounts.create(CreateAccountReq().apply {
+            this.username = username
+            this.password = password
+            this.email = email
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
         })
 
         //修改头像
         val logo = req.queryParams("logo") ?: ""
         if (!logo.isNullOrBlank()) {
-            UserService.updateById(UpdateUserReq().apply {
+            Users.updateById(UpdateUserReq().apply {
                 this.id = createResp.account.id
                 this.args = strDict {
                     if (!logo.isNullOrBlank()) this["logo"] = logo
                 }
             })
         }
+
+        val emailActivateToken = EmailActivates.createSession(CreateEmailSessionReq().apply {
+            this.uid = createResp.account.id
+            this.email = email
+        }).token
+        val activateUrl = "$cgiHost/api/account/email/activate?token=${URLEncoder.encode(emailActivateToken, "UTF-8")}"
+        Emails.send(EmailReq().apply {
+            this.to = email
+            this.subject = "[Kotlin-CN] 邮箱激活"
+            this.content = """
+            <h2>尊敬的$username <$email>，您好</h2>
+            <p>感谢您加入 kotlin-cn.org。</p>
+            <p>请点击以下链接进行邮箱验证，以便开始使用您的账号<br>
+            <a href="$activateUrl">$activateUrl</a></p>
+            """.trimIndent()
+        })
 
         resp.cookie("X-App-UID", "${createResp.userInfo.uid}")
         resp.cookie("X-App-Token", createResp.token)
@@ -79,15 +108,21 @@ object AccountController {
         }
     }
 
+    val activateEmail = Route { req, _ ->
+        val token = URLDecoder.decode(req.queryParams("token"), "UTF-8")
+        EmailActivates.activate(ActivateEmailReq().apply { this.token = token })
+        return@Route ok()
+    }
+
     val getUserInfo = Route { req, _ ->
         val uid = req.params(":uid")
                 .check(Err.PARAMETER, "uid错误") { it.toLong(); true }
                 .toLong()
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN || it.id == uid }
 
-        val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
+        val queryUser = Users.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
         val info = queryUser.info[uid] ?: abort(Err.USER_NOT_EXISTS)
         val account = queryUser.account[uid] ?: abort(Err.SYSTEM)
 
@@ -117,10 +152,10 @@ object AccountController {
             abort(Err.PARAMETER, "密码格式有误")
         }
 
-        TokenService.checkToken(CheckTokenReq(req)).account
+        Sessions.checkSession(CheckSessionReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
-        AccountService.updatePassword(UpdatePasswordReq().apply {
+        Accounts.updatePassword(UpdatePasswordReq().apply {
             this.id = uid
             this.password = password
         })
@@ -140,10 +175,10 @@ object AccountController {
         if (username.isNullOrBlank() && email.isNullOrBlank() && logo.isNullOrBlank())
             abort(Err.PARAMETER)
 
-        TokenService.checkToken(CheckTokenReq(req)).account
+        Sessions.checkSession(CheckSessionReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
-        UserService.updateById(UpdateUserReq().apply {
+        Users.updateById(UpdateUserReq().apply {
             this.id = uid
             this.args = strDict {
                 if (!username.isNullOrBlank()) this["username"] = username

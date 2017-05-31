@@ -8,7 +8,7 @@ import tech.kotlin.model.domain.Device
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 
-class CheckTokenReq() {
+class CheckSessionReq() {
 
     @Protobuf(order = 1, required = true, fieldType = FieldType.OBJECT, description = "设备信息")
     @JsonProperty("device")

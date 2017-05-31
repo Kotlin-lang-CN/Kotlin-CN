@@ -16,14 +16,14 @@ import tech.kotlin.utils.mysql.Mysql
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object ArticleService {
+object Articles {
 
     //创建一篇文章
     fun create(req: CreateArticleReq): ArticleResp {
         val articleId = Snowflake(0).next()
         val current = System.currentTimeMillis()
         //调用文本服务创建新的文本对象
-        val contentId = TextService.createContent(CreateTextContentReq().apply {
+        val contentId = Texts.createContent(CreateTextContentReq().apply {
             this.content = req.content
             this.serializeId = "article:$articleId"
         }).id
@@ -66,7 +66,7 @@ object ArticleService {
     //更新文章内容
     fun updateContent(req: UpdateArticleContentReq): ArticleResp {
         //调用文本服务创建新的文本对象
-        val contentID = TextService.createContent(CreateTextContentReq().apply {
+        val contentID = Texts.createContent(CreateTextContentReq().apply {
             this.content = req.content
             this.serializeId = "article:${req.articleId}"
         }).id

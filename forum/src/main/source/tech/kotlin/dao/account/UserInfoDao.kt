@@ -1,9 +1,6 @@
 package tech.kotlin.dao.account
 
-import org.apache.ibatis.annotations.Insert
-import org.apache.ibatis.annotations.Select
-import org.apache.ibatis.annotations.Update
-import org.apache.ibatis.annotations.UpdateProvider
+import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.utils.mysql.Mysql
@@ -72,7 +69,7 @@ object UserInfoDao {
         }
 
         fun update(userInfo: UserInfo) {
-            val key = Cache.key(userInfo.uid)
+            val key = key(userInfo.uid)
             Redis write {
                 Json.reflect(userInfo) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
                 it.expire(key, 2 * 60 * 60)//cache for 2 hours
@@ -80,7 +77,7 @@ object UserInfoDao {
         }
 
         fun drop(uid: Long) {
-            val key = Cache.key(uid)
+            val key = key(uid)
             Redis write { Json.reflect<UserInfo> { name, _ -> it.hdel(key, name) } }
         }
     }
@@ -92,6 +89,7 @@ object UserInfoDao {
         WHERE uid = #{uid}
         LIMIT 1
         """)
+        @Results(Result(column = "email_state", property = "emailState"))
         fun getById(uid: Long): UserInfo?
 
         @Select("""
@@ -99,6 +97,7 @@ object UserInfoDao {
         WHERE username = #{username}
         LIMIT 1
         """)
+        @Results(Result(column = "email_state", property = "emailState"))
         fun getByName(username: String): UserInfo?
 
         @Select("""
@@ -106,6 +105,7 @@ object UserInfoDao {
         WHERE email= #{email}
         LIMIT 1
         """)
+        @Results(Result(column = "email_state", property = "emailState"))
         fun getByEmail(email: String): UserInfo?
 
         @Insert("""

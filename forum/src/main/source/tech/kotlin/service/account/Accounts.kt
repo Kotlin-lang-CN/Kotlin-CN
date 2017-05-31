@@ -22,7 +22,7 @@ import kotlin.properties.Delegates
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object AccountService {
+object Accounts {
 
     private val properties: Properties = Props.loads("project.properties")
     private val passwordSalt: String = properties str "account.pwd.salt"
@@ -61,7 +61,7 @@ object AccountService {
 
         return CreateAccountResp().apply {
             this.account = account
-            this.token = TokenService.createSession(CreateSessionReq().apply {
+            this.token = Sessions.createSession(CreateSessionReq().apply {
                 this.device = req.device
                 this.uid = account.id
             }).token
@@ -92,7 +92,7 @@ object AccountService {
         }
 
         return LoginResp().apply {
-            this.token = TokenService.createSession(CreateSessionReq().apply {
+            this.token = Sessions.createSession(CreateSessionReq().apply {
                 this.device = req.device
                 this.uid = account.id
             }).token
@@ -117,5 +117,6 @@ object AccountService {
         }
         return EmptyResp()
     }
+
 }
 

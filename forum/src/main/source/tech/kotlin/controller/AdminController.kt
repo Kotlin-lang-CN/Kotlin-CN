@@ -3,11 +3,11 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.model.domain.*
 import tech.kotlin.model.request.*
-import tech.kotlin.service.account.AccountService
-import tech.kotlin.service.account.TokenService
-import tech.kotlin.service.account.UserService
-import tech.kotlin.service.article.ArticleService
-import tech.kotlin.service.article.ReplyService
+import tech.kotlin.service.account.Accounts
+import tech.kotlin.service.account.Sessions
+import tech.kotlin.service.account.Users
+import tech.kotlin.service.article.Articles
+import tech.kotlin.service.article.Replys
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.check
 import tech.kotlin.utils.serialize.dict
@@ -27,10 +27,10 @@ object AdminController {
                     arrayOf(Account.State.NORMAL, Account.State.BAN).any { it == s.toInt() }
                 }.toInt()
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
-        AccountService.changeUserState(ChangeUserStateReq().apply {
+        Accounts.changeUserState(ChangeUserStateReq().apply {
             this.uid = userId
             this.state = state
         })
@@ -49,10 +49,10 @@ object AdminController {
                     ).any { it == s.toInt() }
                 }
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
-        ArticleService.updateMeta(UpdateArticleReq().apply {
+        Articles.updateMeta(UpdateArticleReq().apply {
             this.id = articleId
             this.args = hashMapOf("state" to state)
         })
@@ -68,10 +68,10 @@ object AdminController {
             arrayOf(Reply.State.NORMAL, Reply.State.BAN, Reply.State.DELETE).any { it == s.toInt() }
         }.toInt()
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
-        ReplyService.changeState(ChangeReplyStateReq().apply {
+        Replys.changeState(ChangeReplyStateReq().apply {
             this.replyId = replyId
             this.state = state
         })
@@ -90,10 +90,10 @@ object AdminController {
                 ?.toInt()
                 ?: 20
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
-        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
+        val articles = Articles.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
             this.limit = limit
             this.state = "${Article.State.FINE},${Article.State.NORMAL},${Article.State.BAN},${Article.State.DELETE}"
@@ -101,7 +101,7 @@ object AdminController {
 
         val users = HashMap<Long, UserInfo>()
         if (articles.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
+            users.putAll(Users.queryById(QueryUserReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.author })
                     addAll(articles.map { it.lastEditUID })

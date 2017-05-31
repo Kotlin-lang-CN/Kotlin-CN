@@ -16,7 +16,7 @@ import tech.kotlin.utils.mysql.Mysql
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object UserService {
+object Users {
 
     //通过id批量查询用户
     fun queryById(req: QueryUserReq): QueryUserResp {

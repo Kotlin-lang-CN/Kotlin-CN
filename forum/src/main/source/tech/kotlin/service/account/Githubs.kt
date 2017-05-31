@@ -8,14 +8,12 @@ import tech.kotlin.dao.account.GithubUserInfoDao
 import tech.kotlin.dao.account.UserInfoDao
 import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.GithubUser
-import tech.kotlin.model.domain.Session
+import tech.kotlin.model.session.AccountSession
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.CreateAuthSessionReq
 import tech.kotlin.model.request.GithubAuthReq
 import tech.kotlin.model.response.CreateAuthSessionResp
-import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.response.GithubAuthResp
-import tech.kotlin.model.request.GithubBindReq
 import tech.kotlin.utils.algorithm.JWT
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.check
@@ -32,7 +30,7 @@ import java.util.*
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object GithubService {
+object Githubs {
 
     private val properties: Properties = Props.loads("project.properties")
     private val jwtToken: String = properties str "github.jwt.token"
@@ -46,7 +44,7 @@ object GithubService {
 
     fun createAuthSession(req: CreateAuthSessionReq): CreateAuthSessionResp {
         return CreateAuthSessionResp().apply {
-            state = JWT.dumps(key = jwtToken, content = Session().apply {
+            state = JWT.dumps(key = jwtToken, content = AccountSession().apply {
                 id = Snowflake(0).next()
                 device = req.device
                 uid = 0
@@ -56,7 +54,7 @@ object GithubService {
 
     fun handleAuthCallback(req: GithubAuthReq): GithubAuthResp {
         tryExec(Err.GITHUB_AUTH_ERR) {
-            val session = JWT.loads<Session>(key = jwtToken, jwt = req.state, expire = jwtExpire)
+            val session = JWT.loads<AccountSession>(key = jwtToken, jwt = req.state, expire = jwtExpire)
             assert(session.device.isEquals(req.device))
         }
         val githubInfo = getUser(req.code, req.state)
@@ -74,7 +72,7 @@ object GithubService {
             this.hasAccount = !needBind
             this.userInfo = userInfo
             this.account = account
-            this.sessionToken = JWT.dumps(key = jwtToken, content = Session().apply {
+            this.sessionToken = JWT.dumps(key = jwtToken, content = AccountSession().apply {
                 id = Snowflake(0).next()
                 device = req.device
                 uid = github.id

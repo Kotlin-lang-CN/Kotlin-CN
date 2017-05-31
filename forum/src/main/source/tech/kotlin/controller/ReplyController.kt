@@ -6,10 +6,10 @@ import tech.kotlin.model.domain.Reply
 import tech.kotlin.model.domain.TextContent
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.*
-import tech.kotlin.service.account.TokenService
-import tech.kotlin.service.account.UserService
-import tech.kotlin.service.article.ReplyService
-import tech.kotlin.service.article.TextService
+import tech.kotlin.service.account.Sessions
+import tech.kotlin.service.account.Users
+import tech.kotlin.service.article.Replys
+import tech.kotlin.service.article.Texts
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.abort
 import tech.kotlin.utils.exceptions.check
@@ -34,9 +34,9 @@ object ReplyController {
                 ?.toLong()
                 ?: 0
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
 
-        val createResp = ReplyService.create(CreateArticleReplyReq().apply {
+        val createResp = Replys.create(CreateArticleReplyReq().apply {
             this.articleId = articleId
             this.ownerUID = owner.id
             this.content = content
@@ -50,13 +50,13 @@ object ReplyController {
         val replyId = req.params(":id")
                 .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
-        val owner = TokenService.checkToken(CheckTokenReq(req)).account
-        val reply = ReplyService.getReplyById(QueryReplyByIdReq().apply {
+        val owner = Sessions.checkSession(CheckSessionReq(req)).account
+        val reply = Replys.getReplyById(QueryReplyByIdReq().apply {
             this.id = arrayListOf(replyId)
         }).result[replyId] ?: abort(Err.REPLY_NOT_EXISTS)
 
         if (reply.ownerUID == owner.id) {
-            ReplyService.changeState(ChangeReplyStateReq().apply {
+            Replys.changeState(ChangeReplyStateReq().apply {
                 this.replyId = replyId
                 this.state = Reply.State.DELETE
             })
@@ -80,7 +80,7 @@ object ReplyController {
                 ?.toInt()
                 ?: 20
 
-        val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
+        val reply = Replys.getReplyByArticle(QueryReplyByArticleReq().apply {
             this.articleId = articleId
             this.offset = offset
             this.limit = limit
@@ -89,10 +89,10 @@ object ReplyController {
         val users = HashMap<Long, UserInfo>()
         val contents = HashMap<Long, TextContent>()
         if (reply.isNotEmpty()) {
-            users.putAll(UserService.queryById(QueryUserReq().apply {
+            users.putAll(Users.queryById(QueryUserReq().apply {
                 this.id = reply.map { it.ownerUID }.toList()
             }).info)
-            contents.putAll(TextService.getById(QueryTextReq().apply {
+            contents.putAll(Texts.getById(QueryTextReq().apply {
                 this.id = reply.map { it.contentId }.toList()
             }).result)
         }
@@ -100,7 +100,7 @@ object ReplyController {
         //只有管理员才能看到封禁和删除的文章内容
         var isUserAdmin = false
         try {
-            val account = TokenService.checkToken(CheckTokenReq(req)).account
+            val account = Sessions.checkSession(CheckSessionReq(req)).account
             isUserAdmin = account.role == Account.Role.ADMIN
         } catch (ignore: Throwable) {
         }
@@ -128,7 +128,7 @@ object ReplyController {
                 ?.map { it.toLong() }
                 ?: listOf(0L)
 
-        val result = ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+        val result = Replys.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
             this.id = queryId
         })
         return@Route ok {

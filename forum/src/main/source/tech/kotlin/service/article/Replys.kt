@@ -16,12 +16,12 @@ import tech.kotlin.utils.mysql.Mysql
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object ReplyService {
+object Replys {
 
     //创建一则文章回复
     fun create(req: CreateArticleReplyReq): CreateReplyResp {
         val replyId = Snowflake(0).next()
-        val contentId = TextService.createContent(CreateTextContentReq().apply {
+        val contentId = Texts.createContent(CreateTextContentReq().apply {
             this.serializeId = "reply:$replyId"
             this.content = req.content
         }).id

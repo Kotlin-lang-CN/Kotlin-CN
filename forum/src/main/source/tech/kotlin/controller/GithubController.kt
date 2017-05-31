@@ -5,8 +5,8 @@ import tech.kotlin.model.domain.Device
 import tech.kotlin.model.request.CreateAuthSessionReq
 import tech.kotlin.model.request.CreateSessionReq
 import tech.kotlin.model.request.GithubAuthReq
-import tech.kotlin.service.account.GithubService
-import tech.kotlin.service.account.TokenService
+import tech.kotlin.service.account.Githubs
+import tech.kotlin.service.account.Sessions
 import tech.kotlin.utils.exceptions.Err
 import tech.kotlin.utils.exceptions.check
 
@@ -17,7 +17,7 @@ import tech.kotlin.utils.exceptions.check
 object GithubController {
 
     val startAuth = Route { req, _ ->
-        val resp = GithubService.createAuthSession(CreateAuthSessionReq().apply {
+        val resp = Githubs.createAuthSession(CreateAuthSessionReq().apply {
             this.device = Device(req)
         })
         return@Route ok {
@@ -29,7 +29,7 @@ object GithubController {
         val device = Device(req)
         val code = req.queryParams("code").check(Err.GITHUB_AUTH_ERR) { !it.isNullOrBlank() }
         val state = req.queryParams("state").check(Err.GITHUB_AUTH_ERR) { !it.isNullOrBlank() }
-        val authResp = GithubService.handleAuthCallback(GithubAuthReq().apply {
+        val authResp = Githubs.handleAuthCallback(GithubAuthReq().apply {
             this.device = device
             this.code = code
             this.state = state
@@ -37,7 +37,7 @@ object GithubController {
         if (!authResp.hasAccount) {
 
         } else {
-            val token = TokenService.createSession(CreateSessionReq().apply {
+            val token = Sessions.createSession(CreateSessionReq().apply {
                 this.uid = authResp.account.id
                 this.device = device
             }).token

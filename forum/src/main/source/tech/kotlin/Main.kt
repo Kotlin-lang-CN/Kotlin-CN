@@ -27,6 +27,7 @@ fun main(vararg args: String) = LooperApp.start({
             post("/user/:uid/password", AccountController.alterPassword.gate("修改密码"))
             post("/user/:uid/update", AccountController.updateUserInfo.gate("更新用户信息"))
             get("/user/:uid", AccountController.getUserInfo.gate("查询用户信息"))
+            get("/email/activate", AccountController.activateEmail.gate("激活账户邮箱"))
         }
 
         path("/github") {

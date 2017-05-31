@@ -38,6 +38,9 @@ dependencies {
     //zookeeper
     //compile 'org.apache.zookeeper:zookeeper:3.4.10'
 
+    //email
+    compile 'javax.mail:mail:1.4.7'
+
     compile 'com.relops:snowflake:1.1'
     compile 'com.sparkjava:spark-core:2.6.0'
     compile 'org.apache.logging.log4j:log4j-api:2.8.2'
