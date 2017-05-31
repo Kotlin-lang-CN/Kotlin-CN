@@ -13,13 +13,7 @@
     </div>
     <div class="content">
       <div class="post">
-        <article-list :requestUrl="articleListUrl"
-                      :requestOffset="articleListOffset"></article-list>
-        <div class="page">
-          <div>ONE</div>
-          <div>TWO</div>
-          <div>THREE</div>
-        </div>
+        <article-list :requestUrl="articleListUrl"></article-list>
       </div>
       <div class="right-nav">
         <a class="button" :href="uiEdit">发布新话题</a>
@@ -37,17 +31,14 @@
       return {
         uiEdit: Config.UI.edit,
         select: 'default',
-        articleListUrl: '',
-        articleListOffset: 0
+        articleListUrl: ''
       }
     },
     components: {
       'article-list': ArticleList
     },
-    created() {
-      setTimeout(() => {
-        this.articleListUrl = Config.URL.article.list;
-      }, 20);
+    mounted(){
+      this.articleListUrl = Config.URL.article.list;
     },
     methods: {
       selectDefault(){
@@ -61,9 +52,6 @@
       selectNew(){
         this.select = 'news';
         this.articleListUrl = Config.URL.article.list;
-      },
-      createPost(){
-        location.href = Config.UI.edit;
       }
     }
   }

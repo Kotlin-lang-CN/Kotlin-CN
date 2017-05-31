@@ -5,7 +5,7 @@
         <div>{{ topic.article.title }}</div>
         <div><span>{{ topic.article.tags }}</span></div>
         <div>
-          <span>{{ topic.author.username }}</span>AT<span>{{ topic.article.last_edit_time }}</span>
+          <span>{{ topic.author.username }}</span>at<span>{{ topic.article.last_edit_time | moment}}</span>
         </div>
       </header>
       <section>
@@ -18,7 +18,7 @@
       <div class="reply">
         <header>评论</header>
         <div class="item" v-for="value in reply">
-          <div><span>{{ value.user.username }}</span> at <span>{{ value.meta.create_time }}</span></div>
+          <div><span>{{ value.user.username }}</span> at <span>{{ value.meta.create_time | moment}}</span></div>
           <div class="cont">{{value.content.content}}</div>
         </div>
       </div>
@@ -127,7 +127,6 @@
       }
     }
   }
-
   .to-reply {
     max-width: 600px;
     margin-top: 90px;
@@ -146,7 +145,6 @@
       vertical-align: top;
     }
   }
-
   .reply {
     text-align: left;
     margin-top: 30px;

@@ -8,7 +8,7 @@
     name: 'foot',
     data: function () {
       return {
-        msg: 'FOOTER',
+        msg: 'Not Routinism，Think Different'.toUpperCase(),
         moduleShow: true
       }
     },
@@ -24,8 +24,7 @@
   div {
     min-width: 320px;
     text-align: center;
-    margin: auto;
+    margin: 90px auto 0px auto;
     color: #999;
-    margin-top: 48px;
   }
 </style>
