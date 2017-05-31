@@ -1,30 +1,50 @@
 <template>
-  <div class="value-post">
-    <div>精华帖</div>
-    <ul>
-      <li>
-        <div>
-          <div><span>TAB</span>LONG LONG TITLE</div>
-          <div><span>SOMEONE</span>LATS POST AT 'WHEN'</div>
-        </div>
-        <div class="reply">18</div>
-      </li>
-    </ul>
-    <div><a :href="urlTopics" title="">查看更多...</a></div>
+  <div class="content">
+    <div class="sub-title">精华帖</div>
+    <article-list :requestUrl="articleListUrl"
+                  :requestOffset="articleListOffset"></article-list>
+    <a :href="uiTopics" class="more">查看更多...</a>
   </div>
 </template>
 <script>
-  import Config from '../assets/js/Config.js'
+  import Config from "../assets/js/Config.js";
+  import Net from "../assets/js/Net.js";
+  import ArticleList from '../components/ArticleList.vue';
+  import Event from "../assets/js/Event.js";
+
   export default {
-    name: 'hello',
+    name: 'home',
+    components: {
+      'article-list': ArticleList
+    },
     data: function () {
       return {
-        urlTopics:Config.UI.topics,
-        msg: 'TODO:Home'
+        uiTopics: Config.UI.topics,
+        articleListUrl: '',
+        articleListOffset: 0
       }
-    }
+    },
+    created() {
+      setTimeout(() => {
+        this.articleListUrl = Config.URL.article.list;
+      }, 20);
+    },
+    methods: {}
   }
 </script>
-<style scoped>
-
+<style scoped lang="less">
+  .content {
+    .sub-title {
+      text-align: left;
+      padding: 24px 16px;
+      font-size: 24px;
+    }
+    .more {
+      display: block;
+      text-align: left;
+      padding: 16px;
+      color: #eb5424;
+      font-size: 14px;
+    }
+  }
 </style>

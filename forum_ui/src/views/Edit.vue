@@ -13,6 +13,7 @@
     </div>
   </div>
 </template>
+
 <script>
   import Config from "../assets/js/Config.js";
   import LoginMgr from "../assets/js/LoginMgr.js";
@@ -28,6 +29,9 @@
         tag: '',
         input: 'Write here'
       }
+    },
+    created(){
+      Event.emit('fullscreen',true);
     },
     computed: {
       compiledMarkdown: function () {
@@ -62,34 +66,20 @@
       update: _.debounce(function (e) {
         this.input = e.target.value
       }, 300)
+    },
+    destroyed(){
+      Event.emit('fullscreen',false);
     }
   }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-  /**TODO***/
-  /***换页面根模版**/
-  /*.header {*/
-  /*display: none;*/
-  /*}*/
-  /*.foot {*/
-  /*display: none;*/
-  /*}*/
-</style>
 <style scoped lang="less">
   #app > div.edit {
     max-width: 100%;
   }
-
   .meta {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: white;
-
     height: 70px;
-    /*max-width: 600px;*/
+    max-width: 600px;
     margin: auto;
     > div {
       display: inline-block;

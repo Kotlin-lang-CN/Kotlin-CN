@@ -1,21 +1,20 @@
 <template>
   <div>
     <div class="sub-nav">
-      <div v-on:click="selectDefault">默认</div>
-      <div v-on:click="selectFine">优质</div>
-      <div v-on:click="selectNew">最新</div>
-      <div v-on:click="selectCustom">自定义</div>
+      <button v-on:click="selectDefault"
+              v-bind:class="{ 'select': select==='default', 'normal': select!=='default' }">默认
+      </button>
+      <button v-on:click="selectFine"
+              v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }">优质
+      </button>
+      <button v-on:click="selectNew"
+              v-bind:class="{ 'select': select==='news', 'normal': select!=='news' }">最新
+      </button>
     </div>
     <div class="content">
       <div class="post">
-        <div class="list" v-for="value in articles">
-          <a :href="urlTopic + value.meta.id">
-            <div><span>{{ value.meta.tags }}</span><b>{{ value.meta.title }}</b></div>
-            <div><span>{{ value.author.username }}</span>LATS-EDIT BY {{ value.last_editor.username
-              }} AT {{ value.meta.last_edit_time }}
-            </div>
-          </a>
-        </div>
+        <article-list :requestUrl="articleListUrl"
+                      :requestOffset="articleListOffset"></article-list>
         <div class="page">
           <div>ONE</div>
           <div>TWO</div>
@@ -23,63 +22,88 @@
         </div>
       </div>
       <div class="right-nav">
-        <div class="button" v-on:click="createPost">发布新话题</div>
+        <a class="button" :href="uiEdit">发布新话题</a>
       </div>
     </div>
   </div>
 </template>
-<style scoped lang="less">
-  .sub-nav {
-    min-width: 320px;
-    background: beige;
-    > div {
-      display: inline-block;
-      padding: 8px 10px;
+
+<script>
+  import Config from "../assets/js/Config.js";
+  import Net from "../assets/js/Net.js";
+  import ArticleList from '../components/ArticleList.vue';
+  export default {
+    data() {
+      return {
+        uiEdit: Config.UI.edit,
+        select: 'default',
+        articleListUrl: '',
+        articleListOffset: 0
+      }
+    },
+    components: {
+      'article-list': ArticleList
+    },
+    created() {
+      setTimeout(() => {
+        this.articleListUrl = Config.URL.article.list;
+      }, 20);
+    },
+    methods: {
+      selectDefault(){
+        this.select = 'default';
+        this.articleListUrl = Config.URL.article.list;
+      },
+      selectFine(){
+        this.select = 'fine';
+        this.articleListUrl = Config.URL.article.fine;
+      },
+      selectNew(){
+        this.select = 'news';
+        this.articleListUrl = Config.URL.article.list;
+      },
+      createPost(){
+        location.href = Config.UI.edit;
+      }
     }
   }
-
-  .page {
-    > div {
+</script>
+<style scoped lang="less">
+  .sub-nav {
+    text-align: left;
+    padding: 16px;
+    > button {
+      background: white;
+      outline: none;
+      border: 0;
+      color: #666;
       display: inline-block;
-      padding: 16px;
+      font-size: 24px;
+    }
+    .select {
+      color: #eb5424;
+    }
+    .normal {
+      color: #666;
     }
   }
 
   .content {
-    padding: 16px;
+    padding: 0 16px;
     display: flex;
     box-sizing: border-box;
-  }
 
-  .list a {
-    display: block;
-    padding: 16px 16px;
-    text-align: left;
-    border-bottom: 1px solid #f1f1f1;
-    background: white;
-    > div:nth-child(1) {
-      margin-bottom: 8px;
-      span {
-        background: aliceblue;
-        padding: 6px 3px;
-        border-radius: 6px;
-        margin-right: 8px;
-      }
+    .post {
+      float: left;
+      width: 75%;
     }
-    > div:nth-child(2) {
-      color: #666;
-      font-size: 12px;
-      span {
-        color: #999;
+
+    .page {
+      > div {
         display: inline-block;
-        padding-right: 6px;
+        padding: 16px;
       }
     }
-  }
-
-  .post {
-    float: left;
-    width: 75%;
   }
 
   .right-nav {
@@ -96,52 +120,3 @@
   }
 
 </style>
-<script>
-  import Config from "../assets/js/Config.js";
-  import Net from "../assets/js/Net.js";
-
-  export default {
-    data() {
-      return {
-        msg: 'TODO:Topics',
-        urlTopic: Config.UI.topic + '/',
-        articles: {}
-      }
-    },
-    created() {
-      this.get(Config.URL.article.list, 0);
-    },
-    methods: {
-      selectDefault(){
-        this.get(Config.URL.article.list, 0);
-      },
-      selectFine(){
-        this.get(Config.URL.article.fine, 0);
-      },
-      selectNew(){
-        this.get(Config.URL.article.list, 0);
-      },
-      selectCustom(){
-        let id = "custom";
-        this.get(Config.URL.article.category.format(id), 0);
-      },
-      get(url, offset){
-        let request = {
-          url: url,
-          type: "GET",
-          condition: {
-            'offset': offset,
-            'limit': 20
-          }
-        };
-        Net.ajax(request, (data) => {
-          this.articles = data.articles;
-        })
-      },
-      createPost(){
-        location.href = Config.UI.edit;
-      }
-    }
-  }
-</script>
-

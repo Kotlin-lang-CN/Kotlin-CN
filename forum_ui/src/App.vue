@@ -7,6 +7,7 @@
     <app-foot></app-foot>
   </div>
 </template>
+
 <script>
   import Event from './assets/js/Event.js';
   import Header from './components/Headers.vue';
@@ -19,6 +20,7 @@
     }
   }
 </script>
+
 <style lang="less">
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;

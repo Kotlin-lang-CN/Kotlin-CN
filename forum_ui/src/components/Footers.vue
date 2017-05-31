@@ -1,14 +1,21 @@
 <template>
-  <div class="foot">{{ msg }}</div>
+  <div class="foot" v-show="moduleShow">{{ msg }}</div>
 </template>
 
 <script>
+  import Event from '../assets/js/Event.js';
   export default {
     name: 'foot',
     data: function () {
       return {
-        msg: 'FOOTER'
+        msg: 'FOOTER',
+        moduleShow: true
       }
+    },
+    created: function () {
+      Event.on("fullscreen", (on) => {
+        this.moduleShow = !on;
+      })
     }
   }
 </script>
