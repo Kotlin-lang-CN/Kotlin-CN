@@ -263,7 +263,7 @@
         }
       },
       postCancel(){
-
+        history.back();
       },
       postArticle(){
         if (this.title.trim().length === 0

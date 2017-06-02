@@ -11,26 +11,16 @@
       <section>
         <div v-html="compiledMarkdown"></div>
       </section>
-      <div class="to-reply">
-        <textarea v-model="toReplyContent"></textarea>
-        <div class="button" v-on:click="toReply">好了</div>
-      </div>
-      <div class="reply">
-        <header>评论</header>
-        <div class="item" v-for="value in reply">
-          <div><span>{{ value.user.username }}</span> at <span>{{ value.meta.create_time | moment}}</span></div>
-          <div class="cont">{{value.content.content}}</div>
-        </div>
-      </div>
+      <app-reply :articleId="articleId"></app-reply>
     </article>
   </div>
 </template>
 <script>
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
-  import Util from "../assets/js/Util.js";
   import Net from "../assets/js/Net.js";
   import marked from 'marked';
+  import Reply from '../components/Reply.vue';
   export default {
     data () {
       return {
@@ -38,14 +28,20 @@
         topic: null,
         content: '',
         reply: [],
-        toReplyContent: ''
+        toReplyContent: '',
+        articleId:''
       }
+    },
+    components: {
+      'app-reply': Reply
     },
     created(){
       this.id = this.$route.params.id;
 
       this.getArticle();
-      this.getReply(0);
+    },
+    mounted(){
+      this.articleId = this.id;
     },
     computed: {
       compiledMarkdown: function () {
@@ -62,46 +58,6 @@
         Net.ajax(request, (data) => {
           this.topic = data;
           this.content = data.content.content;
-        })
-      },
-      getReply(index){
-        let request = {
-          url: Config.URL.article.reply.format(this.id),
-          type: "GET",
-          condition: {
-            offset: index,
-            limit: 0
-          }
-        };
-        Net.ajax(request, (data) => {
-          let list = data.reply;
-          if (!Array.isArray(list))return;
-          if (index === 0) {
-            this.reply = [];
-          }
-          this.reply = Array.concat(this.reply, list);
-          //TODO 循环取的时候长度有问题
-          //if (list.length > 0) {
-          //  this.getReply(this.reply.length);
-          //}
-        })
-      },
-      toReply(){
-        if (this.toReplyContent.length === 0) {
-          Event.emit("error", '评论不能为空');
-          return;
-        }
-        let request = {
-          url: Config.URL.article.reply.format(this.id),
-          type: "POST",
-          condition: {
-            content: this.toReplyContent
-          }
-        };
-        Net.ajax(request, (data) => {
-          if (data.length > 0) {
-            this.getReply(0);
-          }
         })
       }
     }
@@ -125,39 +81,6 @@
         margin-right: 6px;
         margin-left: 6px;
       }
-    }
-  }
-  .to-reply {
-    max-width: 600px;
-    margin-top: 90px;
-    text-align: left;
-    textarea {
-      width: 75%;
-      min-height: 160px;
-      padding: 10px;
-      font-size: 14px;
-      color: #666;
-      resize: vertical;
-    }
-    .button {
-      padding: 3px 18px;
-      display: inline-block;
-      vertical-align: top;
-    }
-  }
-  .reply {
-    text-align: left;
-    margin-top: 30px;
-    header {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-    .item {
-      border-top: 1px #f1f1f1 solid;
-      padding: 16px 0px;
-    }
-    .cont {
-      padding: 16px;
     }
   }
 </style>
