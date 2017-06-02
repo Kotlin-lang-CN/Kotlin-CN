@@ -55,7 +55,6 @@
   textarea {
     outline: none;
     border-radius: 8px;
-    border: 1px #f1f1f1 solid;
   }
 
   .button {
