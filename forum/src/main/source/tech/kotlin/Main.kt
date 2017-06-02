@@ -15,6 +15,7 @@ import tech.kotlin.utils.redis.Redis
 val properties = Props.loads("project.properties")
 
 fun main(vararg args: String) = LooperApp.start({
+
     Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
 
@@ -44,6 +45,7 @@ fun main(vararg args: String) = LooperApp.start({
             get("/list", ArticleViewController.getList.gate("获取最新文章列表"))
             get("/fine", ArticleViewController.getFine.gate("获取精品文章"))
             get("/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
+            get("/category", ArticleViewController.getCategory.gate("获取文章类型列表"))
 
             get("/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
             post("/:id/reply", ReplyController.createReply.gate("参与文章评论"))
@@ -57,5 +59,10 @@ fun main(vararg args: String) = LooperApp.start({
             post("/article/:id/state", AdminController.articleState.gate("修改文章状态"))
             post("/reply/:id/state", AdminController.replyState.gate("修改评论状态"))
         }
+
+        path("/rss") {
+            get("/fine", ArticleViewController.rssFine)
+        }
     }
+
 }, args)
