@@ -16,144 +16,11 @@ object Log {
     const val WARN = 0x1 shl 3
     const val ERROR = 0x1 shl 4
 
-    val LOG_LEVEL = VERBOSE or DEBUG or INFO or WARN or ERROR
+    const val LOG_LEVEL = VERBOSE or DEBUG or INFO or WARN or ERROR
 
     //时间格式
     private val TIME_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.CHINA)
-
-    private val sLogger = AppLogger()
-
-    //verbose level
-    fun v(tag: String?, message: String?): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message)
-    }
-
-    fun v(tag: String?, message: Long): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message.toString())
-    }
-
-    fun v(tag: String?, e: Throwable): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, getDetail(e))
-    }
-
-    fun v(message: String?): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message)
-    }
-
-    fun v(message: Long): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message.toString())
-    }
-
-    fun v(e: Throwable): Boolean {
-        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, getDetail(e))
-    }
-
-    //debug level
-    fun d(tag: String?, message: String?): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message)
-    }
-
-    fun d(tag: String?, message: Long): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message.toString())
-    }
-
-    fun d(tag: String?, e: Throwable): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, getDetail(e))
-    }
-
-    fun d(message: String?): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message)
-    }
-
-    fun d(message: Long): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message.toString())
-    }
-
-    fun d(e: Throwable): Boolean {
-        return !isLevelLogging(DEBUG) || log(DEBUG, tag, getDetail(e))
-    }
-
-    //info level
-    fun i(tag: String?, message: String?): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, message)
-    }
-
-    fun i(tag: String?, message: Long): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, message.toString())
-    }
-
-    fun i(tag: String?, e: Throwable): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, getDetail(e))
-    }
-
-    fun i(message: String?): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, message)
-    }
-
-    fun i(message: Long): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, message.toString())
-    }
-
-    fun i(e: Throwable): Boolean {
-        return !isLevelLogging(INFO) || log(INFO, tag, getDetail(e))
-    }
-
-    //warn level
-    fun w(tag: String?, message: String?): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, message)
-    }
-
-    fun w(tag: String?, message: Long): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, message.toString())
-    }
-
-    fun w(tag: String?, e: Throwable): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, getDetail(e))
-    }
-
-    fun w(message: String?): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, message)
-    }
-
-    fun w(message: Long): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, message.toString())
-    }
-
-    fun w(e: Throwable): Boolean {
-        return !isLevelLogging(WARN) || log(WARN, tag, getDetail(e))
-    }
-
-    //error level
-    fun e(tag: String?, message: String?): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, message)
-    }
-
-    fun e(tag: String?, message: Long): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, message.toString())
-    }
-
-    fun e(tag: String?, e: Throwable): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, getDetail(e))
-    }
-
-    fun e(message: String?): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, message)
-    }
-
-    fun e(message: Long): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, message.toString())
-    }
-
-    fun e(e: Throwable): Boolean {
-        return !isLevelLogging(ERROR) || log(ERROR, tag, getDetail(e))
-    }
-
-    //private methods
-    private fun isLevelLogging(level: Int): Boolean {
-        return level != DISABLED && level and LOG_LEVEL == level
-    }
-
-    private val tag: String?
+    private val tag: String
         get() {
             val cause = Thread.currentThread().stackTrace
             var tag = Log::class.java.simpleName
@@ -166,6 +33,134 @@ object Log {
             return tag
         }
 
+    //verbose level
+    @JvmStatic fun v(tag: String?, message: String?): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message)
+    }
+
+    @JvmStatic fun v(tag: String?, message: Long): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message.toString())
+    }
+
+    @JvmStatic fun v(tag: String?, e: Throwable): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, getDetail(e))
+    }
+
+    @JvmStatic fun v(message: String?): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message)
+    }
+
+    @JvmStatic fun v(message: Long): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, message.toString())
+    }
+
+    @JvmStatic fun v(e: Throwable): Boolean {
+        return !isLevelLogging(VERBOSE) || log(VERBOSE, tag, getDetail(e))
+    }
+
+    //debug level
+    @JvmStatic fun d(tag: String?, message: String?): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message)
+    }
+
+    @JvmStatic fun d(tag: String?, message: Long): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message.toString())
+    }
+
+    @JvmStatic fun d(tag: String?, e: Throwable): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, getDetail(e))
+    }
+
+    @JvmStatic fun d(message: String?): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message)
+    }
+
+    @JvmStatic fun d(message: Long): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, message.toString())
+    }
+
+    @JvmStatic fun d(e: Throwable): Boolean {
+        return !isLevelLogging(DEBUG) || log(DEBUG, tag, getDetail(e))
+    }
+
+    //info level
+    @JvmStatic fun i(tag: String?, message: String?): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, message)
+    }
+
+    @JvmStatic fun i(tag: String?, message: Long): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, message.toString())
+    }
+
+    @JvmStatic fun i(tag: String?, e: Throwable): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, getDetail(e))
+    }
+
+    @JvmStatic fun i(message: String?): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, message)
+    }
+
+    @JvmStatic fun i(message: Long): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, message.toString())
+    }
+
+    @JvmStatic fun i(e: Throwable): Boolean {
+        return !isLevelLogging(INFO) || log(INFO, tag, getDetail(e))
+    }
+
+    //warn level
+    @JvmStatic fun w(tag: String?, message: String?): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, message)
+    }
+
+    @JvmStatic fun w(tag: String?, message: Long): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, message.toString())
+    }
+
+    @JvmStatic fun w(tag: String?, e: Throwable): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, getDetail(e))
+    }
+
+    @JvmStatic fun w(message: String?): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, message)
+    }
+
+    @JvmStatic fun w(message: Long): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, message.toString())
+    }
+
+    @JvmStatic fun w(e: Throwable): Boolean {
+        return !isLevelLogging(WARN) || log(WARN, tag, getDetail(e))
+    }
+
+    //error level
+    @JvmStatic fun e(tag: String?, message: String?): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, message)
+    }
+
+    @JvmStatic fun e(tag: String?, message: Long): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, message.toString())
+    }
+
+    @JvmStatic fun e(tag: String?, e: Throwable): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, getDetail(e))
+    }
+
+    @JvmStatic fun e(message: String?): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, message)
+    }
+
+    @JvmStatic fun e(message: Long): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, message.toString())
+    }
+
+    @JvmStatic fun e(e: Throwable): Boolean {
+        return !isLevelLogging(ERROR) || log(ERROR, tag, getDetail(e))
+    }
+
+    //private methods
+    private fun isLevelLogging(level: Int) = level != DISABLED && level and LOG_LEVEL == level
+
     private fun getDetail(e: Throwable?): String? {
         if (e == null) return null
         return StringBuilder(e.toString()).apply {
@@ -174,28 +169,25 @@ object Log {
     }
 
     private fun log(level: Int, tag: String?, message: String?): Boolean {
-        sLogger.log(level, tag, message)
+        LoggerImpl.log(level, tag, message)
         return true
     }
 
-    //app file logger
-    private class AppLogger {
+    private object LoggerImpl {
 
-        fun getLevel(level: Int): String? {
-            when (level) {
-                VERBOSE -> return "V"
-                DEBUG -> return "D"
-                INFO -> return "I"
-                WARN -> return "W"
-                ERROR -> return "E"
-            }
-            return "NULL"
+        fun getLevel(level: Int) = when (level) {
+            VERBOSE -> "V"
+            DEBUG -> "D"
+            INFO -> "I"
+            WARN -> "W"
+            ERROR -> "E"
+            else -> "NULL"
         }
 
         fun log(level: Int, tag: String?, line: String?) {
-            if (line.isNullOrBlank()) return
-            System.out.printf("%s %s/%s %s\n",
-                    TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, line)
+            if (tag.isNullOrBlank() || line.isNullOrBlank()) return
+            System.out.printf("%s %s/%s %s\n", TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, line)
         }
+
     }
 }

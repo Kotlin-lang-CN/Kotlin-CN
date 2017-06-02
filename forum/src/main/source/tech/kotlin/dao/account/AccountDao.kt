@@ -41,10 +41,10 @@ object AccountDao {
         }
     }
 
-    fun update(session: SqlSession, uid: Long, args: HashMap<String, Any>) {
+    fun update(session: SqlSession, uid: Long, args: HashMap<String, String>) {
         val mapper = session[AccountMapper::class]
         Cache.drop(uid)
-        mapper.updateWithArgs(args = args.apply { this["id"] = uid })
+        mapper.updateWithArgs(args = args.apply { this["id"] = "$uid" })
     }
 
     internal object Cache {

@@ -3,6 +3,7 @@ package tech.kotlin.model.response
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
+import tech.kotlin.model.domain.Account
 import tech.kotlin.model.domain.UserInfo
 
 /*********************************************************************
@@ -18,5 +19,9 @@ class LoginResp {
     @Protobuf(order = 2, required = true, fieldType = FieldType.OBJECT, description = "用户信息")
     @JsonProperty("user_info")
     var userInfo: UserInfo = UserInfo()
+
+    @Protobuf(order = 3, required = true, fieldType = FieldType.OBJECT, description = "用户信息")
+    @JsonProperty("user_info")
+    var account: Account = Account()
 
 }

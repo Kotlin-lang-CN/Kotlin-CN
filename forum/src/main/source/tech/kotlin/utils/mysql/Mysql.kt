@@ -79,6 +79,7 @@ object Mysql {
     }
 }
 
+//为 Mybatis ORM 添加自定义的日志
 operator fun <T : Any> SqlSession.get(kClass: KClass<T>): T {
     val clazz = kClass.java
     val mapper = getMapper(clazz)

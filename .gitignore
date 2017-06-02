@@ -11,3 +11,11 @@ out
 !build.release
 node_modules
 *.log
+web/.DS_Store
+web/node_modules/
+web/dist/
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/test/unit/coverage
+

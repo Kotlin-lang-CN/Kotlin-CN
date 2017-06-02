@@ -32,17 +32,17 @@ class Device() {
 
     constructor(req: Request) : this() {
         token = (req.headers("X-App-Device") ?: "")
-                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
+                .check(Err.TOKEN_FAIL, "缺失设备信息") { !it.isNullOrBlank() }
 
         platform = req.headers("X-App-Platform")?.apply {
-            check(Err.PARAMETER, "缺失设备信息") { it.toInt();true }
+            check(Err.TOKEN_FAIL, "缺失设备信息") { it.toInt();true }
         }?.toInt() ?: 0
 
         vendor = (req.headers("X-App-Vendor") ?: "")
-                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
+                .check(Err.TOKEN_FAIL, "缺失设备信息") { !it.isNullOrBlank() }
 
         system = (req.headers("X-App-System") ?: "")
-                .check(Err.PARAMETER, "缺失设备信息") { !it.isNullOrBlank() }
+                .check(Err.TOKEN_FAIL, "缺失设备信息") { !it.isNullOrBlank() }
     }
 
     fun isEquals(device: Device): Boolean {

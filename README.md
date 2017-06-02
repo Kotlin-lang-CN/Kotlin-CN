@@ -24,5 +24,4 @@ Kotlin China 论坛
 
 加入我们 QQ:561490348 [![QQ群](http://pub.idqqimg.com/wpa/images/group.png)](//shang.qq.com/wpa/qunwpa?idkey=3ca5ebb183d90a980fff13e960380bdd660b3475e1434b12e35d42d5df0428b6)
 
-
 邮件联系我: [chpengzh](mailto:chpengzh@foxmail.com)
