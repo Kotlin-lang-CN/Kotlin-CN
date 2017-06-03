@@ -55,12 +55,17 @@
   textarea {
     outline: none;
     border-radius: 8px;
+
   }
 
-  .button {
+  .button,button {
     line-height: 36px;
     height: 36px;
     color: #eb5424;
     padding: 6px 12px;
+    background: transparent;
+    outline: none;
+    border: none;
+    font-size: 16px;
   }
 </style>

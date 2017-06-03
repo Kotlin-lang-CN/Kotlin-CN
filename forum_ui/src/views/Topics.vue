@@ -15,8 +15,8 @@
       <div class="post">
         <article-list :requestUrl="articleListUrl"></article-list>
       </div>
-      <div class="right-nav">
-        <a class="button" :href="uiEdit">发布新话题</a>
+      <div class="side">
+        <side-bar></side-bar>
       </div>
     </div>
   </div>
@@ -26,6 +26,8 @@
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import ArticleList from '../components/ArticleList.vue';
+  import SideBar from '../components/SideBar.vue';
+
   export default {
     data() {
       return {
@@ -35,7 +37,8 @@
       }
     },
     components: {
-      'article-list': ArticleList
+      'article-list': ArticleList,
+      'side-bar': SideBar
     },
     mounted(){
       this.articleListUrl = Config.URL.article.list;
@@ -75,7 +78,6 @@
       color: #666;
     }
   }
-
   .content {
     padding: 0 16px;
     display: flex;
@@ -85,7 +87,9 @@
       float: left;
       width: 75%;
     }
-
+    .side{
+      width: 23%;
+    }
     .page {
       > div {
         display: inline-block;
@@ -93,18 +97,18 @@
       }
     }
   }
-
-  .right-nav {
-    padding: 8px 0;
-    background: white;
-    float: right;
-    width: 23%;
+  @media screen and (max-width: 480px) {
+    .content{
+      display: block;
+      .post{
+        display: block;
+        float: none;
+        width: 100%;
+      }
+      .side{
+        display: block;
+        width: 100%;
+      }
+    }
   }
-
-  .button {
-    border-left: 1px #f1f1f1 solid;
-    padding: 6px 12px;
-    float: right;
-  }
-
 </style>

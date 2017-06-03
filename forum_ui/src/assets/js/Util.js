@@ -13,6 +13,7 @@ class Util {
   isValidPass(s) {
     return s !== null && s.length > 5;
   }
+
 }
 if (!String.prototype.format) {
   String.prototype.format = function() {

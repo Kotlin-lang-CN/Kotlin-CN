@@ -1,7 +1,7 @@
 <template>
   <div class="mdContainer" :class="{ fullPage: fullPageStatus }">
     <div class="navContainer" v-if="navStatus">
-      <div class="nameContainer" v-if="icoStatusP">Kotlin-CN</div>
+      <div class="nameContainer">Kotlin-CN</div>
       <div class="markContainer">
         <ul class="markListGroup">
           <li class="markListItem" @click="addStrong" title="strong"><b>B</b></li>
@@ -93,18 +93,20 @@
   }
   export default {
     name: 'markdown',
-    props: ['mdValuesP', 'fullPageStatusP', 'editStatusP', 'previewStatusP', 'navStatusP', 'icoStatusP'],
     data() {
       return {
+        articleId: '',
         title: '',
         tag: '',
+        updateMode: false,
         author: LoginMgr.username,
-        input: this.mdValuesP || '',
-        editStatus: this.editStatusP || true,
-        previewStatus: this.previewStatusP || true,
-        fullPageStatus: this.fullPageStatusP || false,
-        navStatus: this.navStatusP || true,
-        icoStatus: this.icoStatusP || true,
+        input: '',
+
+        editStatus: true,
+        previewStatus: true,
+        fullPageStatus: false,
+        navStatus: true,
+        icoStatus: true,
         maxEditScrollHeight: 0,
         maxPreviewScrollHeight: 0
       }
@@ -115,11 +117,16 @@
         this.editStatus = true;
         this.previewStatus = true;
       }
+
+      this.articleId = this.$route.params.id;
+      if (this.articleId !== undefined && this.articleId !== '') {
+        this.updateMode = true;
+        this.getArticle();
+      }
     },
     methods: {
       tabFn: function (evt) {
         insertContent("    ", this);
-        // 屏蔽屌tab切换事件
         if (evt.preventDefault) {
           evt.preventDefault();
         } else {
@@ -262,6 +269,18 @@
           document.querySelector('.previewContainer').scrollTop = this.maxPreviewScrollHeight * topPercent;
         }
       },
+      getArticle(){
+        let request = {
+          url: Config.URL.article.detail.format(this.articleId),
+          type: "GET",
+          condition: {}
+        };
+        Net.ajax(request, (data) => {
+          this.title = data.article.title;
+          this.tag = data.article.tags;
+          this.input = data.content.content;
+        })
+      },
       postCancel(){
         history.back();
       },
@@ -269,11 +288,15 @@
         if (this.title.trim().length === 0
           || this.tag.trim().length === 0
           || this.input.trim().length === 0) {
-          Event.emit("error", '文章信息不完整');
+          layer.msg('文章信息不完整');
           return;
         }
+        let url = Config.URL.article.post;
+        if (this.updateMode) {
+          url = Config.URL.article.update.format(this.articleId);
+        }
         let request = {
-          url: Config.URL.article.post,
+          url: url,
           type: "POST",
           condition: {
             title: this.title,
@@ -284,9 +307,9 @@
           }
         };
         Net.ajax(request, (data) => {
-          let articleId = data.id;
           //TODO
-          //preview
+          this.articleId = data.id;
+          history.back();
         });
       },
     },

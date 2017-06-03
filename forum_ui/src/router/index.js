@@ -16,7 +16,13 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }
-  }, {
+  },  {
+    path: '/edit/:id',
+    name: 'Edit',
+    component: function (resolve) {
+      require(['@/views/Edit.vue'], resolve);
+    }
+  },{
     path: '/account',
     name: 'Account',
     component: function (resolve) {
