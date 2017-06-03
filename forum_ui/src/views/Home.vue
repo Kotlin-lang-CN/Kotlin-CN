@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div class="sub-title">精华帖</div>
+    <div class="sub-title">精华</div>
     <article-list :requestUrl="articleListUrl"></article-list>
   </div>
 </template>

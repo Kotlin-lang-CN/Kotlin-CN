@@ -4,7 +4,9 @@
       <header>评论</header>
       <div class="item" v-for="value in reply">
         <div><span>{{ value.user.username }}</span> at <span>{{ value.meta.create_time | moment}}</span></div>
-        <div class="cont">{{value.content.content}}</div>
+        <div class="content">
+          <display-panels :content="value.content.content"></display-panels>
+        </div>
       </div>
     </div>
     <markdown-comment
@@ -16,7 +18,8 @@
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
   import Util from "../assets/js/Util.js";
-  import MdComment from "../components/MdComment.vue";
+  import Comment from "./Comment.vue";
+  import DisplayPanels from "./DisplayPanels.vue";
 
   export default {
     data () {
@@ -31,7 +34,8 @@
       articleId: ''
     },
     components: {
-      'markdown-comment': MdComment
+      'markdown-comment': Comment,
+      "display-panels": DisplayPanels
     },
     created(){
       this.getReply(0);
@@ -66,25 +70,6 @@
   }
 </script>
 <style scoped lang="less">
-  .to-reply {
-    max-width: 600px;
-    margin-top: 90px;
-    text-align: left;
-    textarea {
-      width: 75%;
-      min-height: 160px;
-      padding: 10px;
-      font-size: 14px;
-      color: #666;
-      resize: vertical;
-    }
-    .button {
-      padding: 3px 18px;
-      display: inline-block;
-      vertical-align: top;
-    }
-  }
-
   .reply {
     text-align: left;
     margin-top: 30px;
@@ -94,7 +79,10 @@
     }
     .item {
       border-top: 1px #f1f1f1 solid;
-      padding: 16px 0px;
+      padding: 16px 0;
+      .content{
+        padding: 8px 8px 8px 20px
+      }
     }
     .cont {
       padding: 16px;

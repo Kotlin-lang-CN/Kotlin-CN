@@ -9,9 +9,7 @@
         </div>
       </header>
       <section>
-        <div class="previewContainer markdown-body">
-          <div v-html="compiledMarkdown" ></div>
-        </div>
+        <display-panels :content="content"></display-panels>
       </section>
       <app-reply :articleId="articleId"></app-reply>
     </article>
@@ -21,24 +19,9 @@
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
-  import marked from 'marked';
-  import Reply from '../components/Reply.vue';
-  import hljs from '../../static/js/highlight.min.js'
-  import range from '../../static/js/rangeFn.js'
 
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    gfm: true,
-    tables: true,
-    breaks: false,
-    pedantic: false,
-    sanitize: true,
-    smartLists: true,
-    smartypants: false,
-    highlight: function (code) {
-      return hljs.highlightAuto(code).value
-    }
-  });
+  import DisplayPanels from '../components/DisplayPanels.vue';
+  import Reply from '../components/Reply.vue';
   export default {
     data () {
       return {
@@ -51,7 +34,9 @@
       }
     },
     components: {
-      'app-reply': Reply
+      DisplayPanels,
+      'app-reply': Reply,
+      'display-panels': DisplayPanels
     },
     created(){
       this.id = this.$route.params.id;
@@ -60,13 +45,6 @@
     },
     mounted(){
       this.articleId = this.id;
-    },
-    computed: {
-      compiledMarkdown: function () {
-        return marked(this.content, {
-          sanitize: true
-        })
-      }
     },
     methods: {
       getArticle(){
@@ -105,13 +83,5 @@
         margin-left: 6px;
       }
     }
-  }
-</style>
-<style lang="scss" scoped>
-  @import "../../static/css/reset.scss";
-  @import "../../static/css/github-markdown.css";
-  @import "../../static/css/atom-one-dark.min.css";
-  #app > div {
-    text-align: left;
   }
 </style>

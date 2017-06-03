@@ -305,10 +305,19 @@
   @import "../../static/css/github-markdown.css";
   @import "../../static/css/atom-one-dark.min.css";
 
+  #app > div {
+    text-align: left;
+  }
   .mdContainer {
     max-width: 1000px;
     height: 240px;
     background: lightblue;
+    &.fullPage {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+    }
     .navContainer {
       width: 100%;
       height: 36px;
