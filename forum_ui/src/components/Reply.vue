@@ -7,10 +7,8 @@
         <div class="cont">{{value.content.content}}</div>
       </div>
     </div>
-    <div class="to-reply">
-      <textarea v-model="toReplyContent"></textarea>
-      <div class="button" v-on:click="toReply">好了</div>
-    </div>
+    <markdown-comment
+      :articleId="articleId"></markdown-comment>
   </div>
 </template>
 <script>
@@ -18,6 +16,8 @@
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
   import Util from "../assets/js/Util.js";
+  import MdComment from "../components/MdComment.vue";
+
   export default {
     data () {
       return {
@@ -30,8 +30,14 @@
     props: {
       articleId: ''
     },
+    components: {
+      'markdown-comment': MdComment
+    },
     created(){
       this.getReply(0);
+      Event.on('comment-change', () => {
+        this.getReply(0);
+      })
     },
     methods: {
       getReply(index){
@@ -54,25 +60,6 @@
           //if (list.length > 0) {
           //  this.getReply(this.reply.length);
           //}
-        })
-      },
-      toReply(){
-        if (this.toReplyContent.length === 0) {
-          Event.emit("error", '评论不能为空');
-          return;
-        }
-        let request = {
-          url: Config.URL.article.reply.format(this.articleId),
-          type: "POST",
-          condition: {
-            content: this.toReplyContent
-          }
-        };
-        Net.ajax(request, (data) => {
-          if (data.id.length > 0) {
-            this.content = '';
-            this.getReply(0);
-          }
         })
       }
     }

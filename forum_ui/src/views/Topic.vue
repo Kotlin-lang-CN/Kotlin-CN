@@ -9,7 +9,9 @@
         </div>
       </header>
       <section>
-        <div v-html="compiledMarkdown"></div>
+        <div class="previewContainer markdown-body">
+          <div v-html="compiledMarkdown" ></div>
+        </div>
       </section>
       <app-reply :articleId="articleId"></app-reply>
     </article>
@@ -21,6 +23,22 @@
   import Net from "../assets/js/Net.js";
   import marked from 'marked';
   import Reply from '../components/Reply.vue';
+  import hljs from '../../static/js/highlight.min.js'
+  import range from '../../static/js/rangeFn.js'
+
+  marked.setOptions({
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: true,
+    breaks: false,
+    pedantic: false,
+    sanitize: true,
+    smartLists: true,
+    smartypants: false,
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value
+    }
+  });
   export default {
     data () {
       return {
@@ -29,7 +47,7 @@
         content: '',
         reply: [],
         toReplyContent: '',
-        articleId:''
+        articleId: ''
       }
     },
     components: {
@@ -45,7 +63,9 @@
     },
     computed: {
       compiledMarkdown: function () {
-        return marked(this.content, {sanitize: true})
+        return marked(this.content, {
+          sanitize: true
+        })
       }
     },
     methods: {
@@ -63,8 +83,11 @@
     }
   }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+  #app > div {
+    text-align: left;
+  }
+
   .topic {
     max-width: 600px;
     margin: 30px auto 10px auto;
@@ -82,5 +105,13 @@
         margin-left: 6px;
       }
     }
+  }
+</style>
+<style lang="scss" scoped>
+  @import "../../static/css/reset.scss";
+  @import "../../static/css/github-markdown.css";
+  @import "../../static/css/atom-one-dark.min.css";
+  #app > div {
+    text-align: left;
   }
 </style>
