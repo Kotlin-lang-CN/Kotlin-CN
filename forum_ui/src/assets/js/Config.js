@@ -1,5 +1,5 @@
 const config = {
-  HOST: 'http://kotlin-cn.org',
+  HOST: 'http://localhost:8080',
   API: '/api',
   URL: {
     account: {

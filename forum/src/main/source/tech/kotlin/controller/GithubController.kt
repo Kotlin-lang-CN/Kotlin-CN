@@ -35,7 +35,9 @@ object GithubController {
             this.state = state
         })
         if (!authResp.hasAccount) {
-
+            return@Route ok {
+                it["need_create_account"] = true
+            }
         } else {
             val token = Sessions.createSession(CreateSessionReq().apply {
                 this.uid = authResp.account.id
@@ -43,9 +45,9 @@ object GithubController {
             }).token
             resp.cookie("X-App-UID", "${authResp.account.id}")
             resp.cookie("X-App-Token", token)
-        }
-        return@Route ok {
+            return@Route ok {
 
+            }
         }
     }
 

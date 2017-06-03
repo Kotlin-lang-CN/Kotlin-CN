@@ -1,6 +1,5 @@
 package tech.kotlin.controller
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import spark.Route
 import tech.kotlin.model.domain.Article
 import tech.kotlin.model.domain.Category

@@ -2,22 +2,21 @@ package tech.kotlin.utils.os;
 
 import tech.kotlin.utils.log.Log;
 
+import java.io.IOException;
+
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
 public final class LooperApp {
 
-    public static void start(AppTask task, String... args) throws InterruptedException {
+    public static void start(AppTask task, String... args) {
         Looper.prepareMain();
         try {
             task.onStart(args);
-        } catch (Throwable error) {
-            Log.e(error);
-            return;
-        }
-        try {
             Looper.loop();
+        } catch (Throwable err) {
+            Log.e(err);
         } finally {
             Looper.quiteMain();
         }

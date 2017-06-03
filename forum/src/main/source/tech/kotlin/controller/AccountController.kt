@@ -30,7 +30,7 @@ object AccountController {
     val properties = Props.loads("project.properties")
     val cgiHost = properties str "cgi.host"
 
-    val login = Route { req, resp ->
+    val login = Route { req, _ ->
         val loginResp = Accounts.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
@@ -41,8 +41,6 @@ object AccountController {
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
         })
 
-        resp.cookie("X-App-UID", "${loginResp.userInfo.uid}")
-        resp.cookie("X-App-Token", loginResp.token)
         return@Route ok {
             it["uid"] = loginResp.userInfo.uid
             it["token"] = loginResp.token
@@ -53,7 +51,7 @@ object AccountController {
         }
     }
 
-    val register = Route { req, resp ->
+    val register = Route { req, _ ->
         val username = req.queryParams("username")
                 .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
         val password = req.queryParams("password")
@@ -100,8 +98,6 @@ object AccountController {
             """.trimIndent()
         })
 
-        resp.cookie("X-App-UID", "${createResp.userInfo.uid}")
-        resp.cookie("X-App-Token", createResp.token)
         return@Route ok {
             it["uid"] = createResp.account.id
             it["token"] = createResp.token

@@ -3,10 +3,12 @@
     <hr/>
     <i></i>
     <div class="content">
-      <div>联系我们：<a href=mailto:chpengzh@kotlin-cn.org>kotlin-cn Admin</a></div>
-      <div>RSS订阅：TODO </div>
-      <div>项目地址：<a href="https://github.com/Kotlin-lang-CN">KOTLIN-LANG-CN</a></div>
-      <div>ICP备案号：TODO </div>
+      <div>
+        <a href=mailto:chpengzh@kotlin-cn.org>Email</a>
+        <a target="_blank" href="http://localhost:8080/api/rss/fine">RSS</a>
+        <a target="_blank" href="https://github.com/Kotlin-lang-CN">Github</a>
+      </div>
+      <div>ICP备案号：<a target="_blank" href="http://www.miitbeian.gov.cn/">xxx</a></div>
     </div>
   </div>
 </template>
@@ -23,7 +25,8 @@
       Event.on("fullscreen", (on) => {
         this.moduleShow = !on;
       })
-    }
+    },
+    action: {}
   }
 </script>
 
@@ -35,7 +38,7 @@
     margin: 90px auto 40px auto;
     color: #999;
 
-    i{
+    i {
       display: inline-block;
       width: 60px;
       height: 60px;
@@ -44,7 +47,7 @@
       margin-left: 30px;
       margin-right: 8px;
     }
-    .content{
+    .content {
       display: inline-block;
     }
   }

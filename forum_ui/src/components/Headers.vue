@@ -2,7 +2,7 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar">
       <div class="nav-content">
-        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b>CN</a></div>
+        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> China</a></div>
         <div class="menu-main">
           <ul>
             <li><a :href="urlTopics" title="社区">社区</a></li>
