@@ -2,10 +2,10 @@ package tech.kotlin.service.mail
 
 import tech.kotlin.model.request.EmailReq
 import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.utils.os.Handler
-import tech.kotlin.utils.os.Looper
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.str
+import tech.kotlin.common.os.Handler
+import tech.kotlin.common.os.Looper
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.str
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
 import javax.mail.Session

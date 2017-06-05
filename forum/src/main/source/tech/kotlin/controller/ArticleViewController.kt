@@ -11,9 +11,9 @@ import tech.kotlin.service.article.Articles
 import tech.kotlin.model.request.QueryLatestArticleReq
 import tech.kotlin.model.request.QueryTextReq
 import tech.kotlin.service.article.Texts
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.check
-import tech.kotlin.utils.serialize.dict
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.check
+import tech.kotlin.common.utils.dict
 import java.text.SimpleDateFormat
 import java.util.*
 

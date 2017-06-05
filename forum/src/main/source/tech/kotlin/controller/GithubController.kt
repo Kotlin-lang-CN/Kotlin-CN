@@ -7,8 +7,8 @@ import tech.kotlin.model.request.CreateSessionReq
 import tech.kotlin.model.request.GithubAuthReq
 import tech.kotlin.service.account.Githubs
 import tech.kotlin.service.account.Sessions
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.check
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.check
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

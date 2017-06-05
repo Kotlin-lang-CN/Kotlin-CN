@@ -14,16 +14,16 @@ import tech.kotlin.model.request.CreateAuthSessionReq
 import tech.kotlin.model.request.GithubAuthReq
 import tech.kotlin.model.response.CreateAuthSessionResp
 import tech.kotlin.model.response.GithubAuthResp
-import tech.kotlin.utils.algorithm.JWT
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.check
-import tech.kotlin.utils.exceptions.tryExec
-import tech.kotlin.utils.http.Http
-import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.long
-import tech.kotlin.utils.properties.str
-import tech.kotlin.utils.serialize.Json
+import tech.kotlin.common.algorithm.JWT
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.check
+import tech.kotlin.utils.tryExec
+import tech.kotlin.utils.Http
+import tech.kotlin.utils.Mysql
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.long
+import tech.kotlin.common.utils.str
+import tech.kotlin.common.serialize.Json
 import java.util.*
 
 /*********************************************************************

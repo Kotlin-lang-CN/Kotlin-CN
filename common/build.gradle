@@ -1,0 +1,37 @@
+group 'tech.kotlin.china'
+version project_version
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/source']
+    }
+    test {
+        java.srcDirs = ['src/test/source']
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'tech.kotlin.MainKt'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    //zookeeper
+    //compile 'org.apache.zookeeper:zookeeper:3.4.10'
+    compile 'org.reflections:reflections:0.9.10'
+    compile 'com.baidu:jprotobuf:2.0.8'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.7'
+    testCompile 'junit:junit:4.12'
+}

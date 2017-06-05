@@ -5,8 +5,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
 import spark.Request
 import tech.kotlin.model.domain.Device
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.abort
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.abort
 
 class CheckSessionReq() {
 

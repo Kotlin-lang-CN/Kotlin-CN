@@ -7,7 +7,7 @@ import tech.kotlin.model.request.CreateTextContentReq
 import tech.kotlin.model.request.QueryTextReq
 import tech.kotlin.model.response.CreateTextContentResp
 import tech.kotlin.model.response.QueryTextResp
-import tech.kotlin.utils.mysql.Mysql
+import tech.kotlin.utils.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

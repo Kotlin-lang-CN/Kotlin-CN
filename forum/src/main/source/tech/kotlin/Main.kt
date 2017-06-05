@@ -2,13 +2,13 @@ package tech.kotlin
 
 import spark.Spark.*
 import tech.kotlin.controller.*
-import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.os.LooperApp
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.int
-import tech.kotlin.utils.redis.Redis
-import tech.kotlin.utils.serialize.Json
-import tech.kotlin.utils.serialize.dict
+import tech.kotlin.utils.Mysql
+import tech.kotlin.common.os.LooperApp
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.int
+import tech.kotlin.utils.Redis
+import tech.kotlin.common.serialize.Json
+import tech.kotlin.common.utils.dict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

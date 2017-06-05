@@ -1,4 +1,4 @@
 rootProject.name = 'Kotlin-CN'
 include 'forum'
-
+include 'common'
 
