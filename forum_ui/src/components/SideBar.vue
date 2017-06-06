@@ -1,18 +1,19 @@
 <template>
   <div class="side-bar">
     <a class="button" :href="uiEdit">发布新话题</a>
-    <div class="card">
+    <div class="part">
       <header>网站通告</header>
-      <div>文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻</div>
+      <div class="card">文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻</div>
     </div>
-    <div class="card">
+    <div class="part">
       <header>友情链接</header>
-      <ul>
-        <li><a href="http://cnodejs.org/">cnodejs</a></li>
-        <li><a href="http://golangtc.com/">golangtc</a></li>
-        <li><a href="https://laravel-china.org/">laravel-china</a></li>
-        <li><a href="http://elixir-cn.com/">elixir-cn</a></li>
-        <li><a href="http://ionichina.com/">ionichina</a></li>
+      <ul class="card">
+        <li><a href="http://cnodejs.org/"><i class="cnodejs"></i></a></li>
+        <li><a href="https://laravel-china.org/"><i class="laravel"></i></a></li>
+        <li><a href="http://golangtc.com/"><i class="golangtc"></i></a></li>
+        <li><a href="http://elixir-cn.com/"><i class="elixir"></i></a></li>
+        <li><a href="http://ionichina.com/"><i class="ioni"></i></a></li>
+        <li><a href="https://testerhome.com/"></a><i class="tester"></i></li>
       </ul>
     </div>
   </div>
@@ -32,25 +33,63 @@
 <style scoped lang="less">
   .side-bar {
     margin: auto 16px;
-    border-left: 1px #f1f1f1 solid;
     max-width: 230px;
     min-width: 200px;
     .button {
       padding: 6px 12px;
       display: block;
+      color: white;
+      background: #2572e5;
+      font-size: 16px;
+      border-radius: 2px;
+      margin-bottom: 30px;
     }
 
-    .card {
+    .part {
       margin: 0 8px;
       header {
-        font-weight: bolder;
-        border-bottom: 1px #f1f1f1 solid;
-        margin: 36px 8px 8px 8px;
+        font-size: 18px;
+        color: #999;
+        text-align: left;
+        margin-bottom: 12px;
+      }
+      .card {
+        border: 1px #e4e4e4 solid;
+        background-color: #f8f9fa;
+        padding: 12px 14px;
+        line-height: 36px;
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 28px;
       }
       ul {
         padding: 0;
-        li {
-          padding: 8px 0;
+        a {
+          display: block;
+          i {
+            display: block;
+            width: 230px;
+            height: 40px;
+            margin-bottom: 16px;
+          }
+          .cnodejs {
+            background: url(../assets/img/friendship1.png) no-repeat;
+          }
+          .laravel {
+            background: url(../assets/img/friendship2.png) no-repeat;
+          }
+          .golangtc {
+            background: url(../assets/img/friendship3.png) no-repeat;
+          }
+          .elixir {
+            background: url(../assets/img/friendship4.png) no-repeat;
+          }
+          .ioni {
+            background: url(../assets/img/friendship5.png) no-repeat;
+          }
+          .tester {
+            background: url(../assets/img/friendship6.png) no-repeat;
+          }
         }
       }
     }
@@ -61,6 +100,5 @@
       border-left: none;
       margin: auto;
     }
-
   }
 </style>
