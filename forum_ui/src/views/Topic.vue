@@ -38,7 +38,6 @@
       }
     },
     components: {
-      DisplayPanels,
       'app-reply': Reply,
       'display-panels': DisplayPanels
     },

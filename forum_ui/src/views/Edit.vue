@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="meta">
-      <input v-model="tag" type="text" name="tag" placeholder="标签"/>
+      <input-tag :tags="tag"></input-tag>
       <input v-model="title" type="text" name="text" placeholder="标题"/>
       <div>Author:{{ author }}</div>
     </div>
@@ -62,6 +62,8 @@
   import scroll from 'vue-scroll'
   import hljs from '../../static/js/highlight.min.js'
   import range from '../../static/js/rangeFn.js'
+  import InputTag from 'vue-input-tag'
+
   Vue.use(scroll);
   marked.setOptions({
     renderer: new marked.Renderer(),
@@ -97,7 +99,7 @@
       return {
         articleId: '',
         title: '',
-        tag: '',
+        tag: [],
         updateMode: false,
         author: LoginMgr.username,
         input: '',
@@ -110,6 +112,9 @@
         maxEditScrollHeight: 0,
         maxPreviewScrollHeight: 0
       }
+    },
+    components: {
+      'input-tag': InputTag
     },
     created: function () {
       Event.emit('fullscreen', true);
