@@ -10,14 +10,13 @@ import tech.kotlin.service.account.EmailActivates
 import tech.kotlin.service.account.Sessions
 import tech.kotlin.service.account.Users
 import tech.kotlin.service.mail.Emails
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.abort
-import tech.kotlin.utils.exceptions.check
-import tech.kotlin.utils.exceptions.tryExec
-import tech.kotlin.utils.log.Log
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.str
-import tech.kotlin.utils.serialize.strDict
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.abort
+import tech.kotlin.utils.check
+import tech.kotlin.utils.tryExec
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.str
+import tech.kotlin.common.utils.strDict
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -30,7 +29,7 @@ object AccountController {
     val properties = Props.loads("project.properties")
     val cgiHost = properties str "cgi.host"
 
-    val login = Route { req, resp ->
+    val login = Route { req, _ ->
         val loginResp = Accounts.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
@@ -41,8 +40,6 @@ object AccountController {
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
         })
 
-        resp.cookie("X-App-UID", "${loginResp.userInfo.uid}")
-        resp.cookie("X-App-Token", loginResp.token)
         return@Route ok {
             it["uid"] = loginResp.userInfo.uid
             it["token"] = loginResp.token
@@ -53,7 +50,7 @@ object AccountController {
         }
     }
 
-    val register = Route { req, resp ->
+    val register = Route { req, _ ->
         val username = req.queryParams("username")
                 .check(Err.PARAMETER, "无效的用户名") { !it.isNullOrBlank() && it.trim().length >= 2 }
         val password = req.queryParams("password")
@@ -100,8 +97,6 @@ object AccountController {
             """.trimIndent()
         })
 
-        resp.cookie("X-App-UID", "${createResp.userInfo.uid}")
-        resp.cookie("X-App-Token", createResp.token)
         return@Route ok {
             it["uid"] = createResp.account.id
             it["token"] = createResp.token

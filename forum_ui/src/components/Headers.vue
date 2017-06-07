@@ -2,12 +2,8 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar">
       <div class="nav-content">
-        <div class="menu-header"><a :href="urlRoot" title=""><b>kotlin</b> China</a></div>
-        <div class="menu-main">
-          <ul>
-            <li><a :href="urlTopics" title="社区">社区</a></li>
-          </ul>
-        </div>
+        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> China</a></div>
+        <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
         <div class="menu-authen menu-right" v-if="strUserName ===''">
           <a :href="urlRegister" title="注册">注册</a>
           <a :href="urlLogin" title="登录">登录</a>
@@ -72,20 +68,40 @@
     .nav-bar {
       background: white;
       padding: 0 16px;
-      border-bottom: 1px #f1f1f1 solid;
+      font-size: 20px;
       .nav-content {
-        max-width: 1000px;
+        max-width: 1120px;
+        padding-top: 24px;
+        padding-bottom: 24px;
         margin: auto;
         > div {
           display: inline-block;
         }
+        .menu-header ,.menu-main{
+          height: 38px;
+          line-height: 38px;
+          text-align: center;
+          margin-right: 20px;
+        }
         .menu-header b {
-          color: #eb5424;
+          color: #2572e5;
           font-weight: normal;
         }
         .menu-right {
           float: right;
-          margin: 16px 16px;
+          font-size: 16px;
+          >a{
+            display: inline-block;
+            width: 96px;
+            height: 38px;
+            line-height: 38px;
+            text-align: center;
+          }
+          >a:nth-child(2){
+            border: 1px #2572e5 solid;
+            border-radius: 2px;
+            color: #2572e5;
+          }
         }
       }
     }

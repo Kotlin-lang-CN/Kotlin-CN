@@ -1,10 +1,10 @@
 package tech.kotlin.controller
 
 import spark.Route
-import tech.kotlin.utils.exceptions.Abort
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.log.Log
-import tech.kotlin.utils.serialize.Json
+import tech.kotlin.common.os.Abort
+import tech.kotlin.utils.Err
+import tech.kotlin.common.os.Log
+import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -38,9 +38,14 @@ fun Route.gate(desc: String, log: Boolean = true): Route {
         var result: String
         try {
             result = this.handle(request, response) as String
+            response.header("Access-Control-Allow-Origin", "http://localhost:3000")
+            response.header("Access-Control-Allow-Credentials", "true")
+            response.header("Access-Control-Allow-Headers",
+                    "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")
+            response.header("Access-Control-Allow-Methods", "GET, POST")
             if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Abort) {
-            result = Json.dumps(err.model)
+            result = err.message!!
             if (log) Log.d("Response", err)
             if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Throwable) {

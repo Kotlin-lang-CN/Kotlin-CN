@@ -1,6 +1,5 @@
 package tech.kotlin.controller
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import spark.Route
 import tech.kotlin.model.domain.Article
 import tech.kotlin.model.domain.Category
@@ -12,9 +11,9 @@ import tech.kotlin.service.article.Articles
 import tech.kotlin.model.request.QueryLatestArticleReq
 import tech.kotlin.model.request.QueryTextReq
 import tech.kotlin.service.article.Texts
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.check
-import tech.kotlin.utils.serialize.dict
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.check
+import tech.kotlin.common.utils.dict
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -145,9 +144,7 @@ object ArticleViewController {
         }
     }
 
-    val getCategory = Route { _, _ ->
-        return@Route ok { it["category"] = Category.values().map { it.value } }
-    }
+    val getCategory = Route { _, _ -> ok { it["category"] = Category.values().map { it.value } } }
 
     val rssFine = Route { _, resp ->
         val articles = Articles.getLatest(QueryLatestArticleReq().apply {

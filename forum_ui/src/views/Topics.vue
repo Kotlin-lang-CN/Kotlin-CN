@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div class="sub-nav">
-      <button v-on:click="selectDefault"
-              v-bind:class="{ 'select': select==='default', 'normal': select!=='default' }">默认
-      </button>
-      <button v-on:click="selectFine"
-              v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }">优质
-      </button>
-      <button v-on:click="selectNew"
-              v-bind:class="{ 'select': select==='news', 'normal': select!=='news' }">最新
-      </button>
-    </div>
     <div class="content">
       <div class="post">
+        <div class="sub-nav">
+          <button v-on:click="selectDefault"
+                  v-bind:class="{ 'select': select==='default', 'normal': select!=='default' }">默认
+          </button>
+          <button v-on:click="selectFine"
+                  v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }">优质
+          </button>
+          <button v-on:click="selectNew"
+                  v-bind:class="{ 'select': select==='news', 'normal': select!=='news' }">最新
+          </button>
+        </div>
         <article-list :requestUrl="articleListUrl"></article-list>
       </div>
-      <div class="right-nav">
-        <a class="button" :href="uiEdit">发布新话题</a>
+      <div class="side">
+        <side-bar></side-bar>
       </div>
     </div>
   </div>
@@ -26,6 +26,8 @@
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import ArticleList from '../components/ArticleList.vue';
+  import SideBar from '../components/SideBar.vue';
+
   export default {
     data() {
       return {
@@ -35,7 +37,8 @@
       }
     },
     components: {
-      'article-list': ArticleList
+      'article-list': ArticleList,
+      'side-bar': SideBar
     },
     mounted(){
       this.articleListUrl = Config.URL.article.list;
@@ -57,25 +60,6 @@
   }
 </script>
 <style scoped lang="less">
-  .sub-nav {
-    text-align: left;
-    padding: 16px;
-    > button {
-      background: white;
-      outline: none;
-      border: 0;
-      color: #666;
-      display: inline-block;
-      font-size: 24px;
-    }
-    .select {
-      color: #eb5424;
-    }
-    .normal {
-      color: #666;
-    }
-  }
-
   .content {
     padding: 0 16px;
     display: flex;
@@ -84,8 +68,34 @@
     .post {
       float: left;
       width: 75%;
-    }
 
+      .sub-nav {
+        text-align: left;
+        > button {
+          background: white;
+          outline: none;
+          border: 0;
+          color: #999;
+          display: inline-block;
+          font-size: 18px;
+          padding: 0 16px;
+          line-height: 50px;
+          height: 50px;
+        }
+        .select {
+          border-bottom: 4px #2572e5 solid;
+          color: #2572e5;
+        }
+        .normal {
+          border-bottom: 4px white solid;
+          color: #999;
+        }
+      }
+    }
+    .side{
+      width: 23%;
+      padding-top: 8px;
+    }
     .page {
       > div {
         display: inline-block;
@@ -93,18 +103,18 @@
       }
     }
   }
-
-  .right-nav {
-    padding: 8px 0;
-    background: white;
-    float: right;
-    width: 23%;
+  @media screen and (max-width: 480px) {
+    .content{
+      display: block;
+      .post{
+        display: block;
+        float: none;
+        width: 100%;
+      }
+      .side{
+        display: block;
+        width: 100%;
+      }
+    }
   }
-
-  .button {
-    border-left: 1px #f1f1f1 solid;
-    padding: 6px 12px;
-    float: right;
-  }
-
 </style>

@@ -2,11 +2,13 @@ package tech.kotlin
 
 import spark.Spark.*
 import tech.kotlin.controller.*
-import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.os.LooperApp
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.int
-import tech.kotlin.utils.redis.Redis
+import tech.kotlin.utils.Mysql
+import tech.kotlin.common.os.LooperApp
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.int
+import tech.kotlin.utils.Redis
+import tech.kotlin.common.serialize.Json
+import tech.kotlin.common.utils.dict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -63,6 +65,23 @@ fun main(vararg args: String) = LooperApp.start({
         path("/rss") {
             get("/fine", ArticleViewController.rssFine)
         }
-    }
 
+        path("/misc") {
+            get("/dashboard", MiscController.dashboard.gate(""))
+        }
+    }
+    notFound { req, response ->
+        response.header("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.header("Access-Control-Allow-Credentials", "true")
+        response.header("Access-Control-Allow-Headers",
+                "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")
+        response.header("Access-Control-Allow-Methods", "GET, POST")
+        if (req.requestMethod().toUpperCase() != "OPTIONS") {
+            response.status(404)
+            Json.dumps(dict { this["code"] = 404; this["msg"] = "not found" })
+        } else {
+            response.status(200)
+            Json.dumps(dict { this["code"] = 0; this["msg"] = "" })
+        }
+    }
 }, args)

@@ -40,7 +40,7 @@ class Net {
   ajax(request, success) {
     let header = this.Header.get();
     $.ajax({
-      url: Config.API + request.url,
+      url: Config.HOST + Config.API + request.url,
       cache: !1,
       type: request.type,
       dataType: "text",

@@ -30,14 +30,14 @@
     color: #2c3e50;
 
     >div{
-      max-width: 1000px;
+      max-width: 1120px;
       margin: 1px auto;
     }
   }
 
   a {
     text-decoration: none;
-    color: #2c3e50;
+    color: #333;
     font-weight: normal;
   }
 
@@ -55,12 +55,17 @@
   textarea {
     outline: none;
     border-radius: 8px;
+
   }
 
-  .button {
+  .button,button {
     line-height: 36px;
     height: 36px;
-    color: #eb5424;
+    color: #2572e5;
     padding: 6px 12px;
+    background: transparent;
+    outline: none;
+    border: none;
+    font-size: 16px;
   }
 </style>

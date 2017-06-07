@@ -3,16 +3,83 @@
     <div class="content">
       <div class="list" v-for="value in articles">
         <a :href="urlTopic + value.meta.id">
-          <div><span>{{ value.meta.tags }}</span><b>{{ value.meta.title }}</b></div>
-          <div><span>{{ value.author.username }}</span>at {{ value.meta.last_edit_time | moment}}
+          <div class="footnote">最后由{{ value.last_editor.username }} 回复于 {{ value.meta.last_edit_time | moment}}</div>
+          <i>K</i>
+          <div class="aside">
+            <div class="title">{{ value.meta.title }}</div>
+            <div class="tag">{{ value.meta.tags }}</div>
+            <div class="footnote right">{{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}</div>
           </div>
         </a>
       </div>
     </div>
-    <button v-on:click="loadMore" v-show="hasMore">查看更多...</button>
+    <button v-on:click="loadMore" v-show="hasMore">加载更多</button>
   </div>
 </template>
 
+<style scoped lang="less">
+  .content {
+    .list a {
+      display: block;
+      padding: 16px 16px;
+      text-align: left;
+      border-top: 1px solid #f1f1f1;
+      background: white;
+      .footnote{
+        font-size: 12px;
+        color: #999;
+      }
+      i{
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        color: white;
+        line-height: 60px;
+        background-color: #2D93CA;
+        text-align: center;
+        font-size: 50px;
+        font-style: normal;
+        border-radius: 30px;
+        vertical-align: top;
+        margin-top: 4px;
+      }
+      .aside{
+        display: inline-block;
+        padding-top: 10px;
+        width: 85%;
+        .title{
+          line-height: 28px;
+          font-size: 24px;
+          color: #333;
+        }
+        .tag{
+          display: inline-block;
+          font-size: 16px;
+          color: #999;
+        }
+        .right{
+          float: right;
+        }
+      }
+
+    }
+    button {
+      background-color: #f2f7fd;
+      outline: none;
+      border: 1px #6ba0f1 solid;
+      border-radius: 4px;
+      margin: 16px 0;
+      display: block;
+      text-align: center;
+      height: 50px;
+      width: 100%;
+      padding: 8px;
+      color: #6ba0f1;
+      font-size: 16px;
+    }
+  }
+
+</style>
 <script>
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
@@ -63,44 +130,4 @@
     }
   }
 </script>
-<style scoped lang="less">
-  .content {
-    .list a {
-      display: block;
-      padding: 16px 16px;
-      text-align: left;
-      border-top: 1px solid #f1f1f1;
-      background: white;
-      > div:nth-child(1) {
-        margin-bottom: 8px;
-        span {
-          background: aliceblue;
-          padding: 6px 3px;
-          border-radius: 6px;
-          margin-right: 8px;
-        }
-      }
-      > div:nth-child(2) {
-        color: #666;
-        font-size: 12px;
-        span {
-          color: #999;
-          display: inline-block;
-          padding-right: 6px;
-        }
-      }
-    }
-    button {
-      background: white;
-      outline: none;
-      border: none;
-      margin: 16px;
-      display: block;
-      text-align: left;
-      padding: 8px;
-      color: #eb5424;
-      font-size: 14px;
-    }
-  }
 
-</style>

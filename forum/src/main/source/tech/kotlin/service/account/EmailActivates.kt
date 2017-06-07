@@ -7,13 +7,13 @@ import tech.kotlin.model.request.ActivateEmailReq
 import tech.kotlin.model.request.CreateEmailSessionReq
 import tech.kotlin.model.response.CreateEmailSessionResp
 import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.utils.exceptions.Err
-import tech.kotlin.utils.exceptions.abort
-import tech.kotlin.utils.log.Log
-import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.redis.Redis
-import tech.kotlin.utils.serialize.strDict
+import tech.kotlin.utils.Err
+import tech.kotlin.utils.abort
+import tech.kotlin.common.os.Log
+import tech.kotlin.utils.Mysql
+import tech.kotlin.common.utils.Props
+import tech.kotlin.utils.Redis
+import tech.kotlin.common.utils.strDict
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

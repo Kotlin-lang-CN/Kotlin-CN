@@ -2,10 +2,10 @@ package tech.kotlin.service.mail
 
 import tech.kotlin.model.request.EmailReq
 import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.utils.os.Handler
-import tech.kotlin.utils.os.Looper
-import tech.kotlin.utils.properties.Props
-import tech.kotlin.utils.properties.str
+import tech.kotlin.common.os.Handler
+import tech.kotlin.common.os.Looper
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.str
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
 import javax.mail.Session
@@ -24,9 +24,8 @@ object Emails {
     val authenticator: Authenticator by lazy {
         // 构建授权信息，用于进行SMTP进行身份验证
         object : Authenticator() {
-            override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(properties str "mail.user", properties str "mail.password")
-            }
+            override fun getPasswordAuthentication()=
+                    PasswordAuthentication(properties str "mail.user", properties str "mail.password")
         }
     }
 
@@ -48,13 +47,3 @@ object Emails {
     }
 
 }
-
-fun main(args: Array<String>) {
-    Emails.send(EmailReq().apply {
-        this.to = "chpengzh@kotlin-cn.org"
-        this.subject = "test mail"
-        this.content = ""
-        this.async = false
-    })
-}
-

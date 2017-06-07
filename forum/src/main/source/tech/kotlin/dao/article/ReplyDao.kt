@@ -3,10 +3,10 @@ package tech.kotlin.dao.article
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
 import tech.kotlin.model.domain.Reply
-import tech.kotlin.utils.mysql.Mysql
-import tech.kotlin.utils.mysql.get
-import tech.kotlin.utils.redis.Redis
-import tech.kotlin.utils.serialize.Json
+import tech.kotlin.utils.Mysql
+import tech.kotlin.utils.get
+import tech.kotlin.utils.Redis
+import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
