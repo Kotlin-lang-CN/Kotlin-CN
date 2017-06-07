@@ -21,14 +21,14 @@ const config = {
     }
   },
   UI: {
-    root: '#/',
-    account: '#/account',
-    register: '#/register',
-    login: '#/login',
-    edit: '#/edit',
-    topics: '#/topics',
-    manager: '#/manager',
-    topic: '#/topic'
+    root: '/',
+    account: '/account',
+    register: '/register',
+    login: '/login',
+    edit: '/edit',
+    topics: '/topics',
+    manager: '/manager',
+    topic: '/topic'
   }
 };
 export default config;
