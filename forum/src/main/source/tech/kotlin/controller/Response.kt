@@ -45,7 +45,7 @@ fun Route.gate(desc: String, log: Boolean = true): Route {
             response.header("Access-Control-Allow-Methods", "GET, POST")
             if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Abort) {
-            result = Json.dumps(err.model)
+            result = err.message!!
             if (log) Log.d("Response", err)
             if (log) Log.d("Response", "$desc($requestId): $result")
         } catch (err: Throwable) {

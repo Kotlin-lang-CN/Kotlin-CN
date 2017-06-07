@@ -47,10 +47,17 @@ public class IOThread extends Thread implements MultiConnPool {
 
     @Override
     public void connect(InetSocketAddress address) throws IOException {
+        connect(address, null);
+    }
+
+    @Override
+    public void connect(InetSocketAddress address, Object tag) throws IOException {
         SocketChannel channel = SocketChannel.open();
         channel.connect(address);
         channel.configureBlocking(false);
-        register(new Connection(this, channel));
+        Connection connection = new Connection(this, channel);
+        connection.attach(tag);
+        register(connection);
     }
 
     private void register(Connection conn) throws IOException {

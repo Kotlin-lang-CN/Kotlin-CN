@@ -39,7 +39,6 @@ dependencies {
     //email
     compile 'javax.mail:mail:1.4.7'
 
-    compile 'com.relops:snowflake:1.1'
     compile 'com.sparkjava:spark-core:2.6.0'
     compile 'org.slf4j:slf4j-jdk14:1.7.25'
     testCompile 'junit:junit:4.12'

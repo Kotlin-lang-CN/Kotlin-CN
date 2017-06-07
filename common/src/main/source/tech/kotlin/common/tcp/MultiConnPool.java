@@ -10,6 +10,8 @@ public interface MultiConnPool {
 
     void connect(InetSocketAddress address) throws IOException;
 
+    void connect(InetSocketAddress address, Object tag) throws IOException;
+
     void close(Connection conn) throws IOException;
 
     void terminate();
