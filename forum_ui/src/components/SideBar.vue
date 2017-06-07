@@ -8,12 +8,12 @@
     <div class="part">
       <header>友情链接</header>
       <ul class="card">
-        <li><a href="http://cnodejs.org/"><i class="cnodejs"></i></a></li>
-        <li><a href="https://laravel-china.org/"><i class="laravel"></i></a></li>
-        <li><a href="http://golangtc.com/"><i class="golangtc"></i></a></li>
-        <li><a href="http://elixir-cn.com/"><i class="elixir"></i></a></li>
-        <li><a href="http://ionichina.com/"><i class="ioni"></i></a></li>
-        <li><a href="https://testerhome.com/"></a><i class="tester"></i></li>
+        <li><a href="http://cnodejs.org/" target="_blank"><i class="cnodejs"></i></a></li>
+        <li><a href="https://laravel-china.org/" target="_blank"><i class="laravel"></i></a></li>
+        <li><a href="http://golangtc.com/" target="_blank"><i class="golangtc"></i></a></li>
+        <li><a href="http://elixir-cn.com/" target="_blank"><i class="elixir"></i></a></li>
+        <li><a href="http://ionichina.com/" target="_blank"><i class="ioni"></i></a></li>
+        <li><a href="https://testerhome.com/" target="_blank"></a><i class="tester"></i></li>
       </ul>
     </div>
   </div>
