@@ -24,4 +24,4 @@ if [ ${pid} ]; then
     kill ${pid}
 fi
 
-nohup java -jar ./forum/build/libs/forum-1.0.0-release.jar > ../forum.log &
+java -jar ./forum/build/libs/forum-1.0.0-release.jar

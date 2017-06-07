@@ -24,9 +24,8 @@ object Emails {
     val authenticator: Authenticator by lazy {
         // 构建授权信息，用于进行SMTP进行身份验证
         object : Authenticator() {
-            override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(properties str "mail.user", properties str "mail.password")
-            }
+            override fun getPasswordAuthentication()=
+                    PasswordAuthentication(properties str "mail.user", properties str "mail.password")
         }
     }
 
@@ -48,13 +47,3 @@ object Emails {
     }
 
 }
-
-fun main(args: Array<String>) {
-    Emails.send(EmailReq().apply {
-        this.to = "chpengzh@kotlin-cn.org"
-        this.subject = "test mail"
-        this.content = ""
-        this.async = false
-    })
-}
-

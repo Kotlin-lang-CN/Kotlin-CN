@@ -65,6 +65,10 @@ fun main(vararg args: String) = LooperApp.start({
         path("/rss") {
             get("/fine", ArticleViewController.rssFine)
         }
+
+        path("/misc") {
+            get("/dashboard", MiscController.dashboard.gate(""))
+        }
     }
     notFound { req, response ->
         response.header("Access-Control-Allow-Origin", "http://localhost:3000")

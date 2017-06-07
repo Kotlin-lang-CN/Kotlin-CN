@@ -144,9 +144,7 @@ object ArticleViewController {
         }
     }
 
-    val getCategory = Route { _, _ ->
-        return@Route ok { it["category"] = Category.values().map { it.value } }
-    }
+    val getCategory = Route { _, _ -> ok { it["category"] = Category.values().map { it.value } } }
 
     val rssFine = Route { _, resp ->
         val articles = Articles.getLatest(QueryLatestArticleReq().apply {
