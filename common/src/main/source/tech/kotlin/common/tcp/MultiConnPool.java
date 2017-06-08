@@ -8,9 +8,9 @@ public interface MultiConnPool {
 
     void listen(InetSocketAddress address) throws IOException;
 
-    void connect(InetSocketAddress address) throws IOException;
+    Connection connect(InetSocketAddress address) throws IOException;
 
-    void connect(InetSocketAddress address, Object tag) throws IOException;
+    Connection connect(InetSocketAddress address, Object tag) throws IOException;
 
     void close(Connection conn) throws IOException;
 

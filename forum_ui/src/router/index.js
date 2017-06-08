@@ -18,7 +18,7 @@ export default new Router({
     }
   }, {
     path: '/edit/:id',
-    name: 'Edit',
+    name: 'EditPost',
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }

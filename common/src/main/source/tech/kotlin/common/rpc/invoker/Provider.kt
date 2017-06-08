@@ -1,13 +1,16 @@
 package tech.kotlin.common.rpc.invoker
 
+import com.baidu.bjf.remoting.protobuf.Codec
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.common.rpc.annotations.RpcName
 import tech.kotlin.common.rpc.exceptions.NoSuchServiceError
+import tech.kotlin.common.tcp.Connection
 import java.lang.IllegalStateException
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentHashMap
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -15,13 +18,21 @@ import java.lang.reflect.Method
  *********************************************************************/
 class Provider {
 
-    private val services = HashMap<String, Pair<Any, Method>>()
+    private val services = HashMap<Int, Pair<Any, Method>>()
+    private val coder = ConcurrentHashMap<Class<*>, Codec<*>>()
+
+    private fun <T> getCodec(type: Class<T>): Codec<T> {
+        @Suppress("UNCHECKED_CAST")
+        return (coder[type] ?: synchronized(coder) {
+            val shadow = coder[type]
+            if (shadow != null) return@synchronized shadow
+            val new = ProtobufProxy.create(type)
+            coder[type] = new
+            return@synchronized new
+        }) as Codec<T>
+    }
 
     fun register(interfaceType: Class<*>, implement: Any) {
-        val namePrefix = interfaceType.getAnnotation(RpcName::class.java)?.value
-                ?: throw IllegalStateException("""
-                interface type ${interfaceType.name} should be annotated by ${RpcName::class.java.name}
-                """.trimIndent().trim())
         if (interfaceType.declaredMethods
                 .filter { it.isAnnotationPresent(RpcInterface::class.java) }
                 .map {
@@ -29,7 +40,7 @@ class Provider {
                         throw IllegalStateException("interface method should only have one argument")
                     it
                 }
-                .map { services["$namePrefix:${it.getAnnotation(RpcInterface::class.java).value}"] = implement to it }
+                .map { services[it.getAnnotation(RpcInterface::class.java).value] = implement to it }
                 .isEmpty()) {
             throw IllegalStateException("""
             no method is found in interface type ${interfaceType.name},
@@ -39,10 +50,13 @@ class Provider {
     }
 
     @Throws(Abort::class)
-    fun invokeNative(serviceName: String, arg: Any): Any {
-        val implProxy = services[serviceName] ?: throw NoSuchServiceError("no such service with name $serviceName")
+    fun invokeNative(connection: Connection, service: Int, data: ByteArray): Any {
+        val implProxy = services[service] ?: throw NoSuchServiceError("no such service $service")
         try {
-            return implProxy.second(implProxy.first, arg)
+            val argType = implProxy.second.parameterTypes[0]
+            val arg = (getCodec(argType) as Codec<*>).decode(data)
+            val result = implProxy.second(implProxy.first, arg)
+            return Any()
         } catch (err: InvocationTargetException) {
             val targetErr = err.targetException
             if (targetErr is Abort) {

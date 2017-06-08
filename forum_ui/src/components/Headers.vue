@@ -30,7 +30,7 @@
         urlAccount: Config.UI.account,
         urlLogin: Config.UI.login,
         strToast: '',
-        strUserName: LoginMgr.username,
+        strUserName: LoginMgr.check((it) => it.username, () => ''),
         moduleShow: true
       }
     },
@@ -42,7 +42,7 @@
         }, 3000);
       });
       Event.on("login", () => {
-        this.strUserName = LoginMgr.username
+        this.strUserName = LoginMgr.check((it) => it.username, () => '')
       });
       Event.on("fullscreen", (on) => {
         this.moduleShow = !on;
@@ -77,7 +77,7 @@
         > div {
           display: inline-block;
         }
-        .menu-header ,.menu-main{
+        .menu-header, .menu-main {
           height: 38px;
           line-height: 38px;
           text-align: center;
@@ -90,14 +90,14 @@
         .menu-right {
           float: right;
           font-size: 16px;
-          >a{
+          > a {
             display: inline-block;
             width: 96px;
             height: 38px;
             line-height: 38px;
             text-align: center;
           }
-          >a:nth-child(2){
+          > a:nth-child(2) {
             border: 1px #2572e5 solid;
             border-radius: 2px;
             color: #2572e5;

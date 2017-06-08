@@ -2,43 +2,62 @@ import Cookie from './Cookie.js';
 import Cache from './Cache.js';
 import Event from './Event.js';
 
+
 class LoginMgr {
-  constructor() {
-    this.isLogin = true;
-    this.uid = Cookie.get('uid');
-    this.username = Cache.get('username');
-    this.email = Cache.get('email');
-    if (this.uid.length === 0 ||this.getToken().length === 0) {
-      this.logout();
+
+  info() {
+    let uid = Cookie.get("X-App-UID");
+    let username = Cookie.get("X-App-Name");
+    let email = Cookie.get("X-App-Email");
+    let token = Cookie.get("X-App-Token");
+    if (uid && uid.length > 0
+      && username && username.length > 0
+      && email && email.length > 0
+      && token && token.length > 0) {
+      return {
+        uid: uid,
+        username: username,
+        email: email,
+        token: token
+      }
+    } else {
+      return false
+    }
+  }
+
+  check(loginMode, guestMode) {
+    let userInfo = this.info();
+    if (userInfo) {
+      return loginMode ? loginMode(userInfo) : '';
+    } else {
+      return guestMode ? guestMode() : '';
+    }
+  }
+
+  require(loginAlready) {
+    if (this.info()) {
+      loginAlready()
+    } else {
+      Event.emit('require_login', loginAlready)
     }
   }
 
   login(data) {
-    this.isLogin = true;
-    this.uid = data.uid;
-    this.username = data.username;
-    this.email = data.email;
-    Cookie.set('uid', data.uid);
-    Cookie.set('token', data.token);
-    Cache.set('username', data.username);
-    Cache.set('email', data.email);
+    console.log(data);
+    Cookie.set('X-App-Name', data.username);
+    Cookie.set('X-App-Email', data.email);
+    Cookie.set('X-App-UID', data.uid);
+    Cookie.set('X-App-Token', data.token);
     Event.emit('login');
   }
 
   logout() {
-    Cookie.del('uid');
-    Cookie.del('token');
-    Cache.del('username');
-    Cache.del('email');
-    this.uid = '';
-    this.username = '';
-    this.email = '';
-    this.isLogin = false;
+    Cookie.del('X-App-Email');
+    Cookie.del('X-App-Token');
+    Cookie.del('X-App-UID');
+    Cookie.del('X-App-Name');
     Event.emit('login');
   }
 
-  getToken(){
-    return Cookie.get('token');
-  }
 }
 export default new LoginMgr();

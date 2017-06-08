@@ -22,8 +22,8 @@
       return {
         msg: Config.URL.account.register,
         object: {
-          Name: LoginMgr.username,
-          Email: LoginMgr.email
+          Name: LoginMgr.info().username,
+          Email: LoginMgr.info().email
         }
       }
     },
@@ -36,14 +36,14 @@
   };
 </script>
 <style scoped lang="less">
-.button{
-  max-width: 300px;
-  margin: auto;
-  line-height: 36px;
-  border-radius: 5px;
-  height: 36px;
-  background: white;
-  border-color: #f1f1f1;
-  color: #eb5424;
-}
+  .button {
+    max-width: 300px;
+    margin: auto;
+    line-height: 36px;
+    border-radius: 5px;
+    height: 36px;
+    background: white;
+    border-color: #f1f1f1;
+    color: #eb5424;
+  }
 </style>

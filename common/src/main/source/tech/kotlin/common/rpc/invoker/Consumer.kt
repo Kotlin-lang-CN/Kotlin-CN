@@ -1,9 +1,10 @@
 package tech.kotlin.common.rpc.invoker
 
+import com.baidu.bjf.remoting.protobuf.Codec
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy
 import com.relops.snowflake.Snowflake
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.common.rpc.annotations.RpcName
 import tech.kotlin.common.rpc.exceptions.ProxyTimeout
 import java.lang.reflect.Proxy.newProxyInstance
 import java.util.concurrent.ConcurrentHashMap
@@ -17,12 +18,20 @@ import java.util.concurrent.TimeUnit
 abstract class Consumer {
 
     private val transactions = ConcurrentHashMap<Long, Transaction>()
+    private val coder = ConcurrentHashMap<Class<*>, Codec<*>>()
+
+    private fun <T> getCodec(type: Class<T>): Codec<T> {
+        @Suppress("UNCHECKED_CAST")
+        return (coder[type] ?: synchronized(coder) {
+            val shadow = coder[type]
+            if (shadow != null) return@synchronized shadow
+            val new = ProtobufProxy.create(type)
+            coder[type] = new
+            return@synchronized new
+        }) as Codec<T>
+    }
 
     fun <T> getProxy(interfaceType: Class<T>): T {
-        val namePrefix = interfaceType.getAnnotation(RpcName::class.java)?.value
-                ?: throw IllegalStateException("""
-                interface type ${interfaceType.name} should be annotated by ${RpcName::class.java.name}
-                """.trimIndent().trim())
         @Suppress("UNCHECKED_CAST")
         return newProxyInstance(javaClass.classLoader, arrayOf(interfaceType)) { proxy, method, args ->
             if (!method.isAnnotationPresent(RpcInterface::class.java))
@@ -32,14 +41,20 @@ abstract class Consumer {
             val serviceId = method.getAnnotation(RpcInterface::class.java).value
             val transaction = Transaction()
             synchronized(transaction) {
-                transactions[requestId] = transaction
-                onProxyStart(namePrefix, serviceId, requestId, args[0])
+                try {
+                    transactions[requestId] = transaction
+                    val data = (getCodec(method.parameterTypes[0]) as Codec<Any>).encode(args[0])
+                    onProxyTransport(requestId, serviceId, data)
+                } catch (error: Throwable) {
+                    transactions.remove(requestId)
+                    throw error
+                }
             }
             transaction.latch.await(5, TimeUnit.SECONDS)
             val error = transaction.error
             val result = transaction.result
             if (error == null && result == null) {
-                throw ProxyTimeout("proxy timeout while invoke $namePrefix:$serviceId(${interfaceType.name}$${method.name})")
+                throw ProxyTimeout("proxy timeout while invoke $serviceId(${interfaceType.name}$${method.name})")
             } else if (error != null) {
                 error.stackTrace = Thread.currentThread().stackTrace
                         .dropWhile { it.methodName != method.name }.toTypedArray()
@@ -50,18 +65,12 @@ abstract class Consumer {
         } as T
     }
 
-    abstract fun onProxyStart(serviceName: String, serviceId: Int, requestId: Long, argument: Any)
+    abstract fun onProxyTransport(requestId: Long, type: Int, data: ByteArray)
 
-    fun onProxyResult(requestId: Long, result: Any) {
+    fun onProxyResult(requestId: Long, type: Int, data: ByteArray) {
         val trans = transactions.remove(requestId) ?: return
         synchronized(trans) {
-            if (result is Abort) {
-                trans.error = result
-            } else if (result is Throwable) {
-                trans.error = Abort(-3, result.message)
-            } else {
-                trans.result = result
-            }
+
             trans.latch.countDown()
         }
     }
