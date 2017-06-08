@@ -18,17 +18,20 @@ const config = {
       list: '/article/list',//获取最新文章列表
       fine: '/article/fine', //获取精品文章列表
       category: '/article/category/{0}'//获取特定类别最新文章列表
+    },
+    misc: {
+      dashboard: '/misc/dashboard'
     }
   },
   UI: {
-    root: '/',
-    account: '/account',
-    register: '/register',
-    login: '/login',
-    edit: '/edit',
-    topics: '/topics',
-    manager: '/manager',
-    topic: '/topic'
+    root: '#/',
+    account: '#/account',
+    register: '#/register',
+    login: '#/login',
+    edit: '#/edit',
+    topics: '#/topics',
+    manager: '#/manager',
+    topic: '#/topic'
   }
 };
 export default config;

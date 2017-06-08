@@ -3,7 +3,7 @@
     <a class="button" :href="uiEdit">发布新话题</a>
     <div class="part">
       <header>网站通告</header>
-      <div class="card">文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻文字常驻</div>
+      <div class="card"><display-panels :content="dashboard"></display-panels></div>
     </div>
     <div class="part">
       <header>友情链接</header>
@@ -20,13 +20,33 @@
 </template>
 <script>
   import Config from "../assets/js/Config.js";
+  import Net from "../assets/js/Net.js";
+  import DisplayPanels from '../components/DisplayPanels.vue';
   export default {
     data() {
       return {
-        uiEdit: Config.UI.edit
+        uiEdit: Config.UI.edit,
+        dashboard:''
       }
     },
-    methods: {}
+    components: {
+      'display-panels': DisplayPanels
+    },
+    created(){
+      this.updateDashboard();
+    },
+    methods: {
+      updateDashboard(){
+        let request = {
+          url: Config.URL.misc.dashboard,
+          type: "GET",
+          condition: {}
+        };
+        Net.ajax(request, (data) => {
+          this.dashboard = data.text;
+        })
+      }
+    }
   }
 </script>
 

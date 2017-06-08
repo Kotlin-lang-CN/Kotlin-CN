@@ -4,7 +4,6 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [{
     path: '/',
     name: 'home',
@@ -17,13 +16,13 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }
-  },  {
+  }, {
     path: '/edit/:id',
     name: 'Edit',
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }
-  },{
+  }, {
     path: '/account',
     name: 'Account',
     component: function (resolve) {
@@ -47,7 +46,7 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Topic.vue'], resolve);
     }
-  },{
+  }, {
     path: '/topics',
     name: 'Topics',
     component: function (resolve) {
