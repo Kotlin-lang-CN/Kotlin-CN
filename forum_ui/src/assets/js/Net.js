@@ -29,10 +29,10 @@ function generateHeaders() {
 }
 
 class Net {
-
   ajax(request, success, fail) {
     let errHandler = function (error) {
-      Event.on('error', error);
+      Event.emit('error', error);
+      console.log(error);
       if (fail) fail(error)
     };
     $.ajax({
@@ -46,7 +46,7 @@ class Net {
         try {
           let resp = bigJSON.parse(data);
           if (0 !== resp.code) {
-            errHandler(resp.msg);
+            errHandler(resp.msg + "(" + resp.code + ")");
           } else {
             if (success) success(resp);
           }

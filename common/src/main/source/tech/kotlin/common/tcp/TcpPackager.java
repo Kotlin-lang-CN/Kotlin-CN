@@ -57,7 +57,7 @@ public class TcpPackager {
         tagger.writeInt(sent, data.length, 0);
         tagger.writeInt(sent, type, 4);
         tagger.writeInt(sent, (int) (packageId >> 32), 8);
-        tagger.writeInt(sent, (int) (packageId & 0xFFFF), 12);
+        tagger.writeInt(sent, (int) packageId, 12);
 
         System.arraycopy(data, 0, sent, 16, data.length);
         if (encoder != null) {
@@ -81,7 +81,7 @@ public class TcpPackager {
             int type = mTagger.readInt(mTagger.mTagBuffer, 4);
             int high = mTagger.readInt(mTagger.mTagBuffer, 8);
             int low = mTagger.readInt(mTagger.mTagBuffer, 12);
-            long packageId = ((long) high << 32) | (long) low;
+            long packageId = (long) high << 32 | low & 0xFFFFFFFFL;
 
             if (mBuffer.getLen() < length + 16)
                 break;//包内容未解析完整

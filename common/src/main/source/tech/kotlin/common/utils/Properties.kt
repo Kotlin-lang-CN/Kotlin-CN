@@ -65,3 +65,5 @@ infix fun Properties.str(field: String): String = getProperty(field)
 infix fun Properties.long(field: String) = getProperty(field).toLong()
 
 infix fun Properties.int(field: String) = getProperty(field).toInt()
+
+infix fun Properties.bool(field: String) = getProperty(field).toBoolean()

@@ -15,15 +15,11 @@ import tech.kotlin.model.request.GithubAuthReq
 import tech.kotlin.model.response.CreateAuthSessionResp
 import tech.kotlin.model.response.GithubAuthResp
 import tech.kotlin.common.algorithm.JWT
-import tech.kotlin.utils.Err
-import tech.kotlin.utils.check
-import tech.kotlin.utils.tryExec
-import tech.kotlin.utils.Http
-import tech.kotlin.utils.Mysql
 import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.long
 import tech.kotlin.common.utils.str
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.utils.*
 import java.util.*
 
 /*********************************************************************
@@ -45,7 +41,7 @@ object Githubs {
     fun createAuthSession(req: CreateAuthSessionReq): CreateAuthSessionResp {
         return CreateAuthSessionResp().apply {
             state = JWT.dumps(key = jwtToken, content = AccountSession().apply {
-                id = Snowflake(0).next()
+                id = IDs.next()
                 device = req.device
                 uid = 0
             })
@@ -73,7 +69,7 @@ object Githubs {
             this.userInfo = userInfo
             this.account = account
             this.sessionToken = JWT.dumps(key = jwtToken, content = AccountSession().apply {
-                id = Snowflake(0).next()
+                id = IDs.next()
                 device = req.device
                 uid = github.id
             })

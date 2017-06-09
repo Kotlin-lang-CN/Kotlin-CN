@@ -9,6 +9,7 @@ import tech.kotlin.model.response.ArticleListResp
 import tech.kotlin.model.response.ArticleResp
 import tech.kotlin.model.response.QueryArticleByIdResp
 import tech.kotlin.utils.Err
+import tech.kotlin.utils.IDs
 import tech.kotlin.utils.abort
 import tech.kotlin.utils.Mysql
 
@@ -20,7 +21,7 @@ object Articles {
 
     //创建一篇文章
     fun create(req: CreateArticleReq): ArticleResp {
-        val articleId = Snowflake(0).next()
+        val articleId = IDs.next()
         val current = System.currentTimeMillis()
         //调用文本服务创建新的文本对象
         val contentId = Texts.createContent(CreateTextContentReq().apply {

@@ -2,6 +2,7 @@
   <div>
     <app-header></app-header>
     <div id="app">
+      <app-login></app-login>
       <router-view></router-view>
     </div>
     <app-foot></app-foot>
@@ -12,11 +13,14 @@
   import Event from './assets/js/Event.js';
   import Header from './components/Headers.vue';
   import Footer from './components/Footers.vue';
+  import Login from './components/Login.vue';
+
   export default {
     name: 'app',
     components: {
       'app-header': Header,
-      'app-foot': Footer
+      'app-foot': Footer,
+      'app-login': Login
     }
   }
 </script>
@@ -29,7 +33,7 @@
     text-align: center;
     color: #2c3e50;
 
-    >div{
+    > div {
       max-width: 1120px;
       margin: 1px auto;
     }
@@ -58,7 +62,7 @@
 
   }
 
-  .button,button {
+  .button, button {
     line-height: 36px;
     height: 36px;
     color: #2572e5;

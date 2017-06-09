@@ -1,5 +1,4 @@
 import Cookie from './Cookie.js';
-import Cache from './Cache.js';
 import Event from './Event.js';
 
 
@@ -35,10 +34,11 @@ class LoginMgr {
   }
 
   require(loginAlready) {
-    if (this.info()) {
-      loginAlready()
+    let info = this.info();
+    if (info) {
+      loginAlready(info)
     } else {
-      Event.emit('require_login', loginAlready)
+      Event.emit('request_login', loginAlready)
     }
   }
 

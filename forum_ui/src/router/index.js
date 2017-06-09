@@ -29,18 +29,6 @@ export default new Router({
       require(['@/views/Account.vue'], resolve);
     }
   }, {
-    path: '/register',
-    name: 'Register',
-    component: function (resolve) {
-      require(['@/views/Register.vue'], resolve);
-    }
-  }, {
-    path: '/login',
-    name: 'Login',
-    component: function (resolve) {
-      require(['@/views/Login.vue'], resolve);
-    }
-  }, {
     path: '/topic/:id',
     name: 'Topic',
     component: function (resolve) {

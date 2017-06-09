@@ -5,8 +5,8 @@
         <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> China</a></div>
         <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
         <div class="menu-authen menu-right" v-if="strUserName ===''">
-          <a :href="urlRegister" title="注册">注册</a>
-          <a :href="urlLogin" title="登录">登录</a>
+          <a v-on:click="register" title="注册">注册</a>
+          <a v-on:click="login" title="登录">登录</a>
         </div>
         <div class="menu-user menu-right" v-if="strUserName !==''">
           <a :href="urlAccount" title="登录">你好！{{ strUserName }}</a>
@@ -20,7 +20,8 @@
 <script>
   import LoginMgr from '../assets/js/LoginMgr.js';
   import Event from '../assets/js/Event.js';
-  import Config from '../assets/js/Config';
+  import Config from '../assets/js/Config.js';
+
   export default {
     data: function () {
       return {
@@ -35,8 +36,8 @@
       }
     },
     created: function () {
-      Event.on("error", (msg) => {
-        this.strToast = msg;
+      Event.on("error", (err) => {
+        this.strToast = err;
         setTimeout(() => {
           this.strToast = '';
         }, 3000);
@@ -48,7 +49,15 @@
         this.moduleShow = !on;
       })
     },
-    methods: {}
+    methods: {
+      login() {
+        Event.emit('request_login')
+      },
+      register() {
+        Event.emit('request_register')
+      }
+
+    }
   }
 </script>
 

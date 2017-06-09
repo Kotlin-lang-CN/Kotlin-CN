@@ -7,6 +7,7 @@ import tech.kotlin.model.request.CreateTextContentReq
 import tech.kotlin.model.request.QueryTextReq
 import tech.kotlin.model.response.CreateTextContentResp
 import tech.kotlin.model.response.QueryTextResp
+import tech.kotlin.utils.IDs
 import tech.kotlin.utils.Mysql
 
 /*********************************************************************
@@ -34,7 +35,7 @@ object Texts {
     //创建文本对象
     fun createContent(req: CreateTextContentReq): CreateTextContentResp {
         val content = TextContent().apply {
-            this.id = Snowflake(0).next()
+            this.id = IDs.next()
             this.content = req.content
             this.serializeId = req.serializeId
             this.createTime = System.currentTimeMillis()
