@@ -8,6 +8,7 @@ import tech.kotlin.model.domain.Reply
 import tech.kotlin.model.request.*
 import tech.kotlin.model.response.*
 import tech.kotlin.utils.Err
+import tech.kotlin.utils.IDs
 import tech.kotlin.utils.abort
 import tech.kotlin.utils.Mysql
 
@@ -20,7 +21,7 @@ object Replys {
 
     //创建一则文章回复
     fun create(req: CreateArticleReplyReq): CreateReplyResp {
-        val replyId = Snowflake(0).next()
+        val replyId = IDs.next()
         val contentId = Texts.createContent(CreateTextContentReq().apply {
             this.serializeId = "reply:$replyId"
             this.content = req.content

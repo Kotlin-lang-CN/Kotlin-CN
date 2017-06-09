@@ -3,8 +3,8 @@ package tech.kotlin.common.rpc.invoker
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.common.rpc.annotations.RpcName
 import tech.kotlin.common.rpc.exceptions.NoSuchServiceError
+import tech.kotlin.common.serialize.Proto
 import java.lang.IllegalStateException
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -15,13 +15,9 @@ import java.lang.reflect.Method
  *********************************************************************/
 class Provider {
 
-    private val services = HashMap<String, Pair<Any, Method>>()
+    private val services = HashMap<Int, InvokeWrapper>()
 
     fun register(interfaceType: Class<*>, implement: Any) {
-        val namePrefix = interfaceType.getAnnotation(RpcName::class.java)?.value
-                ?: throw IllegalStateException("""
-                interface type ${interfaceType.name} should be annotated by ${RpcName::class.java.name}
-                """.trimIndent().trim())
         if (interfaceType.declaredMethods
                 .filter { it.isAnnotationPresent(RpcInterface::class.java) }
                 .map {
@@ -29,7 +25,10 @@ class Provider {
                         throw IllegalStateException("interface method should only have one argument")
                     it
                 }
-                .map { services["$namePrefix:${it.getAnnotation(RpcInterface::class.java).value}"] = implement to it }
+                .map { method ->
+                    services[method.getAnnotation(RpcInterface::class.java).value] =
+                            InvokeWrapper(implement, implement.javaClass.getMethod(method.name, *method.parameterTypes))
+                }
                 .isEmpty()) {
             throw IllegalStateException("""
             no method is found in interface type ${interfaceType.name},
@@ -39,23 +38,29 @@ class Provider {
     }
 
     @Throws(Abort::class)
-    fun invokeNative(serviceName: String, arg: Any): Any {
-        val implProxy = services[serviceName] ?: throw NoSuchServiceError("no such service with name $serviceName")
+    fun invokeNative(type: Int, data: ByteArray, invokeCall: (Int, ByteArray) -> Unit) {
+        val wrapper = services[type] ?: return invokeCall(0, Proto.dumps(Abort(0, "no such interface $type").model))
         try {
-            return implProxy.second(implProxy.first, arg)
+            val argType = wrapper.method.parameterTypes[0]
+            val arg = Proto.loads(data, argType)
+            val proxy = wrapper.impl
+            val result = wrapper.method(proxy, arg)
+            val resultData = Proto.dumps(result)
+            invokeCall(type, resultData)
         } catch (err: InvocationTargetException) {
             val targetErr = err.targetException
             if (targetErr is Abort) {
-                Log.d(err)
-                throw targetErr
+                Log.d(targetErr)
+                invokeCall(targetErr.model.code, Proto.dumps(targetErr.model))
             } else {
-                Log.e(err)
-                throw Abort(0, err.message)
+                Log.e(targetErr)
+                invokeCall(0, Proto.dumps(Abort(0, targetErr.message).model))
             }
         } catch (err: Throwable) {
             Log.e(err)
-            throw Abort(0, err.message)
+            invokeCall(0, Proto.dumps(Abort(0, err.message).model))
         }
     }
 
+    internal data class InvokeWrapper(val impl: Any, val method: Method)
 }

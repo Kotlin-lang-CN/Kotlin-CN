@@ -2,6 +2,7 @@ package tech.kotlin.common.serialize
 
 import com.baidu.bjf.remoting.protobuf.Codec
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy
+import kotlin.reflect.KClass
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -35,11 +36,15 @@ object Proto {
     }
 
     inline fun <reified T : Any> loads(data: ByteArray): T {
+        return loads(data, T::class.java)
+    }
+
+    fun <T : Any> loads(data: ByteArray, type: Class<T>): T {
         val coderMap = coders.get()
-        var coder = coderMap[T::class.java]
+        var coder = coderMap[type]
         if (coder == null) {
-            coder = ProtobufProxy.create(T::class.java)
-            coderMap[T::class.java] = coder
+            coder = ProtobufProxy.create(type)
+            coderMap[type] = coder
         }
         @Suppress("UNCHECKED_CAST")
         return (coder!! as Codec<T>).decode(data)

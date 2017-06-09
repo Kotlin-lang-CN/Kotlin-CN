@@ -1,6 +1,8 @@
 package tech.kotlin.service.account
 
-import com.relops.snowflake.Snowflake
+import tech.kotlin.common.algorithm.MD5
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.str
 import tech.kotlin.dao.account.AccountDao
 import tech.kotlin.dao.account.UserInfoDao
 import tech.kotlin.model.domain.Account
@@ -9,12 +11,10 @@ import tech.kotlin.model.request.*
 import tech.kotlin.model.response.CreateAccountResp
 import tech.kotlin.model.response.EmptyResp
 import tech.kotlin.model.response.LoginResp
-import tech.kotlin.common.algorithm.MD5
 import tech.kotlin.utils.Err
-import tech.kotlin.utils.abort
+import tech.kotlin.utils.IDs
 import tech.kotlin.utils.Mysql
-import tech.kotlin.common.utils.Props
-import tech.kotlin.common.utils.str
+import tech.kotlin.utils.abort
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -32,7 +32,7 @@ object Accounts {
     fun create(req: CreateAccountReq): CreateAccountResp {
         val current = System.currentTimeMillis()
         val account = Account().apply {
-            id = Snowflake(0).next()
+            id = IDs.next()
             password = encrypt(req.password)
             lastLogin = current
             state = Account.State.NORMAL

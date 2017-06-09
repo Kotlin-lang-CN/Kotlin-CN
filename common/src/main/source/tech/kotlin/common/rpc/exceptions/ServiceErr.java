@@ -1,14 +1,14 @@
-package tech.kotlin.controller
+package tech.kotlin.common.rpc.exceptions;
 
-import spark.Route
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.os.Abort;
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object MiscController {
+public class ServiceErr extends Abort {
 
-    val dashboard = Route { _, _ -> return@Route ok { it["text"] = Redis.read { it["dashboard"] } } }
-
+    public ServiceErr(String message) {
+        super(-3, message);
+    }
 }

@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
+ *
+ * 提供了统一的异步调度服务，所有 postDelay 服务全部由该线程执行调度
  *********************************************************************/
 public final class Timer extends Thread {
 

@@ -16,29 +16,17 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }
-  },  {
+  }, {
     path: '/edit/:id',
-    name: 'Edit',
+    name: 'EditPost',
     component: function (resolve) {
       require(['@/views/Edit.vue'], resolve);
     }
-  },{
+  }, {
     path: '/account',
     name: 'Account',
     component: function (resolve) {
       require(['@/views/Account.vue'], resolve);
-    }
-  }, {
-    path: '/register',
-    name: 'Register',
-    component: function (resolve) {
-      require(['@/views/Register.vue'], resolve);
-    }
-  }, {
-    path: '/login',
-    name: 'Login',
-    component: function (resolve) {
-      require(['@/views/Login.vue'], resolve);
     }
   }, {
     path: '/topic/:id',
@@ -46,7 +34,7 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Topic.vue'], resolve);
     }
-  },{
+  }, {
     path: '/topics',
     name: 'Topics',
     component: function (resolve) {

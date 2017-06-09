@@ -1,16 +1,13 @@
 import Vue from 'vue';
-class Event {
-  //https://vuejs.org/v2/guide/components.html#Non-Parent-Child-Communication
-  constructor() {
-    this.bus = new Vue();
-  }
 
-  on(key,func){
-    this.bus.$on(key,func);
-  }
+const bus = new Vue();
 
-  emit(key,value){
-    this.bus.$emit(key,value);
+const Event = {
+  on: function (key, func) {
+    bus.$on(key, func);
+  },
+  emit: function (key, value) {
+    bus.$emit(key, value);
   }
-}
-export default new Event;
+};
+export default Event;

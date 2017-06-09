@@ -1,14 +1,9 @@
-package tech.kotlin.controller
+package tech.kotlin.utils
 
-import spark.Route
-import tech.kotlin.utils.Redis
+import com.relops.snowflake.Snowflake
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object MiscController {
-
-    val dashboard = Route { _, _ -> return@Route ok { it["text"] = Redis.read { it["dashboard"] } } }
-
-}
+object IDs : Snowflake(0)
