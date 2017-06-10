@@ -3,14 +3,11 @@
     <div class="content">
       <div class="post">
         <div class="sub-nav">
-          <button v-on:click="selectDefault"
-                  v-bind:class="{ 'select': select==='default', 'normal': select!=='default' }">默认
-          </button>
-          <button v-on:click="selectFine"
-                  v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }">优质
-          </button>
-          <button v-on:click="selectNew"
-                  v-bind:class="{ 'select': select==='news', 'normal': select!=='news' }">最新
+          <button v-for="(category, id) in categories" v-on:click="selectCategory(id)"
+                  v-bind:class="{
+              'select': categories.length > select && categories[select]===category,
+              'normal': categories.length > select && categories[select]!==category
+          }">{{category}}
           </button>
         </div>
         <article-list :requestUrl="articleListUrl"></article-list>
@@ -32,29 +29,25 @@
     data() {
       return {
         uiEdit: Config.UI.edit,
-        select: 'default',
-        articleListUrl: ''
+        select: 0,
+        articleListUrl: '',
+        categories: []
       }
     },
     components: {
       'article-list': ArticleList,
       'side-bar': SideBar
     },
-    mounted(){
-      this.articleListUrl = Config.URL.article.list;
+    created(){
+      Net.get({url: Config.URL.article.categoryType}, (resp) => {
+        this.categories = resp.category;
+        this.selectCategory(0)
+      });
     },
     methods: {
-      selectDefault(){
-        this.select = 'default';
-        this.articleListUrl = Config.URL.article.list;
-      },
-      selectFine(){
-        this.select = 'fine';
-        this.articleListUrl = Config.URL.article.fine;
-      },
-      selectNew(){
-        this.select = 'news';
-        this.articleListUrl = Config.URL.article.list;
+      selectCategory(id){
+        this.articleListUrl = Config.URL.article.category.format(id + 1);
+        this.select = id;
       }
     }
   }
@@ -92,7 +85,7 @@
         }
       }
     }
-    .side{
+    .side {
       width: 23%;
       padding-top: 8px;
     }
@@ -103,15 +96,16 @@
       }
     }
   }
+
   @media screen and (max-width: 480px) {
-    .content{
+    .content {
       display: block;
-      .post{
+      .post {
         display: block;
         float: none;
         width: 100%;
       }
-      .side{
+      .side {
         display: block;
         width: 100%;
       }

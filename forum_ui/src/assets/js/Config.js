@@ -17,7 +17,8 @@ const config = {
       reply: '/article/{0}/reply',
       list: '/article/list',//获取最新文章列表
       fine: '/article/fine', //获取精品文章列表
-      category: '/article/category/{0}'//获取特定类别最新文章列表
+      category: '/article/category/{0}',//获取特定类别最新文章列表
+      categoryType: '/article/category'//获取文章类别列表
     },
     misc: {
       dashboard: '/misc/dashboard'

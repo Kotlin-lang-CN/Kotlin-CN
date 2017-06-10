@@ -21,7 +21,12 @@
       'app-header': Header,
       'app-foot': Footer,
       'app-login': Login
-    }
+    },
+    mounted() {
+      Event.on("error", (err) => {
+        layer.msg(err)
+      });
+    },
   }
 </script>
 

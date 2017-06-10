@@ -4,7 +4,7 @@
       <div class="list" v-for="value in articles">
         <a href="javascript:void(0);">
           <div class="footnote" v-on:click="toArticle(value.meta.id)">
-            最后由{{ value.last_editor.username }} 回复于 {{ value.meta.last_edit_time | moment}}
+            最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
           </div>
           <i v-on:click="toArticle(value.meta.id)">{{ value.author.username.charAt(0).toUpperCase() }}</i>
           <div class="aside">
@@ -57,6 +57,9 @@
     },
     methods: {
       get(url, offset){
+        if (url.trim().length === 0)
+          return;
+
         const limit = 20;
         Net.ajax({
           url: url,

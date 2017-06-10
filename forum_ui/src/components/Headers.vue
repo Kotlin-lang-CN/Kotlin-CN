@@ -21,7 +21,6 @@
   import LoginMgr from '../assets/js/LoginMgr.js';
   import Event from '../assets/js/Event.js';
   import Config from '../assets/js/Config.js';
-
   export default {
     data: function () {
       return {
@@ -36,12 +35,6 @@
       }
     },
     created: function () {
-      Event.on("error", (err) => {
-        this.strToast = err;
-        setTimeout(() => {
-          this.strToast = '';
-        }, 3000);
-      });
       Event.on("login", () => {
         this.strUserName = LoginMgr.check((it) => it.username, () => '')
       });
