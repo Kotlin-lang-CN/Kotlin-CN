@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.annotations.RpcInterface
+import tech.kotlin.common.rpc.registrator.ServiceRegistrator
+import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -48,6 +50,7 @@ class TestImpl : TestApi {
 
 
 fun main(args: Array<String>) {
+    Serv.init()
     Serv.register(TestApi::class.java, TestImpl())
-    Serv.publish(Executors.newFixedThreadPool(4), 8900, "test")
+    Serv.publish(InetSocketAddress("0.0.0.0", 8900), "test", Executors.newFixedThreadPool(4))
 }

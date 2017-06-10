@@ -1,9 +1,12 @@
 package tech.kotlin.common.test.rpc
 
+import org.junit.BeforeClass
 import org.junit.Test
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
+import tech.kotlin.common.rpc.registrator.ServiceRegistrator
+import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -56,5 +59,14 @@ class RpcTest {
 
     companion object {
         val service by Serv.bind("test", TestApi::class)
+
+        @JvmStatic
+        @BeforeClass
+        fun before() {
+            Serv.init(object : ServiceRegistrator {
+                override fun getService(serviceName: String) = InetSocketAddress("127.0.0.1", 8900)
+                override fun publishService(serviceName: String, address: InetSocketAddress) = Unit
+            })
+        }
     }
 }

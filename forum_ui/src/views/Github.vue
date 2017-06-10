@@ -1,99 +1,26 @@
 <template>
-  <div class="dialog" v-if="showMode !==0">
-    <div class="bg" v-on:click="hide"></div>
-    <div class="cont">
-      <div class="header"><span class="blue">Kotlin</span>China</div>
-      <div class="login" v-if="showMode ===1">
-        <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
-        <input v-model="passwordInput" type="password" name="password" placeholder="用户密码"/>
-        <button v-on:click="login" class="big-btn">登录</button>
-        <div class="small-btn">
-          <button v-on:click="forget">忘记密码</button>
-          <button v-on:click="switchMode">我还没有账号</button>
-        </div>
+  <div class="bind_github_account">
+    <div class="login" v-if="showMode === 1">
+      <input v-model="nameInput" type="text" name="user" placeholder="用户名／邮箱"/> <br>
+      <input v-model="passwordInput" type="password" name="password" placeholder="密码"/>
+      <div>
+        <a h="javascript:void(0);" v-on:click="switchMode">我还没有账号</a>
+        <a href="javascript:void(0);" v-on:click="login">绑定账号</a>
       </div>
-      <div class="register" v-if="showMode === 2">
-        <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/> <br>
-        <input v-model="nameInput" type="text" name="user" placeholder="用户名"/> <br>
-        <input v-model="passwordInput" type="password" name="password" placeholder="密码"/><br>
-        <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
-               type="password" name="password" placeholder="再次输入密码"/>
-
-        <button v-on:click="register" class="big-btn">注册</button>
-        <div class="small-btn">
-          <button v-on:click="switchMode">已有账号，去登陆</button>
-        </div>
+    </div>
+    <div class="register" v-if="showMode === 2">
+      <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/> <br>
+      <input v-model="nameInput" type="text" name="user" placeholder="用户名"/> <br>
+      <input v-model="passwordInput" type="password" name="password" placeholder="密码"/><br>
+      <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
+             type="password" name="password" placeholder="再次输入密码"/>
+      <div>
+        <a href="javascript:void(0);" v-on:click="switchMode">已有账号</a>
+        <a href="javascript:void(0);" v-on:click="register">注册并绑定</a>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="less">
-  .dialog {
-    z-index: 3;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    .bg {
-      position: absolute;
-      background: #000000;
-      filter: alpha(opacity=50);
-      -moz-opacity: 0.5;
-      opacity: 0.5;
-      width: 100%;
-      height: 100%;
-    }
-    .cont {
-      position: absolute;
-      left: 50%;
-      top: 300px;
-      width: 480px;
-      margin-left: -240px;
-      background: white;
-      border: 1px #f1f1f1 solid;
-      box-shadow: 0 0 10px #2e8ded;
-      .header {
-        line-height: 60px;
-        text-align: center;
-        .blue {
-          display: inline-block;
-          padding-right: 4px;
-          color: #2e8ded;
-        }
-      }
-      input {
-        display: block;
-        margin: 0 auto 20px auto;
-        border: 1px #f1f1f1 solid;
-        width: 360px;
-        height: 40px;
-      }
-      .big-btn {
-        margin: auto;
-        display: block;
-        width: 360px;
-        height: 40px;
-        background-color: #2572e5;
-        color: white;
-      }
-      .small-btn {
-        margin: 4px auto 40px auto;
-        width: 360px;
-        button:nth-child(2) {
-          float: right;
-        }
-      }
-    }
-    .login {
-
-    }
-  }
-
-</style>
-
-
 <script>
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
@@ -104,7 +31,7 @@
   export default {
     data () {
       return {
-        showMode: 0,//0-none, 1-login, 2-register
+        showMode: 2,//0-none, 1-login, 2-register
         emailInput: '',
         nameInput: '',
         passwordInput: '',
@@ -125,9 +52,6 @@
     methods: {
       switchMode(){
         this.showMode = this.showMode === 1 ? 2 : 1
-      },
-      forget(){
-
       },
       login() {
         if (this.nameInput.trim().length < 2) {
@@ -171,8 +95,7 @@
               uid: resp.uid,
               token: resp.token,
               username: name,
-              email: email,
-              role: 0,
+              email: email
             });
             this.hide()
           })
@@ -189,3 +112,6 @@
     }
   }
 </script>
+<style scoped lang="less">
+
+</style>
