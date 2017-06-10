@@ -3,7 +3,7 @@
     <div class="bg" v-on:click="hide"></div>
     <div class="cont">
       <div class="header"><span class="blue">Kotlin</span>China</div>
-      <div class="login" v-if="showMode ===1">
+      <div class="login" v-if="showMode === 1">
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
         <input v-model="passwordInput" type="password" name="password" placeholder="用户密码"/>
         <button v-on:click="login" class="big-btn">登录</button>
@@ -92,7 +92,6 @@
   }
 
 </style>
-
 
 <script>
   import Config from "../assets/js/Config.js";
@@ -183,7 +182,7 @@
         let loginAlready = this.loginAlready;
         if (loginAlready) {
           this.loginAlready = false;
-          this.loginAlready(LoginMgr.info());
+          loginAlready(LoginMgr.info());
         }
       }
     }
