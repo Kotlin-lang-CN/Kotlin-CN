@@ -282,7 +282,7 @@
         };
         Net.ajax(request, (data) => {
           this.title = data.article.title;
-          this.tag = data.article.tags;
+          this.tag = data.article.tags.split(';');
           this.input = data.content.content;
         })
       },
@@ -291,7 +291,7 @@
       },
       postArticle(){
         if (this.title.trim().length === 0
-          || this.tag.trim().length === 0
+          || this.tag.length === 0
           || this.input.trim().length === 0) {
           layer.msg('文章信息不完整');
           return;
@@ -300,18 +300,22 @@
         if (this.updateMode) {
           url = Config.URL.article.update.format(this.articleId);
         }
-        let request = {
+        let tags = '';
+        this.tag.forEach((t) => {
+          tags += t;
+          tags += ';'
+        });
+        tags = tags.substr(0, tags.length - 1);
+        Net.post({
           url: url,
-          type: "POST",
           condition: {
             title: this.title,
             category: 1,
             content: this.input,
-            tags: this.tag,
+            tags: tags,
             author: LoginMgr.uid
           }
-        };
-        Net.ajax(request, (data) => {
+        }, (data) => {
           //TODO
           this.articleId = data.id;
           history.back();

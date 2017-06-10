@@ -13,7 +13,7 @@
         <article-list :requestUrl="articleListUrl"></article-list>
       </div>
       <div class="side">
-        <side-bar></side-bar>
+        <side-bar :showPostBtn="true"></side-bar>
       </div>
     </div>
   </div>

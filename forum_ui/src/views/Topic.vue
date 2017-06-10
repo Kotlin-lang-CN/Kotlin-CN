@@ -5,12 +5,15 @@
         <div>
           <span v-if="topic && categories.length >= topic.article.category">
             [{{ categories[topic.article.category - 1]}}]
-          </span>{{ topic.article.title }}<span> [{{ topic.article.tags }}] </span>
+          </span>{{ topic.article.title }}
+          <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> {{ tag }} </small>
         </div>
-
         <div>
           <span>{{ topic.author.username }}</span>于
-          <span>{{ topic.article.last_edit_time | moment}}</span>写下
+          <span>{{ topic.article.create_time | moment}}</span>创建,
+          <i v-if="topic.article.create_time !== topic.article.last_edit_time">
+            最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
+          </i>
           <a :href="editUrl" v-if="editUrl !== ''" class="button">编辑</a>
         </div>
       </header>
@@ -65,7 +68,7 @@
         Net.ajax(request, (data) => {
           this.topic = data;
           this.content = data.content.content;
-          if (LoginMgr.info() && LoginMgr.info().uid === data.author.uid) {
+          if (LoginMgr.info() && (LoginMgr.info().uid === data.author.uid || LoginMgr.isAdmin())) {
             this.editUrl = Config.UI.edit + "/" + this.articleId;
           }
         })

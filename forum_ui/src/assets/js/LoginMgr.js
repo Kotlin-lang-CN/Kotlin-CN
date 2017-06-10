@@ -56,7 +56,7 @@ class LoginMgr {
     Cookie.set('X-App-UID', data.uid);
     Cookie.set('X-App-Token', data.token);
     Cookie.set('X-App-Role', data.role);
-    Event.emit('login');
+    Event.emit('login', this.info());
   }
 
   logout() {
@@ -65,7 +65,7 @@ class LoginMgr {
     Cookie.del('X-App-UID');
     Cookie.del('X-App-Name');
     Cookie.del('X-App-Role');
-    Event.emit('login');
+    Event.emit('login', this.info());
   }
 
 }
