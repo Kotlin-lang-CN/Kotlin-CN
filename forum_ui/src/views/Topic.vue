@@ -2,6 +2,8 @@
   <div class="topic">
     <article v-if="topic !== null ">
       <header>
+
+
         <div><span>{{ topic.article.tags }}</span>{{ topic.article.title }}</div>
         <div>
           <span>{{ topic.author.username }}</span>于
@@ -69,21 +71,24 @@
 <style scoped lang="less">
   #app > div.topic {
     text-align: left;
-    max-width: 600px;
     margin: 30px auto 10px auto;
-    header {
-      margin-bottom: 28px;
-      > div:nth-child(1) {
-        font-size: 25px;
-      }
-      > div:nth-child(2) {
-        font-size: 16px;
-      }
-      span {
-        color: #999;
-        display: inline-block;
-        margin-right: 6px;
-        margin-left: 6px;
+    article{
+      max-width: 840px;
+      padding: 0 16px;
+      header {
+        margin-bottom: 28px;
+        > div:nth-child(1) {
+          font-size: 25px;
+        }
+        > div:nth-child(2) {
+          font-size: 16px;
+        }
+        span {
+          color: #999;
+          display: inline-block;
+          margin-right: 6px;
+          margin-left: 6px;
+        }
       }
     }
   }
