@@ -74,7 +74,7 @@ object Replys {
     //查询一篇文章的所有回复
     fun getReplyByArticle(req: QueryReplyByArticleReq): QueryReplyByArticleResp {
         val result = Mysql.read {
-            PageHelper.startPage<Reply>(req.offset + 1, req.limit
+            PageHelper.offsetPage<Reply>(req.offset, req.limit
             ).doSelectPageInfo<Reply> {
                 ReplyDao.getByPool(it, "article:${req.articleId}")
             }.list

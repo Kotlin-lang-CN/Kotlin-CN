@@ -24,6 +24,7 @@
   import Net from "../assets/js/Net.js";
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
+  import Cache from '../assets/js/Cache.js';
 
   export default {
     data() {
@@ -39,15 +40,25 @@
       'side-bar': SideBar
     },
     created(){
-      Net.get({url: Config.URL.article.categoryType}, (resp) => {
-        this.categories = resp.category;
-        this.selectCategory(0)
-      });
+      this.getCategories()
     },
     methods: {
       selectCategory(id){
         this.articleListUrl = Config.URL.article.category.format(id + 1);
         this.select = id;
+      },
+      getCategories(){
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+          this.selectCategory(0);
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.categories;
+            this.categories = resp.category;
+            this.selectCategory(0)
+          });
+        }
       }
     }
   }

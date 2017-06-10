@@ -2,7 +2,12 @@
   <div class="topic">
     <article v-if="topic !== null ">
       <header>
-        <div><span>{{ topic.article.tags }}</span>{{ topic.article.title }}</div>
+        <div>
+          <span v-if="topic && categories.length >= topic.article.category">
+            [{{ categories[topic.article.category - 1]}}]
+          </span>{{ topic.article.title }}<span> [{{ topic.article.tags }}] </span>
+        </div>
+
         <div>
           <span>{{ topic.author.username }}</span>于
           <span>{{ topic.article.last_edit_time | moment}}</span>写下
@@ -34,7 +39,8 @@
         reply: [],
         toReplyContent: '',
         articleId: '',
-        editUrl: ''
+        editUrl: '',
+        categories: []
       }
     },
     components: {
@@ -44,6 +50,7 @@
     created(){
       this.id = this.$route.params.id;
       this.getArticle();
+      this.getCategories()
     },
     mounted(){
       this.articleId = this.id;
@@ -58,10 +65,21 @@
         Net.ajax(request, (data) => {
           this.topic = data;
           this.content = data.content.content;
-          if (LoginMgr.uid === data.article.author) {
+          if (LoginMgr.info() && LoginMgr.info().uid === data.author.uid) {
             this.editUrl = Config.UI.edit + "/" + this.articleId;
           }
         })
+      },
+      getCategories() {
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.categories;
+            this.categories = resp.category;
+          });
+        }
       }
     }
   }
@@ -70,7 +88,7 @@
   #app > div.topic {
     text-align: left;
     margin: 30px auto 10px auto;
-    article{
+    article {
       max-width: 840px;
       padding: 0 16px;
       header {

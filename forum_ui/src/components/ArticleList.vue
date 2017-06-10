@@ -16,6 +16,7 @@
                 </option>˙
               </select>
             </div>
+            <span v-if="categories.length >= value.meta.category"> [{{ categories[value.meta.category - 1] }}]</span>
             <div class="tag" v-on:click="toArticle(value.meta.id)">{{ value.meta.tags }}</div>
             <div class="footnote right" v-on:click="toArticle(value.meta.id)">
               {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
@@ -48,11 +49,15 @@
           {text: '冻结', value: 1},
           {text: '删除', value: 2},
           {text: '精品', value: 3}
-        ]
+        ],
+        categories: []
       }
     },
     props: {
       requestUrl: ''
+    },
+    created() {
+      this.getCategories()
     },
     methods: {
       get(url, offset){
@@ -91,6 +96,17 @@
           this.get(this.requestUrl, 0)
         })
       },
+      getCategories(){
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.categories;
+            this.categories = resp.category;
+          });
+        }
+      }
     },
     watch: {
       requestUrl: function (newValue, oldValue) {

@@ -99,7 +99,7 @@ object Articles {
     //查询最新的文章
     fun getLatest(req: QueryLatestArticleReq): ArticleListResp {
         val result = Mysql.read {
-            PageHelper.startPage<Article>(req.offset + 1, req.limit
+            PageHelper.offsetPage<Article>(req.offset, req.limit
             ).doSelectPageInfo<Article> {
                 ArticleDao.getLatest(it, args = HashMap<String, String>().apply {
                     if (!req.category.isNullOrBlank()) this["category"] = req.category

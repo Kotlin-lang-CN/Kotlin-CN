@@ -107,25 +107,21 @@
     },
     methods: {
       getReply(index){
-        let request = {
+        const limit = 20;
+        Net.ajax({
           url: Config.URL.article.reply.format(this.articleId),
           type: "GET",
           condition: {
             offset: index,
-            limit: 2
+            limit: limit
           }
-        };
-        Net.ajax(request, (data) => {
+        }, (data) => {
           let list = data.reply;
           this.offset = data.next_offset;
           if (!Array.isArray(list))return;
-          if (index === 0) {
-            //if first load
-            this.reply = [];
-          }
+          if (index === 0) this.reply = [];
           this.reply = Array.concat(this.reply, list);
-          this.hasMore = list.length > 0;
-          //TODO 数据有问题
+          this.hasMore = list.length >= limit;
         })
       },
       loadMore(){
