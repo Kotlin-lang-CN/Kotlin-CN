@@ -1,6 +1,7 @@
 package tech.kotlin.service.account
 
 import tech.kotlin.common.algorithm.MD5
+import tech.kotlin.common.os.Log
 import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.str
 import tech.kotlin.dao.account.AccountDao
@@ -26,7 +27,39 @@ object Accounts {
 
     private val properties: Properties = Props.loads("project.properties")
     private val passwordSalt: String = properties str "account.pwd.salt"
+    private val initAdminUserName: String = properties str "admin.init.username"
+    private val initAdminPassword: String = properties str "admin.init.password"
+    private val initAdminEmail: String = properties str "admin.init.email"
     private fun encrypt(password: String) = MD5.hash("$password$passwordSalt")
+
+    //初始化管理员账号
+    fun initAdmin() {
+        Mysql.write {
+            val user = UserInfoDao.getByEmail(it, initAdminEmail)
+            if (user != null) {
+                Log.i("admin $initAdminEmail has already exists!")
+                return
+            }
+            val current = System.currentTimeMillis()
+            val account = Account().apply {
+                id = IDs.next()
+                password = encrypt(initAdminPassword)
+                lastLogin = current
+                state = Account.State.NORMAL
+                role = Account.Role.ADMIN
+                createTime = current
+            }
+            AccountDao.saveOrUpdate(it, account)
+            UserInfoDao.saveOrUpdate(it, UserInfo().apply {
+                uid = account.id
+                username = initAdminUserName
+                logo = ""
+                email = initAdminEmail
+                emailState = UserInfo.EmailState.VERIFIED
+            })
+            Log.i("init admin with name=$initAdminUserName, password=$initAdminPassword, email=$initAdminEmail")
+        }
+    }
 
     //创建账号
     fun create(req: CreateAccountReq): CreateAccountResp {
@@ -36,7 +69,7 @@ object Accounts {
             password = encrypt(req.password)
             lastLogin = current
             state = Account.State.NORMAL
-            role = Account.State.NORMAL
+            role = Account.Role.NORMAL
             createTime = current
         }
         val userInfo = UserInfo().apply {

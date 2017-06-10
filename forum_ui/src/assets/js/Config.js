@@ -21,6 +21,12 @@ const config = {
     },
     misc: {
       dashboard: '/misc/dashboard'
+    },
+    admin: {
+      articleList: '/admin/article/list',//管理员视角查看所有文章内容
+      updateArticleState: '/admin/article/{0}/state',//更新文章状态
+      updateUserState: '/admin/user/{0}/state',//跟新用户状态
+      updateReplyState: '/admin/reply/{0}/state'//更新回复状态
     }
   },
   UI: {

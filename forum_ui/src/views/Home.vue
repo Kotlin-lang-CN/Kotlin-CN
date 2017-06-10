@@ -11,6 +11,7 @@
   import Net from "../assets/js/Net.js";
   import ArticleList from '../components/ArticleList.vue';
   import Event from "../assets/js/Event.js";
+  import LoginMgr from '../assets/js/LoginMgr.js';
 
   export default {
     name: 'home',
@@ -24,7 +25,7 @@
       }
     },
     mounted(){
-      this.articleListUrl = Config.URL.article.list;
+      this.articleListUrl = (LoginMgr.isAdmin()) ? Config.URL.admin.articleList : Config.URL.article.list;
     },
     methods: {}
   }
@@ -32,7 +33,7 @@
 
 <style scoped lang="less">
   .content {
-    .banner{
+    .banner {
       background: #73abfb;
       text-align: center;
       line-height: 120px;

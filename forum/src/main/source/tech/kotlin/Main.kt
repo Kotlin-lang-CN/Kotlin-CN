@@ -9,6 +9,8 @@ import tech.kotlin.common.utils.int
 import tech.kotlin.utils.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.dict
+import tech.kotlin.model.request.CreateAccountReq
+import tech.kotlin.service.account.Accounts
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -16,10 +18,11 @@ import tech.kotlin.common.utils.dict
  *********************************************************************/
 val properties = Props.loads("project.properties")
 
-fun main(vararg args: String) = LooperApp.start({
-
+fun main(vararg args: String) {
     Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
+
+    Accounts.initAdmin()
 
     port(properties int "deploy.port")
     init()
@@ -84,4 +87,4 @@ fun main(vararg args: String) = LooperApp.start({
             Json.dumps(dict { this["code"] = 0; this["msg"] = "" })
         }
     }
-}, args)
+}

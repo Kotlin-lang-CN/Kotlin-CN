@@ -37,7 +37,7 @@ class LoginMgr {
 
   isAdmin() {
     let info = this.info();
-    return info && info.role === 1
+    return info && info.role === '1'
   }
 
   require(loginAlready) {

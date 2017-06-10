@@ -26,8 +26,8 @@ import java.net.URLEncoder
  *********************************************************************/
 object AccountController {
 
-    val properties = Props.loads("project.properties")
-    val cgiHost = properties str "cgi.host"
+    //val properties = Props.loads("project.properties")
+    //val cgiHost = properties str "cgi.host"
 
     val login = Route { req, _ ->
         val loginResp = Accounts.loginWithName(LoginReq().apply {
@@ -81,21 +81,21 @@ object AccountController {
             })
         }
 
-        val emailActivateToken = EmailActivates.createSession(CreateEmailSessionReq().apply {
-            this.uid = createResp.account.id
-            this.email = email
-        }).token
-        val activateUrl = "$cgiHost/api/account/email/activate?token=${URLEncoder.encode(emailActivateToken, "UTF-8")}"
-        Emails.send(EmailReq().apply {
-            this.to = email
-            this.subject = "[Kotlin-CN] 邮箱激活"
-            this.content = """
-            <h2>尊敬的$username <$email>，您好</h2>
-            <p>感谢您加入 kotlin-cn.org。</p>
-            <p>请点击以下链接进行邮箱验证，以便开始使用您的账号<br>
-            <a href="$activateUrl">$activateUrl</a></p>
-            """.trimIndent()
-        })
+        //val emailActivateToken = EmailActivates.createSession(CreateEmailSessionReq().apply {
+        //    this.uid = createResp.account.id
+        //    this.email = email
+        //}).token
+        //val activateUrl = "$cgiHost/api/account/email/activate?token=${URLEncoder.encode(emailActivateToken, "UTF-8")}"
+        //Emails.send(EmailReq().apply {
+        //    this.to = email
+        //    this.subject = "[Kotlin-CN] 邮箱激活"
+        //    this.content = """
+        //    <h2>尊敬的$username <$email>，您好</h2>
+        //    <p>感谢您加入 kotlin-cn.org。</p>
+        //    <p>请点击以下链接进行邮箱验证，以便开始使用您的账号<br>
+        //    <a href="$activateUrl">$activateUrl</a></p>
+        //    """.trimIndent()
+        //})
 
         return@Route ok {
             it["uid"] = createResp.account.id
