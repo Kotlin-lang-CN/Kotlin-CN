@@ -1,9 +1,11 @@
 <template>
   <div class="side-bar">
-    <a class="button" :href="uiEdit">发布新话题</a>
+    <a class="button" :href="uiEdit" v-if="showPostBtn">发布新话题</a>
     <div class="part">
       <header>网站通告</header>
-      <div class="card"><display-panels :content="dashboard"></display-panels></div>
+      <div class="card">
+        <display-panels :content="dashboard"></display-panels>
+      </div>
     </div>
     <div class="part">
       <header>友情链接</header>
@@ -26,8 +28,11 @@
     data() {
       return {
         uiEdit: Config.UI.edit,
-        dashboard:''
+        dashboard: ''
       }
+    },
+    props: {
+      showPostBtn: true
     },
     components: {
       'display-panels': DisplayPanels

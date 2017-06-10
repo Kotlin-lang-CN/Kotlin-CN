@@ -182,7 +182,8 @@
         let loginAlready = this.loginAlready;
         if (loginAlready) {
           this.loginAlready = false;
-          loginAlready(LoginMgr.info());
+          let info = LoginMgr.info();
+          if (info) loginAlready(info);
         }
       }
     }

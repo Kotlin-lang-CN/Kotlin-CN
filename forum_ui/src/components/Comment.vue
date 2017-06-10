@@ -69,20 +69,19 @@
           layer.msg("评论不少于十个字");
           return;
         }
-
-        let request = {
-          url: Config.URL.article.reply.format(this.articleId),
-          type: "POST",
-          condition: {
-            content: this.input
-          }
-        };
-        Net.ajax(request, (data) => {
-          if (data.id.length > 0) {
-            this.input = '';
-            Event.emit('comment-change');
-            layer.msg("已评论");
-          }
+        LoginMgr.require(() => {
+          Net.post({
+            url: Config.URL.article.reply.format(this.articleId),
+            condition: {
+              content: this.input
+            }
+          }, (data) => {
+            if (data.id.length > 0) {
+              this.input = '';
+              Event.emit('comment-change');
+              layer.msg("已评论");
+            }
+          })
         })
       }
     },
@@ -159,7 +158,7 @@
       box-sizing: border-box;
       border: 1px #e4e4e4 solid;
 
-      .hide{
+      .hide {
         display: none;
       }
 

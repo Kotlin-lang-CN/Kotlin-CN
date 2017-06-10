@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <button v-on:click="loadMore" v-show="hasMore">加载更多</button>
+    <button v-on:click="get(requestUrl, offset)" v-show="hasMore">加载更多</button>
   </div>
 </template>
 
@@ -73,9 +73,6 @@
           this.articles = this.articles.concat(data.articles);
           this.offset = data.next_offset;
         })
-      },
-      loadMore(){
-        this.get(this.requestUrl, this.offset);
       },
       toArticle(id) {
         window.location.href = this.urlTopic + id

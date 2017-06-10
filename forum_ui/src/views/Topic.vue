@@ -2,8 +2,6 @@
   <div class="topic">
     <article v-if="topic !== null ">
       <header>
-
-
         <div><span>{{ topic.article.tags }}</span>{{ topic.article.title }}</div>
         <div>
           <span>{{ topic.author.username }}</span>于
