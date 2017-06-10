@@ -350,7 +350,7 @@
   @import "../../static/css/github-markdown.css";
   @import "../../static/css/atom-one-dark.min.css";
 
-  #app > div {
+  div.mdContainer {
     position: absolute;
     top: 0;
     bottom: 0;

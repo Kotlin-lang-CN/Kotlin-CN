@@ -30,8 +30,8 @@
 
 <style scoped lang="less">
   .dialog {
+    position: fixed;
     z-index: 3;
-    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
@@ -86,11 +86,7 @@
         }
       }
     }
-    .login {
-
-    }
   }
-
 </style>
 
 <script>

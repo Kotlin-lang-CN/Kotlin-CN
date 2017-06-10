@@ -85,7 +85,7 @@
   }
 </script>
 <style scoped lang="less">
-  #app > div.topic {
+  div.topic {
     text-align: left;
     margin: 30px auto 10px auto;
     article {

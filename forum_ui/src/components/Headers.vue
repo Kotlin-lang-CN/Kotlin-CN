@@ -1,6 +1,6 @@
 <template>
   <div class="header" v-show="moduleShow">
-    <div class="nav-bar">
+    <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
         <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> China</a></div>
         <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
@@ -13,7 +13,6 @@
         </div>
       </div>
     </div>
-    <div class="toast" v-if="strToast !== ''">{{ strToast }} </div>
   </div>
 </template>
 
@@ -29,9 +28,9 @@
         urlRegister: Config.UI.register,
         urlAccount: Config.UI.account,
         urlLogin: Config.UI.login,
-        strToast: '',
         strUserName: LoginMgr.check((it) => it.username, () => ''),
-        moduleShow: true
+        moduleShow: true,
+        top: true
       }
     },
     created: function () {
@@ -40,6 +39,9 @@
       });
       Event.on("fullscreen", (on) => {
         this.moduleShow = !on;
+      });
+      Event.on("page-scroll", (top) => {
+        this.top = top;
       })
     },
     methods: {
@@ -58,19 +60,17 @@
   .header {
     min-width: 320px;
 
-    .toast {
-      background: lightcoral;
-      color: white;
-      font-size: 14px;
-      line-height: 20px;
-      padding: 8px;
-      text-align: center;
+    .not-top {
+      -webkit-box-shadow: 0 0 10px #f1f1f1;
+      -moz-box-shadow: 0 0 10px #f1f1f1;
+      box-shadow: 0 0 10px #f1f1f1;
     }
 
     .nav-bar {
       background: white;
       padding: 0 16px;
       font-size: 20px;
+
       .nav-content {
         max-width: 1120px;
         padding-top: 24px;
@@ -109,5 +109,10 @@
     }
   }
 
+  @media screen and (max-width: 480px) {
+    /*
+    TODO
+    */
+  }
 
 </style>
