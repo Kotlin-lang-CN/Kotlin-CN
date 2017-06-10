@@ -1,18 +1,76 @@
 <template>
   <div class="reply">
-    <div class="comments">
-      <header>评论</header>
-      <div class="item" v-for="value in reply">
-        <div><span>{{ value.user.username }}</span> at <span>{{ value.meta.create_time | moment}}</span></div>
-        <div class="content">
+    <header>共收到{{ reply.length }}条评论</header>
+    <ul>
+      <li v-for="value in reply">
+        <app-avatar :avatar="value.user.username"></app-avatar>
+        <div class="cont">
+          <div><span>{{ value.user.username }}</span><span>{{ value.meta.create_time | moment}}</span></div>
           <display-panels :content="value.content.content"></display-panels>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
+    <button class="more" v-on:click="loadMore" v-if="hasMore">加载更多</button>
+    <header>回帖</header>
     <markdown-comment
       :articleId="articleId"></markdown-comment>
   </div>
 </template>
+
+<style scoped lang="less">
+  .reply {
+    text-align: left;
+    margin-top: 30px;
+    border-top: 1px #f1f1f1 solid;
+
+    header {
+      font-size: 14px;
+      color: #999;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    header:nth-child(2) {
+      margin-top: 44px;
+    }
+
+    ul {
+      border-top: 1px #e1e1e1 solid;
+      border-left: 1px #e1e1e1 solid;
+      border-right: 1px #e1e1e1 solid;
+      background-color: #fcfcfe;
+      padding: 0;
+      margin: 0;
+      li {
+        border-bottom: 1px #f1f1f1 solid;
+        padding: 16px 20px;
+        display: flex;
+        span {
+          font-size: 12px;
+          color: #999;
+          display: inline-block;
+          margin-right: 4px;
+        }
+        .cont {
+          margin-left: 8px;
+        }
+      }
+    }
+    .more {
+      background-color: #f2f7fd;
+      outline: none;
+      border: 1px #6ba0f1 solid;
+      border-radius: 4px;
+      display: block;
+      text-align: center;
+      height: 50px;
+      line-height: 46px;
+      padding: 0;
+      width: 100%;
+      color: #6ba0f1;
+      font-size: 16px;
+    }
+  }
+</style>
 <script>
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
@@ -20,12 +78,15 @@
   import Util from "../assets/js/Util.js";
   import Comment from "./Comment.vue";
   import DisplayPanels from "./DisplayPanels.vue";
+  import Avatar from "./Avatar.vue";
 
   export default {
     data () {
       return {
         topic: null,
         content: '',
+        offset: 0,
+        hasMore: true,
         reply: [],
         toReplyContent: ''
       }
@@ -35,7 +96,8 @@
     },
     components: {
       'markdown-comment': Comment,
-      "display-panels": DisplayPanels
+      "display-panels": DisplayPanels,
+      "app-avatar": Avatar,
     },
     created(){
       this.getReply(0);
@@ -50,42 +112,26 @@
           type: "GET",
           condition: {
             offset: index,
-            limit: 0
+            limit: 2
           }
         };
         Net.ajax(request, (data) => {
           let list = data.reply;
+          this.offset = data.next_offset;
           if (!Array.isArray(list))return;
           if (index === 0) {
+            //if first load
             this.reply = [];
           }
           this.reply = Array.concat(this.reply, list);
-          //TODO 循环取的时候长度有问题
-          //if (list.length > 0) {
-          //  this.getReply(this.reply.length);
-          //}
+          this.hasMore = list.length > 0;
+          //TODO 数据有问题
         })
+      },
+      loadMore(){
+        this.getReply(this.offset);
       }
     }
   }
 </script>
-<style scoped lang="less">
-  .reply {
-    text-align: left;
-    margin-top: 30px;
-    header {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-    .item {
-      border-top: 1px #f1f1f1 solid;
-      padding: 16px 0;
-      .content{
-        padding: 8px 8px 8px 20px
-      }
-    }
-    .cont {
-      padding: 16px;
-    }
-  }
-</style>
+

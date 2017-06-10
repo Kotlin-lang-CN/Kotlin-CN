@@ -13,7 +13,7 @@
               <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="right" v-if="isAdmin">
                 <option v-for="option in options" v-bind:value="option.value">
                   {{ option.text }}
-                </option>
+                </option>˙
               </select>
             </div>
             <div class="tag" v-on:click="toArticle(value.meta.id)">{{ value.meta.tags }}</div>
@@ -24,7 +24,6 @@
         </a>
       </div>
     </div>
-
     <button v-on:click="get(requestUrl, offset)" v-show="hasMore">加载更多</button>
   </div>
 </template>
