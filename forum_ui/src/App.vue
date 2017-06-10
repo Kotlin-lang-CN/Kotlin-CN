@@ -2,10 +2,10 @@
   <div>
     <app-header></app-header>
     <div id="app">
-      <app-login></app-login>
       <router-view></router-view>
     </div>
     <app-foot></app-foot>
+    <app-login></app-login>
   </div>
 </template>
 
