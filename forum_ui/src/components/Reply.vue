@@ -60,6 +60,7 @@
         }
         .cont {
           margin-left: 8px;
+          width: 90%;
         }
       }
     }

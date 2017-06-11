@@ -14,7 +14,8 @@
           <button><span><i class="add-icon"></i></span>
             <div class="sub-menu"><a :href="urlEdit">发布新话题</a></div>
           </button>
-          <button><span><app-avatar :avatar="strUserName" :size="'small'"></app-avatar><i class="choice-icon"></i></span>
+          <button><span><app-avatar :avatar="strUserName" :size="'small'"></app-avatar><i
+            class="choice-icon"></i></span>
             <div class="sub-menu">
               <button v-on:click="logout">退出登录</button>
             </div>
@@ -111,7 +112,7 @@
             height: 18px;
             background: url(../assets/img/add-icon.png) no-repeat;
           }
-          .choice-icon{
+          .choice-icon {
             display: inline-block;
             width: 18px;
             height: 18px;
@@ -131,7 +132,7 @@
             min-height: 86px;
             width: 78px;
 
-            i{
+            i {
               margin-top: 24px;
             }
           }
@@ -188,9 +189,8 @@
   }
 
   @media screen and (max-width: 480px) {
-    /*
-    TODO
-    */
+    .header .nav-bar .nav-content .menu-main {
+      display: none;
+    }
   }
-
 </style>
