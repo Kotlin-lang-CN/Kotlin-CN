@@ -3,7 +3,7 @@
     <hr/>
     <div class="content">
       <a href=mailto:chpengzh@kotlin-cn.org><i class="email"></i></a>
-      <a target="_blank" href="http://localhost:8080/api/rss/fine"><i class="rss"></i></a>
+      <a target="_blank" v-bind:href="rssURL"><i class="rss"></i></a>
       <a target="_blank" href="https://github.com/Kotlin-lang-CN"><i class="github"></i></a>
       <span class="icp">ICP备案号：<a target="_blank" href="http://www.miitbeian.gov.cn/">81999922</a></span>
     </div>
@@ -11,11 +11,14 @@
 </template>
 <script>
   import Event from '../assets/js/Event.js';
+  import Config from '../assets/js/Config.js';
+
   export default {
     name: 'foot',
     data: function () {
       return {
-        moduleShow: true
+        moduleShow: true,
+        rssURL: Config.HOST + Config.API + Config.URL.rss.fine
       }
     },
     created: function () {
@@ -37,7 +40,7 @@
     color: #999;
     line-height: 30px;
 
-    hr{
+    hr {
       background: #f1f1f1;
       border: 0;
       height: 1px;
@@ -65,8 +68,8 @@
         color: #999;
         display: inline-block;
         vertical-align: top;
-        a{
-          color:#999;
+        a {
+          color: #999;
         }
       }
     }

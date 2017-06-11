@@ -20,6 +20,9 @@ const config = {
       category: '/article/category/{0}',//获取特定类别最新文章列表
       categoryType: '/article/category'//获取文章类别列表
     },
+    rss: {
+      fine: "/rss/fine",//精品文章订阅
+    },
     misc: {
       dashboard: '/misc/dashboard'
     },
