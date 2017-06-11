@@ -64,6 +64,59 @@
   }
 </script>
 
+<style>
+  body {
+    margin: 0;
+    font: 16px "Avenir", Helvetica, Arial, sans-serif;
+  }
+
+  body .app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
+
+  body > div {
+    max-width: 1120px;
+    text-align: left;
+    margin: 1px auto;
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: normal;
+    color: #333;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  textarea {
+    outline: none;
+    border-radius: 8px;
+  }
+
+  .button, button {
+    cursor: pointer;
+    line-height: 36px;
+    height: 36px;
+    color: #2572e5;
+    padding: 6px 12px;
+    background: transparent;
+    outline: none;
+    border: none;
+    font-size: 16px;
+  }
+</style>
 <!--drawer-->
 <style>
   .app-root {
