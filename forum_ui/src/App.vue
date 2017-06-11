@@ -13,7 +13,7 @@
 
     <div ref="page" id="page-content">
       <div class="app">
-        <router-view></router-view>
+        <slot></slot>
       </div>
       <app-foot></app-foot>
     </div>

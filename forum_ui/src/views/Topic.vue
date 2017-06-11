@@ -1,28 +1,30 @@
 <template>
-  <div class="topic">
-    <article v-if="topic !== null ">
-      <header>
-        <div>
+  <app-layout>
+    <div class="topic">
+      <article v-if="topic !== null ">
+        <header>
+          <div>
           <span v-if="topic && categories.length >= topic.article.category">
             [{{ categories[topic.article.category - 1]}}]
           </span>{{ topic.article.title }}
-          <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> {{ tag }} </small>
-        </div>
-        <div>
-          <span>{{ topic.author.username }}</span>于
-          <span>{{ topic.article.create_time | moment}}</span>创建,
-          <i v-if="topic.article.create_time !== topic.article.last_edit_time">
-            最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
-          </i>
-          <a :href="editUrl" v-if="editUrl !== ''" class="button">编辑</a>
-        </div>
-      </header>
-      <section>
-        <display-panels :content="content"></display-panels>
-      </section>
-      <app-reply :articleId="articleId"></app-reply>
-    </article>
-  </div>
+            <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> {{ tag }} </small>
+          </div>
+          <div>
+            <span>{{ topic.author.username }}</span>于
+            <span>{{ topic.article.create_time | moment}}</span>创建,
+            <i v-if="topic.article.create_time !== topic.article.last_edit_time">
+              最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
+            </i>
+            <a :href="editUrl" v-if="editUrl !== ''" class="button">编辑</a>
+          </div>
+        </header>
+        <section>
+          <display-panels :content="content"></display-panels>
+        </section>
+        <app-reply :articleId="articleId"></app-reply>
+      </article>
+    </div>
+  </app-layout>
 </template>
 
 <script>
@@ -33,6 +35,8 @@
 
   import DisplayPanels from '../components/DisplayPanels.vue';
   import Reply from '../components/Reply.vue';
+  import AppLayout from '../App.vue'
+
   export default {
     data () {
       return {
@@ -47,11 +51,12 @@
       }
     },
     components: {
+      AppLayout,
       'app-reply': Reply,
       'display-panels': DisplayPanels
     },
     created(){
-      this.id = this.$route.params.id;
+      this.id = this.$root.params.id;
       this.getArticle();
       this.getCategories()
     },

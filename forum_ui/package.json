@@ -16,6 +16,7 @@
     "lodash": "latest",
     "marked": "^0.3.6",
     "moment": "^2.18.1",
+    "page": "^1.7.1",
     "tagify": "^0.1.1",
     "vue": "^2.3.3",
     "vue-input-tag": "^0.0.11",

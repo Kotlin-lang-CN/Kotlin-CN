@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <app-layout>
     <div class="banner">KOTLIN CHINA 上线了！</div>
     <div class="content">
       <div class="post">
@@ -17,7 +17,7 @@
         <side-bar :showPost="false"></side-bar>
       </div>
     </div>
-  </div>
+  </app-layout>
 
 </template>
 
@@ -27,6 +27,7 @@
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import LoginMgr from '../assets/js/LoginMgr';
+  import AppLayout from '../App.vue'
 
   export default {
     data() {
@@ -37,6 +38,7 @@
       }
     },
     components: {
+      AppLayout,
       'article-list': ArticleList,
       'side-bar': SideBar
     },

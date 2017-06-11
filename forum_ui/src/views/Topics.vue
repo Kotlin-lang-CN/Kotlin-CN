@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <app-layout>
     <div class="content">
       <div class="post">
         <div class="sub-nav">
@@ -17,7 +17,7 @@
         <side-bar :showPostBtn="true"></side-bar>
       </div>
     </div>
-  </div>
+  </app-layout>
 </template>
 
 <script>
@@ -26,6 +26,7 @@
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import Cache from '../assets/js/Cache.js';
+  import AppLayout from '../App.vue'
   import LoginMgr from '../assets/js/LoginMgr.js';
 
   export default {
@@ -38,6 +39,7 @@
       }
     },
     components: {
+      AppLayout,
       'article-list': ArticleList,
       'side-bar': SideBar
     },

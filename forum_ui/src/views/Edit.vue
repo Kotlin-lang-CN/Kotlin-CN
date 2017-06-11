@@ -122,8 +122,7 @@
         this.editStatus = true;
         this.previewStatus = true;
       }
-
-      this.articleId = this.$route.params.id;
+      this.articleId = this.$root.params.id;
       if (this.articleId !== undefined && this.articleId !== '') {
         this.updateMode = true;
         this.getArticle();

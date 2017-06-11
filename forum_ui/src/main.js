@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import page from 'page'
+import routes from './router/routes'
 import moment from 'moment';
 
 Vue.config.productionTip = false;
@@ -12,9 +13,25 @@ Vue.filter('moment', function (value) {
   return moment(value).fromNow();
 });
 
-/* eslint-disable no-new */
-new Vue({
+const app = new Vue({
   el: '#app',
-  router,
-  render: h => h(App)
+  data: {
+    ViewComponent: {render: h => h('div', 'loading...')}
+  },
+  render (h) {
+    return h(this.ViewComponent)
+  }
 });
+
+Object.keys(routes).forEach(route => {
+  const Component = require('./views/' + routes[route] + '.vue');
+  page(route, (ctx) => {
+      app.$root.params = ctx.params;
+      app.ViewComponent = Component;
+    }
+  )
+});
+
+page('*', () => app.ViewComponent = require('./views/404.vue'));
+
+page();
