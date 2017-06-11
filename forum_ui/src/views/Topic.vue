@@ -96,6 +96,7 @@
   div.topic {
     text-align: left;
     margin: 30px auto 10px auto;
+    max-width: 1120px;
     article {
       max-width: 840px;
       padding: 0 16px;

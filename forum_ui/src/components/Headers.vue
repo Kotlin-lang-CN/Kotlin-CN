@@ -76,7 +76,7 @@
 
 <style scoped lang="less">
   .header {
-    min-width: 320px;
+    min-width: 340px;
     .not-top {
       -webkit-box-shadow: 0 0 10px #f1f1f1;
       -moz-box-shadow: 0 0 10px #f1f1f1;

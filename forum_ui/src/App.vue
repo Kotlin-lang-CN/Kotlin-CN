@@ -70,17 +70,11 @@
     font: 16px "Avenir", Helvetica, Arial, sans-serif;
   }
 
-  body .app {
+  .app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-  }
-
-  body > div {
-    max-width: 1120px;
-    text-align: left;
-    margin: 1px auto;
   }
 
   a {
@@ -262,11 +256,6 @@
       -moz-osx-font-smoothing: grayscale;
       text-align: center;
       color: #2c3e50;
-      > div {
-        max-width: 1120px;
-        text-align: left;
-        margin: 1px auto;
-      }
     }
     a {
       text-decoration: none;

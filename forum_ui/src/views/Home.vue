@@ -1,20 +1,22 @@
 <template>
   <app-layout>
-    <div class="banner">KOTLIN CHINA 上线了！</div>
-    <div class="content">
-      <div class="post">
-        <div class="sub-nav">
-          <button v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }"
-                  v-on:click="selectFine">精品
-          </button>
-          <button v-bind:class="{ 'select': select==='latest', 'normal': select!=='latest' }"
-                  v-on:click="selectLatest">最新
-          </button>
+    <div class="home-root">
+      <div class="banner">KOTLIN CHINA 上线了！</div>
+      <div class="content">
+        <div class="post">
+          <div class="sub-nav">
+            <button v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }"
+                    v-on:click="selectFine">精品
+            </button>
+            <button v-bind:class="{ 'select': select==='latest', 'normal': select!=='latest' }"
+                    v-on:click="selectLatest">最新
+            </button>
+          </div>
+          <article-list :requestUrl="articleListUrl"></article-list>
         </div>
-        <article-list :requestUrl="articleListUrl"></article-list>
-      </div>
-      <div class="side">
-        <side-bar :showPost="false"></side-bar>
+        <div class="side">
+          <side-bar :showPost="false"></side-bar>
+        </div>
       </div>
     </div>
   </app-layout>
@@ -59,6 +61,10 @@
 </script>
 
 <style scoped lang="less">
+  .home-root{
+    max-width: 1120px;
+    margin: auto;
+  }
   .banner {
     background: #73abfb;
     text-align: center;

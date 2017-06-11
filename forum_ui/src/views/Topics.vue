@@ -77,6 +77,8 @@
     padding: 0 16px;
     display: flex;
     box-sizing: border-box;
+    max-width: 1120px;
+    margin: auto;
 
     .post {
       float: left;

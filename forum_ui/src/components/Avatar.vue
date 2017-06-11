@@ -58,7 +58,7 @@
 
   .big {
     line-height: 70px;
-    font-size: 60px;
+    font-size: 48px;
     border-radius: 30px;
     width: 60px;
     min-width: 60px;
