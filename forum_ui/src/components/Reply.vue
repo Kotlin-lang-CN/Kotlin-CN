@@ -3,7 +3,7 @@
     <header>共收到{{ reply.length }}条评论</header>
     <ul>
       <li v-for="value in reply">
-        <app-avatar :avatar="value.user.username"></app-avatar>
+        <app-avatar :avatar="value.user.username" :size="'middle'"></app-avatar>
         <div class="cont">
           <div><span>{{ value.user.username }}</span><span>{{ value.meta.create_time | moment}}</span></div>
           <display-panels :content="value.content.content"></display-panels>
@@ -97,7 +97,7 @@
     components: {
       'markdown-comment': Comment,
       "display-panels": DisplayPanels,
-      "app-avatar": Avatar,
+      "app-avatar": Avatar
     },
     created(){
       this.getReply(0);

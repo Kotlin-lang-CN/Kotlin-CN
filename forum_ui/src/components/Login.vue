@@ -18,7 +18,6 @@
         <input v-model="passwordInput" type="password" name="password" placeholder="密码"/><br>
         <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
                type="password" name="password" placeholder="再次输入密码"/>
-
         <button v-on:click="register" class="big-btn">注册</button>
         <div class="small-btn">
           <button v-on:click="switchMode">已有账号，去登陆</button>

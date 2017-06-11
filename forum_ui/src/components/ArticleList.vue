@@ -6,7 +6,7 @@
           <div class="footnote" v-on:click="toArticle(value.meta.id)">
             最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
           </div>
-          <i v-on:click="toArticle(value.meta.id)">{{ value.author.username.charAt(0).toUpperCase() }}</i>
+          <app-avatar :avatar="value.author.username"></app-avatar>
           <div class="aside">
             <div class="title">
               <span v-on:click="toArticle(value.meta.id)">{{ value.meta.title }}</span>
@@ -34,9 +34,13 @@
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import Event from "../assets/js/Event.js";
-  import LoginMgr from '../assets/js/LoginMgr.js'
+  import LoginMgr from '../assets/js/LoginMgr.js';
+  import Avatar from "./Avatar.vue";
 
   export default {
+    components: {
+      "app-avatar": Avatar
+    },
     data() {
       return {
         isAdmin: LoginMgr.isAdmin(),
@@ -133,20 +137,6 @@
       .footnote {
         font-size: 12px;
         color: #999;
-      }
-      i {
-        display: inline-block;
-        width: 60px;
-        height: 60px;
-        color: white;
-        line-height: 60px;
-        background-color: #2D93CA;
-        text-align: center;
-        font-size: 50px;
-        font-style: normal;
-        border-radius: 30px;
-        vertical-align: top;
-        margin-top: 4px;
       }
       .aside {
         display: inline-block;
