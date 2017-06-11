@@ -46,12 +46,5 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Topics.vue'], resolve);
     }
-  }, {
-    path: '/manager',
-    name: 'Manager',
-    component: function (resolve) {
-      resolve(['@/views/Manager.vue'], resolve)
-    }
-  }
-  ]
+  }]
 })
