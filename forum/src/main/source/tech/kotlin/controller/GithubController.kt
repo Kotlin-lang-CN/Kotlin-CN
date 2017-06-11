@@ -5,6 +5,7 @@ import tech.kotlin.model.domain.Device
 import tech.kotlin.model.request.CreateAuthSessionReq
 import tech.kotlin.model.request.CreateSessionReq
 import tech.kotlin.model.request.GithubAuthReq
+import tech.kotlin.ok
 import tech.kotlin.service.account.Githubs
 import tech.kotlin.service.account.Sessions
 import tech.kotlin.utils.Err

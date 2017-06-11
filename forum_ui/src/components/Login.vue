@@ -5,7 +5,9 @@
       <div class="header"><span class="blue">Kotlin</span>China</div>
       <div class="login" v-if="showMode === 1">
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
+        <span v-if="error && error.key == 'login-name'" class="error">{{ error.value }}</span>
         <input v-model="passwordInput" type="password" name="password" placeholder="用户密码"/>
+        <span v-if="error && error.key == 'login-password'" class="error">{{ error.value }}</span>
         <button v-on:click="login" class="big-btn">登录</button>
         <div class="small-btn">
           <button v-on:click="forget">忘记密码</button>
@@ -13,11 +15,15 @@
         </div>
       </div>
       <div class="register" v-if="showMode === 2">
-        <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/> <br>
-        <input v-model="nameInput" type="text" name="user" placeholder="用户名"/> <br>
+        <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/><br>
+        <span v-if="error && error.key == 'register-email'" class="error">{{ error.value }}</span>
+        <input v-model="nameInput" type="text" name="user" placeholder="用户名"/><br>
+        <span v-if="error && error.key == 'register-name'" class="error">{{ error.value }}</span>
         <input v-model="passwordInput" type="password" name="password" placeholder="密码"/><br>
+        <span v-if="error && error.key == 'register-password'" class="error">{{ error.value }}</span>
         <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
                type="password" name="password" placeholder="再次输入密码"/>
+        <span v-if="error && error.key == 'register-password-repeat'" class="error">{{ error.value }}</span>
         <button v-on:click="register" class="big-btn">注册</button>
         <div class="small-btn">
           <button v-on:click="switchMode">已有账号，去登陆</button>
@@ -69,6 +75,14 @@
         width: 360px;
         height: 40px;
       }
+      .error {
+        display: block;
+        font-size: .8em;
+        margin: -15px auto -15px auto;
+        color: #f00;
+        width: 360px;
+        height: 40px;
+      }
       .big-btn {
         margin: auto;
         display: block;
@@ -104,6 +118,7 @@
         passwordInput: '',
         passwordRepeatInput: '',
         loginAlready: false,
+        error: false
       }
     },
     created() {
@@ -116,6 +131,23 @@
         this.showMode = 2
       });
     },
+    watch: {
+      showMode() {
+        this.notifyError()
+      },
+      emailInput() {
+        this.notifyError()
+      },
+      nameInput() {
+        this.notifyError()
+      },
+      passwordInput() {
+        this.notifyError()
+      },
+      passwordRepeatInput() {
+        this.notifyError()
+      }
+    },
     methods: {
       switchMode(){
         this.showMode = this.showMode === 1 ? 2 : 1
@@ -123,54 +155,63 @@
       forget(){
 
       },
-      login() {
-        if (this.nameInput.trim().length < 2) {
-          Event.emit("error", "请输入正确的用户名");
-        } else if (this.passwordInput.length < 8) {
-          Event.emit("error", '密码错误');
-        } else {
-          Net.post({
-            url: Config.URL.account.login,
-            condition: {
-              'login_name': this.nameInput.trim(),
-              'password': this.passwordInput,
-            }
-          }, (resp) => {
-            LoginMgr.login(resp);
-            this.hide()
-          })
+      notifyError() {
+        if (this.showMode === 1) {
+          if (this.nameInput.trim().length < 2) {
+            this.error = {key: 'login-name', value: '请输入正确的用户名'}
+          } else if (this.passwordInput.length < 8) {
+            this.error = {key: 'login-password', value: '请输入正确的密码'}
+          } else {
+            this.error = false
+          }
+        } else if (this.showMode === 2) {
+          if (!Utils.isValidEmail(this.emailInput)) {
+            this.error = {key: 'register-email', value: '请输入正确的邮箱'}
+          } else if (this.nameInput.trim().length < 2) {
+            this.error = {key: 'register-name', value: '用户名过短'}
+          } else if (this.passwordInput.length < 8) {
+            this.error = {key: 'register-password', value: '密码需要8位或以上，仅限大小写与数字'}
+          } else if (this.passwordRepeatInput !== this.passwordInput) {
+            this.error = {key: 'register-password-repeat', value: '两次输入的密码不一致'}
+          } else {
+            this.error = false
+          }
         }
       },
+      login() {
+        if (this.error) return;
+        Net.post({
+          url: Config.URL.account.login,
+          condition: {
+            'login_name': this.nameInput.trim(),
+            'password': this.passwordInput,
+          }
+        }, (resp) => {
+          LoginMgr.login(resp);
+          this.hide()
+        })
+      },
       register() {
-        if (!Utils.isValidEmail(this.emailInput)) {
-          Event.emit('error', "请输入正确的邮箱")
-        } else if (this.nameInput.trim().length < 2) {
-          Event.emit("error", "用户名过短");
-        } else if (this.passwordInput.length < 8) {
-          Event.emit("error", '密码需要8位或以上，仅限大小写与数字');
-        } else if (this.passwordRepeatInput !== this.passwordInput) {
-          Event.emit('error', "两次输入的密码不一致!")
-        } else {
-          let name = this.nameInput;
-          let email = this.emailInput;
-          Net.post({
-            url: Config.URL.account.register,
-            condition: {
-              "username": this.nameInput,
-              "password": this.passwordInput,
-              "email": this.emailInput
-            }
-          }, (resp) => {
-            LoginMgr.login({
-              uid: resp.uid,
-              token: resp.token,
-              username: name,
-              email: email,
-              role: 0,
-            });
-            this.hide()
-          })
-        }
+        if (this.error) return;
+        let name = this.nameInput;
+        let email = this.emailInput;
+        Net.post({
+          url: Config.URL.account.register,
+          condition: {
+            "username": this.nameInput,
+            "password": this.passwordInput,
+            "email": this.emailInput
+          }
+        }, (resp) => {
+          LoginMgr.login({
+            uid: resp.uid,
+            token: resp.token,
+            username: name,
+            email: email,
+            role: 0,
+          });
+          this.hide()
+        })
       },
       hide() {
         this.showMode = 0;
@@ -180,6 +221,11 @@
           let info = LoginMgr.info();
           if (info) loginAlready(info);
         }
+        this.nameInput = '';
+        this.emailInput = '';
+        this.passwordInput = '';
+        this.passwordRepeatInput = '';
+        this.error = false
       }
     }
   }

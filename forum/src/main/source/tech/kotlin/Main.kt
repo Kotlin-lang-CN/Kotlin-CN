@@ -3,13 +3,11 @@ package tech.kotlin
 import spark.Spark.*
 import tech.kotlin.controller.*
 import tech.kotlin.utils.Mysql
-import tech.kotlin.common.os.LooperApp
 import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.int
 import tech.kotlin.utils.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.dict
-import tech.kotlin.model.request.CreateAccountReq
 import tech.kotlin.service.account.Accounts
 
 /*********************************************************************
@@ -66,15 +64,16 @@ fun main(vararg args: String) {
         }
 
         path("/rss") {
-            get("/fine", ArticleViewController.rssFine)
+            get("/fine", RssController.fine)
+            get("/latest", RssController.latest)
         }
 
         path("/misc") {
-            get("/dashboard", MiscController.dashboard.gate(""))
+            get("/dashboard", MiscController.dashboard.gate("网站公告栏"))
         }
     }
     notFound { req, response ->
-        response.header("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.header("Access-Control-Allow-Origin", "*")
         response.header("Access-Control-Allow-Credentials", "true")
         response.header("Access-Control-Allow-Headers",
                 "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")

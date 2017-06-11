@@ -1,4 +1,4 @@
-package tech.kotlin.controller
+package tech.kotlin
 
 import spark.Route
 import tech.kotlin.common.os.Abort

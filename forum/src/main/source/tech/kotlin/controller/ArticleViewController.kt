@@ -6,23 +6,15 @@ import tech.kotlin.common.utils.dict
 import tech.kotlin.common.utils.str
 import tech.kotlin.model.domain.Article
 import tech.kotlin.model.domain.Category
-import tech.kotlin.model.domain.TextContent
 import tech.kotlin.model.domain.UserInfo
 import tech.kotlin.model.request.QueryLatestArticleReq
-import tech.kotlin.model.request.QueryTextReq
 import tech.kotlin.model.request.QueryUserReq
+import tech.kotlin.ok
 import tech.kotlin.service.account.Users
 import tech.kotlin.service.article.Articles
-import tech.kotlin.service.article.Texts
 import tech.kotlin.utils.Err
 import tech.kotlin.utils.check
-import java.text.SimpleDateFormat
 import java.util.*
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
-import java.io.StringWriter
-import javax.xml.transform.TransformerFactory
 
 
 /*********************************************************************
@@ -158,64 +150,4 @@ object ArticleViewController {
 
     val getCategory = Route { _, _ -> ok { it["category"] = Category.values().map { it.value } } }
 
-    val rssFine = Route { _, resp ->
-        val articles = Articles.getLatest(QueryLatestArticleReq().apply {
-            this.offset = 0
-            this.limit = 20
-            this.state = "${Article.State.FINE}"
-        }).result
-
-        val users = HashMap<Long, UserInfo>()
-        if (articles.isNotEmpty()) {
-            users.putAll(Users.queryById(QueryUserReq().apply {
-                this.id = ArrayList<Long>().apply {
-                    addAll(articles.map { it.author })
-                }.distinctBy { it }
-            }).info)
-        }
-
-        val contents = HashMap<Long, TextContent>()
-        if (articles.isNotEmpty()) {
-            contents.putAll(Texts.getById(QueryTextReq().apply {
-                this.id = ArrayList<Long>().apply {
-                    addAll(articles.map { it.contentId })
-                }
-            }).result)
-        }
-        val df = SimpleDateFormat("E, MM dd yyyy HH:mm:ss z", Locale.US)
-        val localeDivide = 14 * 60 * 60 * 1000
-        val doc = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder()
-                .newDocument().apply {
-            appendChild(createElement("rss").apply {
-                setAttribute("version", "2.0")
-                appendChild(createElement("channel").apply {
-                    appendChild(createElement("title").apply { textContent = "Kotlin-CN 中文网" })
-                    appendChild(createElement("link").apply { textContent = cgiHost })
-                    appendChild(createElement("description").apply { textContent = "社区最新精品文章" })
-                    appendChild(createElement("language").apply { textContent = "${Locale.CHINA}" })
-                    articles.forEach {
-                        appendChild(createElement("item").apply {
-                            appendChild(createElement("title").apply { textContent = it.title })
-                            appendChild(createElement("description").apply {
-                                textContent = contents[it.contentId]!!.content
-                            })
-                            appendChild(createElement("author").apply { textContent = users[it.author]!!.username })
-                            appendChild(createElement("pubDate").apply {
-                                textContent = df.format(it.createTime - localeDivide)
-                            })
-                            appendChild(createElement("link").apply { textContent = "$cgiHost/#/topic/${it.id}" })
-                            appendChild(createElement("guid").apply { textContent = "$cgiHost/#/topic/${it.id}" })
-                        })
-                    }
-                })
-            })
-        }
-        resp.header("Content-Type", "application/xml")
-        return@Route StringWriter().apply {
-            TransformerFactory.newInstance()
-                    .newTransformer()
-                    .transform(DOMSource(doc), StreamResult(this))
-        }.toString()
-    }
 }

@@ -11,9 +11,9 @@
           </div>
           <div>
             <span>{{ topic.author.username }}</span>于
-            <span>{{ topic.article.create_time | moment}}</span>创建,
+            <span>{{ topic.article.create_time | moment}}</span>创建
             <i v-if="topic.article.create_time !== topic.article.last_edit_time">
-              最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
+              , 最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
             </i>
             <a :href="editUrl" v-if="editUrl !== ''" class="button">编辑</a>
           </div>

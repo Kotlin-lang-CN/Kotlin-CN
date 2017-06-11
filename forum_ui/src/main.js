@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import App from './App.vue'
 import page from 'page'
 import routes from './router/routes'
 import moment from 'moment';
