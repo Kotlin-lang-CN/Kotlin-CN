@@ -11,15 +11,15 @@
         </div>
 
         <div class="menu-user menu-right" v-if="strUserName !==''">
-          <button><span><i class="add-icon"></i></span>
+          <div class="btn"><span><i class="add-icon"></i></span>
             <div class="sub-menu"><a :href="urlEdit">发布新话题</a></div>
-          </button>
-          <button><span><app-avatar :avatar="strUserName" :size="'small'"></app-avatar><i
+          </div>
+          <div class="btn"><span><app-avatar :avatar="strUserName" :size="'small'"></app-avatar><i
             class="choice-icon"></i></span>
             <div class="sub-menu">
               <button v-on:click="logout">退出登录</button>
             </div>
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@
 
 <style scoped lang="less">
   .header {
-    min-width: 340px;
+    min-width: 320px;
     .not-top {
       -webkit-box-shadow: 0 0 10px #f1f1f1;
       -moz-box-shadow: 0 0 10px #f1f1f1;
@@ -120,29 +120,30 @@
             margin-bottom: 12px;
             background: url(../assets/img/choice-icon.png) no-repeat;
           }
-          button {
+          .btn {
             position: relative;
             vertical-align: top;
             height: 86px;
+            display: inline-block;
+            text-align: center;
           }
-          button > span {
+          .btn > span {
             margin-right: auto;
             display: block;
             line-height: 86px;
             min-height: 86px;
             width: 78px;
-
             i {
               margin-top: 24px;
             }
           }
-          button > span:hover {
+          .btn > span:hover {
             background-color: #f9f9f9;
           }
-          button .sub-menu {
+          .btn .sub-menu {
             display: none;
           }
-          button:hover .sub-menu {
+          .btn:hover .sub-menu {
             position: absolute;
             background-color: white;
             right: -1px;

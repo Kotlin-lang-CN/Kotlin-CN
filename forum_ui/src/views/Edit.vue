@@ -25,165 +25,37 @@
     </nav>
     <div class="main">
       <div class="inside" @keydown.9="tabFn" v-scroll="editScroll">
-        <div class="ignore">
-          <div>TOPIC</div>
-          <div>LONG LONG LONG TITLE</div>
-          <div>{{ author }}</div>
-        </div>
-        <textarea name="" class="mdEditor" v-model="input"></textarea>
+        <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
+        <textarea name="" class="editor" v-model="input"></textarea>
       </div>
       <div class="outside" v-scroll="previewScroll">
-        <div class="ignore">
-          <div>TOPIC</div>
-          <div>LONG LONG LONG TITLE</div>
-          <div>{{ author }}</div>
-        </div>
+        <article-meta :category="category" :title="title" :tags="tags"></article-meta>
         <display-panels :content="input"></display-panels>
       </div>
     </div>
+    <article-meta-dialog :category="category" :title="title" :tags="tags"></article-meta-dialog>
   </div>
 </template>
-
-<style lang="less" scoped>
-  .ignore {
-    font-size: 28px;
-    color: #ccc;
-    border-bottom: 1px #ccc solid;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-
-  body {
-    position: relative;
-    margin: 0;
-    font: 16px "Avenir", Helvetica, Arial, sans-serif;
-    color: #666;
-    #edit-root {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      nav {
-        position: fixed;
-        height: 116px;
-        min-width: 360px;
-        width: 100%;
-
-        .edit-title {
-          margin: auto;
-          max-width: 1120px;
-          padding: 0 16px;
-          height: 86px;
-          line-height: 38px;
-          color: #333;
-          .logo {
-            display: inline-block;
-            font-size: 20px;
-            padding: 24px 0;
-            b {
-              color: #2572e5;
-              display: inline-block;
-              padding-right: 4px;
-            }
-          }
-          .right {
-            display: inline-block;
-            float: right;
-            cursor: pointer;
-            padding: 24px 0;
-            button {
-              line-height: 26px;
-              height: 38px;
-              color: #333;
-              padding: 6px 12px;
-              background: transparent;
-              outline: none;
-              border: none;
-              font-size: 16px;
-            }
-            .post {
-              background-color: #2572e5;
-              color: white;
-            }
-          }
-        }
-        .edit-operation {
-          border-top: 1px #f1f1f1 solid;
-          text-align: center;
-          ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            width: auto;
-            li {
-              float: left;
-              width: 30px;
-              height: 30px;
-              border-right: 1px #ccc solid;
-            }
-            li:hover{
-              background-color: #f9f9f9;
-            }
-          }
-        }
-
-      }
-      .main {
-        position: absolute;
-        top: 116px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-
-        textarea {
-          outline: none;
-          border: none;
-          resize: none;
-          width: 100%;
-          background-color: transparent;
-          font-size: 15px;
-          color: #666;
-
-          height: 20000px;
-          overflow: hidden;
-        }
-        .inside {
-          background-color: #f6f7f8;
-        }
-        .inside,
-        .outside {
-          width: 100%;
-          height: 100%;
-          box-sizing: border-box;
-          overflow: auto;
-          padding: 10px;
-        }
-      }
-    }
-  }
-</style>
-
 <script>
   import Config from "../assets/js/Config.js";
   import LoginMgr from "../assets/js/LoginMgr.js";
   import Util from "../assets/js/Util.js";
   import Net from "../assets/js/Net.js";
   import Event from "../assets/js/Event.js";
-  import Vue from 'vue'
-  import marked from 'marked'
+  import Vue from 'vue';
+  import marked from 'marked';
 
-  import scroll from 'vue-scroll'
-  import range from '../../static/js/rangeFn.js'
+  import scroll from 'vue-scroll';
+  import range from '../../static/js/rangeFn.js';
 
-  import InputTag from 'vue-input-tag'
+  import InputTag from 'vue-input-tag';
   import DisplayPanels from '../components/DisplayPanels.vue';
+  import ArticleMeta from '../components/ArticleMeta.vue';
+  import ArticleMetaDialog from '../components/ArticleMetaDialog.vue';
 
   Vue.use(scroll);
-
   function insertContent(val, that) {
-    let textareaDom = document.querySelector('.mdEditor');
+    let textareaDom = document.querySelector('.editor');
     let value = textareaDom.value;
     let point = range.getCursortPosition(textareaDom);
     let lastChart = value.substring(point - 1, point);
@@ -194,15 +66,15 @@
     } else {
       range.insertAfterText(textareaDom, val);
     }
-    that.input = document.querySelector('.mdEditor').value;
+    that.input = document.querySelector('.editor').value;
   }
   export default {
-    name: 'markdown',
     data() {
       return {
         articleId: '',
-        title: '',
-        tag: [],
+        category:1,
+        title: 'title',
+        tags: '',
         updateMode: false,
         author: LoginMgr.username,
         input: '',
@@ -217,7 +89,10 @@
       }
     },
     components: {
+      ArticleMeta,
       'input-tag': InputTag,
+      'article-meta': ArticleMeta,
+      'article-meta-dialog': ArticleMetaDialog,
       'display-panels': DisplayPanels
     },
     created: function () {
@@ -226,6 +101,11 @@
         this.updateMode = true;
         this.getArticle();
       }
+      Event.on('article-meta-update',(obj)=>{
+          this.category = obj.category;
+          this.title = obj.title;
+          this.tag = obj.tag;
+      })
     },
     methods: {
       tabFn: function (evt) {
@@ -266,7 +146,7 @@
         insertContent(tmp, this);
       },
       addCode: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -278,7 +158,7 @@
         }
       },
       addStrikethrough: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -290,7 +170,7 @@
         }
       },
       addStrong: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -302,7 +182,7 @@
         }
       },
       addItalic: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -320,7 +200,7 @@
         insertContent("[Vue](https://cn.vuejs.org/images/logo.png)", this);
       },
       addQuote: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -391,7 +271,7 @@
           url: url,
           condition: {
             title: this.title,
-            category: 1,
+            category: this.category,
             content: this.input,
             tags: tags,
             author: LoginMgr.uid
@@ -415,3 +295,116 @@
     }
   }
 </script>
+
+<style lang="less" scoped>
+  body {
+    position: relative;
+    margin: 0;
+    font: 16px "Avenir", Helvetica, Arial, sans-serif;
+    color: #666;
+    #edit-root {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      nav {
+        position: fixed;
+        height: 116px;
+        min-width: 360px;
+        width: 100%;
+
+        .edit-title {
+          margin: auto;
+          max-width: 1120px;
+          padding: 0 16px;
+          height: 86px;
+          line-height: 38px;
+          color: #333;
+          .logo {
+            display: inline-block;
+            font-size: 20px;
+            padding: 24px 0;
+            b {
+              color: #2572e5;
+              display: inline-block;
+              padding-right: 4px;
+            }
+          }
+          .right {
+            display: inline-block;
+            float: right;
+            cursor: pointer;
+            padding: 24px 0;
+            button {
+              line-height: 26px;
+              height: 38px;
+              color: #333;
+              padding: 6px 12px;
+              background: transparent;
+              outline: none;
+              border: none;
+              font-size: 16px;
+            }
+            .post {
+              background-color: #2572e5;
+              color: white;
+            }
+          }
+        }
+        .edit-operation {
+          border-top: 1px #f1f1f1 solid;
+          text-align: center;
+          ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: auto;
+            li {
+              float: left;
+              width: 30px;
+              height: 30px;
+              border-right: 1px #ccc solid;
+            }
+            li:hover {
+              background-color: #f9f9f9;
+            }
+          }
+        }
+
+      }
+      .main {
+        position: absolute;
+        top: 116px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+
+        textarea {
+          outline: none;
+          border: none;
+          resize: none;
+          width: 100%;
+          background-color: transparent;
+          font-size: 15px;
+          color: #666;
+
+          height: 20000px;
+          overflow: hidden;
+        }
+        .inside {
+          background-color: #f6f7f8;
+        }
+        .inside,
+        .outside {
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          overflow: auto;
+          padding: 10px;
+        }
+      }
+    }
+  }
+</style>
