@@ -1,37 +1,41 @@
-const config = {
-  HOST: 'http://localhost:8080',
-  API: '/api',
+const CGI = {
+  account: "http://localhost:8081/api",
+  article: "http://localhost:8083/api"
+};
+
+const Config = {
   URL: {
     account: {
-      register: '/account/register',
-      login: '/account/login',
-      user: '/account/user/{0}',
-      password: '/account/user/{0}/password',
-      update: '/account/user/{0}/update'
-    },
-    article: {
-      post: '/article/post',
-      detail: '/article/post/{0}',
-      update: '/article/post/{0}/update',
-      delete: '/article/post/{0}/delete',
-      reply: '/article/{0}/reply',
-      list: '/article/list',//获取最新文章列表
-      fine: '/article/fine', //获取精品文章列表
-      category: '/article/category/{0}',//获取特定类别最新文章列表
-      categoryType: '/article/category'//获取文章类别列表
-    },
-    rss: {
-      fine: "/rss/fine",//精品文章订阅
-    },
-    misc: {
-      dashboard: '/misc/dashboard'
+      register: CGI.account + '/account/register',
+      login: CGI.account + '/account/login',
+      user: CGI.account + '/account/user/{0}',
+      password: CGI.account + '/account/user/{0}/password',
+      update: CGI.account + '/account/user/{0}/update'
     },
     admin: {
-      articleList: '/admin/article/list',//管理员视角查看所有文章内容
-      updateArticleState: '/admin/article/{0}/state',//更新文章状态
-      updateUserState: '/admin/user/{0}/state',//跟新用户状态
-      updateReplyState: '/admin/reply/{0}/state'//更新回复状态
-    }
+      articleList: CGI.account + '/admin/article/list',//管理员视角查看所有文章内容
+      updateArticleState: CGI.account + '/admin/article/{0}/state',//更新文章状态
+      updateUserState: CGI.account + '/admin/user/{0}/state',//跟新用户状态
+      updateReplyState: CGI.account + '/admin/reply/{0}/state'//更新回复状态
+    },
+
+    article: {
+      post: CGI.article + '/article/post',
+      detail: CGI.article + '/article/post/{0}',
+      update: CGI.article + '/article/post/{0}/update',
+      delete: CGI.article + '/article/post/{0}/delete',
+      reply: CGI.article + '/article/{0}/reply',
+      list: CGI.article + '/article/list',//获取最新文章列表
+      fine: CGI.article + '/article/fine', //获取精品文章列表
+      category: CGI.article + '/article/category/{0}',//获取特定类别最新文章列表
+      categoryType: CGI.article + '/article/category'//获取文章类别列表
+    },
+    rss: {
+      fine: CGI.article + "/rss/fine",//精品文章订阅
+    },
+    misc: {
+      dashboard: CGI.article + '/misc/dashboard'//网站公告栏
+    },
   },
   UI: {
     root: '/',
@@ -44,4 +48,4 @@ const config = {
     topic: '/topic'
   }
 };
-export default config;
+export default Config;

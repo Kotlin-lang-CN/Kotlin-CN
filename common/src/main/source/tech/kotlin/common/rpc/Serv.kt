@@ -49,9 +49,9 @@ object Serv : HandlerThread("Serv") {
         initLatch.countDown()//init finish
     }
 
-    fun <T : Any> register(interfaceType: Class<T>, implement: T) {
-        provider.register(interfaceType, implement)
-        services[interfaceType] = implement
+    fun <T : Any> register(interfaceType: KClass<T>, implement: T) {
+        provider.register(interfaceType.java, implement)
+        services[interfaceType.java] = implement
     }
 
     fun publish(address: InetSocketAddress, serviceName: String, executorService: ExecutorService) {
@@ -62,9 +62,7 @@ object Serv : HandlerThread("Serv") {
 
     internal class RpcHandler : TcpHandler() {
 
-        override fun onConnect(connection: Connection) {
-            Log.i("new connection init")
-        }
+        override fun onConnect(connection: Connection) = Unit
 
         override fun onData(connection: Connection, data: TcpPackage) {
             val binder = connection.attachment()
@@ -86,16 +84,15 @@ object Serv : HandlerThread("Serv") {
 
     }
 
-    class bind<T : Any>(val name: String, val api: KClass<T>) : ReadOnlyProperty<Any, T>, Consumer() {
+    class bind<T : Any>(val api: KClass<T>, val name: String = "") : ReadOnlyProperty<Any, T>, Consumer() {
 
         internal var conn: Connection? = null
 
         override fun onProxyTransport(requestId: Long, type: Int, data: ByteArray) {
             val connection: Connection = synchronized(this) {
                 val connection = conn
-                if (connection != null)
-                    return@synchronized connection
-
+                if (connection != null) return@synchronized connection
+                Log.i("Service init binder ${api.java.name} for ${this.javaClass.name}")
                 val address = registrator.getService(name)
                 val newConn = ioThread.connect(address).apply { attach(this@bind) }
                 conn = newConn

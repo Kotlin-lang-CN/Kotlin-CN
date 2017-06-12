@@ -65,17 +65,19 @@
     },
     methods: {
       getArticle(){
-        let request = {
+        Net.get({
           url: Config.URL.article.detail.format(this.id),
           type: "GET",
           condition: {}
-        };
-        Net.ajax(request, (data) => {
+        }, (data) => {
           this.topic = data;
           this.content = data.content.content;
           if (LoginMgr.info() && (LoginMgr.info().uid === data.author.uid || LoginMgr.isAdmin())) {
             this.editUrl = Config.UI.edit + "/" + this.articleId;
           }
+        }, (resp) => {
+          window.console.log(resp);
+          if (resp.code === 34) window.location.href = "/404"
         })
       },
       getCategories() {

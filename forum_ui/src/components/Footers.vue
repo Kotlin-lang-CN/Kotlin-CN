@@ -18,7 +18,7 @@
     data: function () {
       return {
         moduleShow: true,
-        rssURL: Config.HOST + Config.API + Config.URL.rss.fine
+        rssURL: Config.URL.rss.fine
       }
     },
     created: function () {
