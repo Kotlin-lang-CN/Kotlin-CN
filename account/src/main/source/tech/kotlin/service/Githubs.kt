@@ -2,20 +2,23 @@ package tech.kotlin.service
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.eclipse.jetty.http.HttpMethod
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.GithubUser
-import tech.kotlin.model.session.AccountSession
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.CreateAuthSessionReq
-import tech.kotlin.model.request.GithubAuthReq
-import tech.kotlin.model.response.CreateAuthSessionResp
-import tech.kotlin.model.response.GithubAuthResp
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.GithubUser
+import tech.kotlin.service.domain.AccountSession
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.account.req.GithubCreateStateReq
+import tech.kotlin.service.account.req.GithubAuthReq
+import tech.kotlin.service.account.resp.GithubCreateStateResp
+import tech.kotlin.service.account.resp.GithubAuthResp
 import tech.kotlin.common.algorithm.JWT
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.GithubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
+import tech.kotlin.service.account.resp.GithubCheckTokenReq
+import tech.kotlin.service.account.resp.CheckCheckTokenResp
+import tech.kotlin.service.account.GithubApi
 import tech.kotlin.utils.*
 import java.util.*
 
@@ -23,7 +26,7 @@ import java.util.*
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Githubs {
+object Githubs : GithubApi {
 
     private val properties: Properties = Props.loads("project.properties")
     private val jwtToken: String = properties str "github.jwt.token"
@@ -35,9 +38,9 @@ object Githubs {
     private val redirectUrl: String = properties str "github.auth.redirect.url"
     private val userUrl: String = properties str "github.user.url"
 
-    fun createAuthSession(req: CreateAuthSessionReq): CreateAuthSessionResp {
-        return CreateAuthSessionResp().apply {
-            state = JWT.dumps(key = jwtToken, content = AccountSession().apply {
+    override fun createState(req: GithubCreateStateReq): GithubCreateStateResp {
+        return GithubCreateStateResp().apply {
+            this.state = JWT.dumps(key = jwtToken, content = AccountSession().apply {
                 id = IDs.next()
                 device = req.device
                 uid = 0
@@ -45,32 +48,36 @@ object Githubs {
         }
     }
 
-    fun handleAuthCallback(req: GithubAuthReq): GithubAuthResp {
-        tryExec(Err.GITHUB_AUTH_ERR) {
+    override fun createSession(req: GithubAuthReq): GithubAuthResp {
+        tryExec(Err.GITHUB_AUTH_ERR, "无效的code") {
             val session = JWT.loads<AccountSession>(key = jwtToken, jwt = req.state, expire = jwtExpire)
             assert(session.device.isEquals(req.device))
         }
         val githubInfo = getUser(req.code, req.state)
         var account = Account()
         var userInfo = UserInfo()
-        val needBind = Mysql.read {
+        val hasAccount = Mysql.read {
             val result = GithubUserInfoDao.getById(it, id = githubInfo.id, useCache = true, updateCache = true)
-            if (result == null || result.uid == 0L) return@read true
+            if (result == null || result.uid == 0L) return@read false
             userInfo = UserInfoDao.getById(it, result.uid, useCache = true, updateCache = true)!!
             account = AccountDao.getById(it, result.uid, useCache = true, updateCache = true)!!
-            return@read false
+            return@read true
         }
         return GithubAuthResp().apply {
             this.github = githubInfo
-            this.hasAccount = !needBind
+            this.hasAccount = hasAccount
             this.userInfo = userInfo
             this.account = account
-            this.sessionToken = JWT.dumps(key = jwtToken, content = AccountSession().apply {
+            this.token = JWT.dumps(key = jwtToken, content = AccountSession().apply {
                 id = IDs.next()
                 device = req.device
                 uid = github.id
             })
         }
+    }
+
+    override fun checkToken(req: GithubCheckTokenReq): CheckCheckTokenResp {
+        TODO()
     }
 
     private fun getUser(code: String, state: String): GithubUser {

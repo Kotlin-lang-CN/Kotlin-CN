@@ -4,12 +4,12 @@ import tech.kotlin.common.algorithm.JWT
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.request.CheckSessionReq
-import tech.kotlin.model.request.CreateSessionReq
-import tech.kotlin.model.response.CheckSessionResp
-import tech.kotlin.model.response.CreateSessionResp
-import tech.kotlin.model.session.AccountSession
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.CreateSessionReq
+import tech.kotlin.service.account.resp.CheckTokenResp
+import tech.kotlin.service.account.resp.CreateSessionResp
+import tech.kotlin.service.domain.AccountSession
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.utils.*
 import java.util.*
@@ -53,7 +53,7 @@ object Sessions : SessionApi {
     }
 
     //校验用户会话
-    override fun checkSession(req: CheckSessionReq): CheckSessionResp {
+    override fun checkToken(req: CheckTokenReq): CheckTokenResp {
         val content: AccountSession
         try {
             //validate session
@@ -80,7 +80,7 @@ object Sessions : SessionApi {
         //        ?.check(Err.NEED_ACTIVATE_EMAIL) { it.emailState != UserInfo.EmailState.VERIFIED }
         //        ?: abort(Err.TOKEN_FAIL)
 
-        return CheckSessionResp().apply {
+        return CheckTokenResp().apply {
             this.account = account
             //this.user = user
         }

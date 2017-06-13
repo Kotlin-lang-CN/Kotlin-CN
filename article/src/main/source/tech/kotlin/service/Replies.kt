@@ -7,11 +7,15 @@ import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao
 import tech.kotlin.dao.ReplyDao
-import tech.kotlin.model.domain.Reply
-import tech.kotlin.model.request.*
-import tech.kotlin.model.response.*
+import tech.kotlin.service.domain.Reply
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
+import tech.kotlin.service.article.req.*
+import tech.kotlin.service.article.resp.CreateReplyResp
+import tech.kotlin.service.article.resp.QueryReplyByArticleResp
+import tech.kotlin.service.article.resp.QueryReplyByIdResp
+import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
+import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.utils.Mysql
 
 

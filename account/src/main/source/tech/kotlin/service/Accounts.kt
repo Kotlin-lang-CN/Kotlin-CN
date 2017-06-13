@@ -6,15 +6,15 @@ import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.UserInfoDao
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.*
-import tech.kotlin.model.response.CreateAccountResp
-import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.model.response.LoginResp
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.account.resp.CreateAccountResp
+import tech.kotlin.service.domain.EmptyResp
+import tech.kotlin.service.account.resp.LoginResp
 import tech.kotlin.utils.Mysql
 import tech.kotlin.service.account.AccountApi
 import tech.kotlin.service.account.SessionApi
+import tech.kotlin.service.account.req.*
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -152,5 +152,10 @@ object Accounts : AccountApi {
         return EmptyResp()
     }
 
+    //激活邮箱
+//    override fun activateEmail(req: ActivateEmailReq): EmptyResp {
+//        TODO("not implemented")
+//    }
 }
+
 

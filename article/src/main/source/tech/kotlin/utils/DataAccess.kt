@@ -19,6 +19,7 @@ import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.int
 import tech.kotlin.common.utils.str
+import tech.kotlin.service.ServDef
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.reflect.Proxy
@@ -86,7 +87,9 @@ object Redis {
     lateinit var pool: JedisPool
 
     fun init(prop: Properties) {
-        pool = JedisPool(JedisPoolConfig(), prop str "redis.host", prop int "redis.port")
+        pool = JedisPool(JedisPoolConfig(),
+                prop str "redis.${ServDef.ARTICLE}.host",
+                prop int "redis.${ServDef.ARTICLE}.port")
     }
 
     infix fun <T> read(action: (Jedis) -> T): T {

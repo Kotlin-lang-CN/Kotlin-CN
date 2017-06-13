@@ -2,14 +2,12 @@ package tech.kotlin.controller
 
 import spark.Route
 import tech.kotlin.common.rpc.Serv
-import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.dict
-import tech.kotlin.common.utils.str
-import tech.kotlin.model.domain.Article
-import tech.kotlin.model.domain.Category
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.QueryLatestArticleReq
-import tech.kotlin.model.request.QueryUserReq
+import tech.kotlin.service.domain.Article
+import tech.kotlin.service.domain.Category
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.article.req.QueryLatestArticleReq
+import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.UserApi

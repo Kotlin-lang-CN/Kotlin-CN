@@ -1,10 +1,10 @@
 package tech.kotlin.service
 
-import tech.kotlin.model.domain.TextContent
-import tech.kotlin.model.request.CreateTextContentReq
-import tech.kotlin.model.request.QueryTextReq
-import tech.kotlin.model.response.CreateTextContentResp
-import tech.kotlin.model.response.QueryTextResp
+import tech.kotlin.service.domain.TextContent
+import tech.kotlin.service.article.req.CreateTextContentReq
+import tech.kotlin.service.article.req.QueryTextReq
+import tech.kotlin.service.article.resp.CreateTextContentResp
+import tech.kotlin.service.article.resp.QueryTextResp
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.dao.TextDao
 import tech.kotlin.service.article.TextApi

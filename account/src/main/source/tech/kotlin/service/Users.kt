@@ -1,11 +1,11 @@
 package tech.kotlin.service
 
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.QueryUserReq
-import tech.kotlin.model.request.UpdateUserReq
-import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.model.response.QueryUserResp
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.account.req.UpdateUserReq
+import tech.kotlin.service.domain.EmptyResp
+import tech.kotlin.service.article.resp.QueryUserResp
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.AccountDao

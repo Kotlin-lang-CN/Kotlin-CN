@@ -2,9 +2,13 @@
   <div class="side-bar">
     <a class="button" :href="uiEdit" v-if="showPostBtn">发布新话题</a>
     <div class="part">
-      <header>网站通告</header>
+      <header>网站通告
+        <button v-if="isAdmin" v-on:click="inputDashboard">编辑</button>
+      </header>
       <div class="card">
         <display-panels :content="dashboard"></display-panels>
+        <textarea v-if="isAdmin && showDashboardInput" v-model="dashboardInput" title=""></textarea>
+        <button v-if="isAdmin && showDashboardInput" v-on:click="updateDashboard">确认</button>
       </div>
     </div>
     <div class="part">
@@ -24,11 +28,17 @@
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import DisplayPanels from '../components/DisplayPanels.vue';
+  import LoginMgr from '../assets/js/LoginMgr.js';
+  import Event from '../assets/js/Event.js'
+
   export default {
     data() {
       return {
         uiEdit: Config.UI.edit,
-        dashboard: ''
+        dashboard: '',
+        isAdmin: LoginMgr.isAdmin(),
+        showDashboardInput: false,
+        dashboardInput: '',
       }
     },
     props: {
@@ -38,17 +48,23 @@
       'display-panels': DisplayPanels
     },
     created(){
-      this.updateDashboard();
+      this.getDashboard();
+      Event.on('login', () => this.isAdmin = LoginMgr.isAdmin())
     },
     methods: {
-      updateDashboard(){
-        let request = {
-          url: Config.URL.misc.dashboard,
-          type: "GET",
-          condition: {}
-        };
-        Net.ajax(request, (data) => {
+      getDashboard(){
+        Net.get({url: Config.URL.misc.dashboard}, (data) => {
           this.dashboard = data.text;
+        })
+      },
+      inputDashboard() {
+        this.dashboardInput = '';
+        this.showDashboardInput = !this.showDashboardInput
+      },
+      updateDashboard() {
+        const input = this.dashboardInput;
+        Net.post({url: Config.URL.misc.dashboard, condition: {dashboard: input}}, () => {
+          this.dashboard = input
         })
       }
     }

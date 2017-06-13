@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Result
 import org.apache.ibatis.annotations.Results
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.session.SqlSession
-import tech.kotlin.model.domain.TextContent
+import tech.kotlin.service.domain.TextContent
 import tech.kotlin.utils.Mysql
 import tech.kotlin.utils.get
 import tech.kotlin.utils.Redis

@@ -2,8 +2,8 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
-import tech.kotlin.model.domain.Account
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.service.domain.Account
 import tech.kotlin.utils.Mysql
 import tech.kotlin.utils.get
 import tech.kotlin.utils.Redis

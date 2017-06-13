@@ -2,17 +2,17 @@ package tech.kotlin.service
 
 import com.github.pagehelper.PageHelper
 import tech.kotlin.common.rpc.Serv
-import tech.kotlin.model.domain.Article
-import tech.kotlin.model.request.*
-import tech.kotlin.model.response.ArticleListResp
-import tech.kotlin.model.response.ArticleResp
-import tech.kotlin.model.response.QueryArticleByIdResp
+import tech.kotlin.service.domain.Article
+import tech.kotlin.service.article.resp.ArticleResp
+import tech.kotlin.service.article.resp.QueryArticleByIdResp
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao
 import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.TextApi
+import tech.kotlin.service.article.req.*
+import tech.kotlin.service.article.resp.ArticleListResp
 import tech.kotlin.utils.Mysql
 
 /*********************************************************************

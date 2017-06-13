@@ -1,11 +1,11 @@
 package tech.kotlin.service.article
 
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.model.request.*
-import tech.kotlin.model.response.ArticleListResp
-import tech.kotlin.model.response.ArticleResp
-import tech.kotlin.model.response.QueryArticleByIdResp
+import tech.kotlin.service.article.resp.ArticleResp
+import tech.kotlin.service.article.resp.QueryArticleByIdResp
 import tech.kotlin.service.TypeDef
+import tech.kotlin.service.article.req.*
+import tech.kotlin.service.article.resp.ArticleListResp
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

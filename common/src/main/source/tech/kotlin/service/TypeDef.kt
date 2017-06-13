@@ -11,6 +11,7 @@ object TypeDef {
         const val LOGIN_WITH_NAME = 10001
         const val CHANGE_USER_STATE = 10002
         const val UPDATE_PASSWORD = 10003
+        const val ACTIVATE_EMAIL = 10004
     }
 
     object Session {
@@ -44,9 +45,16 @@ object TypeDef {
         const val CREATE_CONTENT = 60001
     }
 
-    object EmailActivate {
+    object Email {
         const val CREATE_SESSION = 70000
-        const val ACTIVATE = 70001
+        const val CHECK_TOKEN = 70001
+        const val SEND = 70002
+    }
+
+    object Github {
+        const val CREATE_STATE = 80000
+        const val CREATE_SESSION = 80001
+        const val CHECK_TOKEN = 80002
     }
 
 }

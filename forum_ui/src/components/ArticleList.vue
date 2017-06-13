@@ -66,9 +66,6 @@
       Event.on('login', () => {
         this.isAdmin = LoginMgr.isAdmin()
       });
-      Event.on('logout', () => {
-        this.isAdmin = LoginMgr.isAdmin()
-      })
     },
     methods: {
       get(url, offset){

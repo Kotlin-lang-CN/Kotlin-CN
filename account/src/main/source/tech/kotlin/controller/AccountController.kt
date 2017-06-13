@@ -3,13 +3,13 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.Device
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.*
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.*
+import tech.kotlin.service.account.req.*
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.Device
+import tech.kotlin.service.domain.UserInfo
 import java.net.URLDecoder
 
 /*********************************************************************
@@ -21,7 +21,6 @@ object AccountController {
     val accountApi by Serv.bind(AccountApi::class)
     val sessionApi by Serv.bind(SessionApi::class)
     val userApi by Serv.bind(UserApi::class)
-    val emailActivateApi by Serv.bind(EmailActivateApi::class)
 
     val login = Route { req, _ ->
         val loginResp = accountApi.loginWithName(LoginReq().apply {
@@ -83,7 +82,7 @@ object AccountController {
 
     val activateEmail = Route { req, _ ->
         val token = URLDecoder.decode(req.queryParams("token"), "UTF-8")
-        emailActivateApi.activate(ActivateEmailReq().apply { this.token = token })
+        //emailActivateApi.createSession(ActivateEmailReq().apply { this.token = token })
         return@Route ok()
     }
 
@@ -92,7 +91,7 @@ object AccountController {
                 .check(Err.PARAMETER, "uid错误") { it.toLong(); true }
                 .toLong()
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN || it.id == uid }
 
         val queryUser = userApi.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
@@ -125,7 +124,7 @@ object AccountController {
             abort(Err.PARAMETER, "密码格式有误")
         }
 
-        sessionApi.checkSession(CheckSessionReq(req)).account
+        sessionApi.checkToken(CheckTokenReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
         accountApi.updatePassword(UpdatePasswordReq().apply {
@@ -148,7 +147,7 @@ object AccountController {
         if (username.isNullOrBlank() && email.isNullOrBlank() && logo.isNullOrBlank())
             abort(Err.PARAMETER)
 
-        sessionApi.checkSession(CheckSessionReq(req)).account
+        sessionApi.checkToken(CheckTokenReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
         userApi.updateById(UpdateUserReq().apply {

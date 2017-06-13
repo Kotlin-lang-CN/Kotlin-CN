@@ -3,11 +3,10 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.dict
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.Reply
-import tech.kotlin.model.domain.TextContent
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.*
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.Reply
+import tech.kotlin.service.domain.TextContent
+import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.SessionApi
@@ -17,6 +16,9 @@ import tech.kotlin.service.article.TextApi
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
+import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.article.req.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -43,7 +45,7 @@ object ReplyController {
                 ?.toLong()
                 ?: 0
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
 
         val createResp = replyApi.create(CreateArticleReplyReq().apply {
             this.articleId = articleId
@@ -59,7 +61,7 @@ object ReplyController {
         val replyId = req.params(":id")
                 .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         val reply = replyApi.getReplyById(QueryReplyByIdReq().apply {
             this.id = arrayListOf(replyId)
         }).result[replyId] ?: abort(Err.REPLY_NOT_EXISTS)
@@ -109,7 +111,7 @@ object ReplyController {
         //只有管理员才能看到封禁和删除的文章内容
         var isUserAdmin = false
         try {
-            val account = sessionApi.checkSession(CheckSessionReq(req)).account
+            val account = sessionApi.checkToken(CheckTokenReq(req)).account
             isUserAdmin = account.role == Account.Role.ADMIN
         } catch (ignore: Throwable) {
         }

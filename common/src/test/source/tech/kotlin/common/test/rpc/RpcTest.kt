@@ -58,7 +58,7 @@ class RpcTest {
     }
 
     companion object {
-        val service by Serv.bind("test", TestApi::class)
+        val service by Serv.bind(TestApi::class, "test")
 
         @JvmStatic
         @BeforeClass

@@ -3,20 +3,21 @@ package tech.kotlin
 import spark.Spark.*
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.PropRegistrator
-import tech.kotlin.common.rpc.registrator.ServiceRegistrator
-import tech.kotlin.controller.*
-import tech.kotlin.utils.Mysql
-import tech.kotlin.common.utils.Props
-import tech.kotlin.common.utils.int
-import tech.kotlin.utils.Redis
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.dict
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.article.*
 import tech.kotlin.common.utils.gate
+import tech.kotlin.common.utils.int
+import tech.kotlin.controller.*
 import tech.kotlin.service.Articles
 import tech.kotlin.service.Replies
+import tech.kotlin.service.ServDef
 import tech.kotlin.service.Texts
+import tech.kotlin.service.article.ArticleApi
+import tech.kotlin.service.article.ReplyApi
+import tech.kotlin.service.article.TextApi
+import tech.kotlin.utils.Mysql
+import tech.kotlin.utils.Redis
 import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 
@@ -72,7 +73,8 @@ fun initHttpCgi() {
         }
 
         path("/misc") {
-            get("/dashboard", MiscController.dashboard.gate("网站公告栏"))
+            get("/dashboard", MiscController.getDashboard.gate("网站公告栏"))
+            post("/dashboard", MiscController.setDashboard.gate("设置网站公告"))
         }
     }
     notFound { req, response ->

@@ -14,11 +14,13 @@ import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.Pipeline
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.os.Abort
+import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.int
 import tech.kotlin.common.utils.str
+import tech.kotlin.service.ServDef
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.reflect.Proxy
@@ -86,7 +88,9 @@ object Redis {
     lateinit var pool: JedisPool
 
     fun init(prop: Properties) {
-        pool = JedisPool(JedisPoolConfig(), prop str "redis.host", prop int "redis.port")
+        pool = JedisPool(JedisPoolConfig(),
+                prop str "redis.${ServDef.ACCOUNT}.host",
+                prop int "redis.${ServDef.ACCOUNT}.port")
     }
 
     infix fun <T> read(action: (Jedis) -> T): T {

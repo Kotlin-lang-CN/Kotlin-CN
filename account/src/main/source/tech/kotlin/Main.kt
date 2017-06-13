@@ -3,20 +3,18 @@ package tech.kotlin
 import spark.Spark.*
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.PropRegistrator
-import tech.kotlin.common.rpc.registrator.ServiceRegistrator
-import tech.kotlin.controller.*
-import tech.kotlin.utils.Mysql
-import tech.kotlin.common.utils.Props
-import tech.kotlin.common.utils.int
-import tech.kotlin.utils.Redis
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.dict
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.account.*
 import tech.kotlin.common.utils.gate
-import tech.kotlin.service.Accounts
-import tech.kotlin.service.Sessions
-import tech.kotlin.service.Users
+import tech.kotlin.common.utils.int
+import tech.kotlin.controller.AccountController
+import tech.kotlin.controller.AdminController
+import tech.kotlin.controller.GithubController
+import tech.kotlin.service.*
+import tech.kotlin.service.account.*
+import tech.kotlin.utils.Mysql
+import tech.kotlin.utils.Redis
 import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 
@@ -37,6 +35,8 @@ fun main(vararg args: String) {
 fun initRpcCgi() {
     Serv.init(PropRegistrator(properties))
     Serv.register(AccountApi::class, Accounts)
+    Serv.register(EmailApi::class, Emails)
+    Serv.register(GithubApi::class, Githubs)
     Serv.register(SessionApi::class, Sessions)
     Serv.register(UserApi::class, Users)
     Serv.publish(
@@ -59,8 +59,9 @@ fun initHttpCgi() {
             get("/email/activate", AccountController.activateEmail.gate("激活账户邮箱"))
         }
         path("/github") {
-            get("/oauth", GithubController.startAuth.gate("获取登录会话"))
-            get("/callback", GithubController.authCallback.gate("github第三方回调"))
+            get("/state", GithubController.createState.gate("获取登录会话"))
+            post("/auth", GithubController.auth.gate("github登录"))
+
         }
         path("/admin") {
             get("/article/list", AdminController.getArticleList.gate("管理员获取文章列表"))

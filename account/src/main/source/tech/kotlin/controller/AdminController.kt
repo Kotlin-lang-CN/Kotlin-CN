@@ -3,11 +3,10 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.dict
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.Article
-import tech.kotlin.model.domain.Reply
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.*
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.Article
+import tech.kotlin.service.domain.Reply
+import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.AccountApi
@@ -17,6 +16,12 @@ import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.check
+import tech.kotlin.service.account.req.ChangeUserStateReq
+import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.article.req.ChangeReplyStateReq
+import tech.kotlin.service.article.req.QueryLatestArticleReq
+import tech.kotlin.service.article.req.UpdateArticleReq
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -40,7 +45,7 @@ object AdminController {
                     arrayOf(Account.State.NORMAL, Account.State.BAN).any { it == s.toInt() }
                 }.toInt()
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
         accountApi.changeUserState(ChangeUserStateReq().apply {
@@ -62,7 +67,7 @@ object AdminController {
                     ).any { it == s.toInt() }
                 }
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
         articleApi.updateMeta(UpdateArticleReq().apply {
@@ -81,7 +86,7 @@ object AdminController {
             arrayOf(Reply.State.NORMAL, Reply.State.BAN, Reply.State.DELETE).any { it == s.toInt() }
         }.toInt()
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
         replyApi.changeState(ChangeReplyStateReq().apply {
@@ -103,7 +108,7 @@ object AdminController {
                 ?.toInt()
                 ?: 20
 
-        val owner = sessionApi.checkSession(CheckSessionReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
 
         val articles = articleApi.getLatest(QueryLatestArticleReq().apply {

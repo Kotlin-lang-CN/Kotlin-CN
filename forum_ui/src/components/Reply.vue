@@ -124,9 +124,6 @@
         this.isAdmin = LoginMgr.isAdmin();
         if (this.isAdmin) this.getReply(0);
       });
-      Event.on('logout', () => {
-        this.isAdmin = LoginMgr.isAdmin()
-      })
     },
     methods: {
       getReply(index){

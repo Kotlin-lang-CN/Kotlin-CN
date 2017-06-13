@@ -1,14 +1,14 @@
 package tech.kotlin.service.account
 
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.model.request.ChangeUserStateReq
-import tech.kotlin.model.request.CreateAccountReq
-import tech.kotlin.model.request.LoginReq
-import tech.kotlin.model.request.UpdatePasswordReq
-import tech.kotlin.model.response.CreateAccountResp
-import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.model.response.LoginResp
 import tech.kotlin.service.TypeDef
+import tech.kotlin.service.account.req.ChangeUserStateReq
+import tech.kotlin.service.account.req.CreateAccountReq
+import tech.kotlin.service.account.req.LoginReq
+import tech.kotlin.service.account.req.UpdatePasswordReq
+import tech.kotlin.service.account.resp.CreateAccountResp
+import tech.kotlin.service.account.resp.LoginResp
+import tech.kotlin.service.domain.EmptyResp
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

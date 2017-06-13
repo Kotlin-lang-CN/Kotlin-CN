@@ -3,11 +3,10 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.strDict
-import tech.kotlin.model.domain.Account
-import tech.kotlin.model.domain.Article
-import tech.kotlin.model.domain.TextContent
-import tech.kotlin.model.domain.UserInfo
-import tech.kotlin.model.request.*
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.Article
+import tech.kotlin.service.domain.TextContent
+import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.SessionApi
@@ -18,6 +17,9 @@ import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.tryExec
+import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.article.req.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -43,7 +45,7 @@ object ArticleController {
                 .check(Err.PARAMETER, "无效的文章内容") { !it.isNullOrBlank() && it.trim().length >= 2 }
                 .check(Err.PARAMETER, "文章内容过短") { !it.isNullOrBlank() && it.trim().length >= 30 }
 
-        val account = sessionApi.checkSession(CheckSessionReq(req)).account
+        val account = sessionApi.checkToken(CheckTokenReq(req)).account
         account.check(Err.UNAUTHORIZED) { it.id == author }
 
         val id = articleApi.create(CreateArticleReq().apply {
@@ -79,7 +81,7 @@ object ArticleController {
         } ?: ""
 
         //只有作者和管理员才能修改文章内容
-        val me = sessionApi.checkSession(CheckSessionReq(req)).account
+        val me = sessionApi.checkToken(CheckTokenReq(req)).account
         val article = articleApi.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
@@ -116,7 +118,7 @@ object ArticleController {
                 .check(Err.PARAMETER, "无效的文章id") { it.toLong();true }.toLong()
 
         //只有作者和管理员才能删除文章
-        val me = sessionApi.checkSession(CheckSessionReq(req)).account
+        val me = sessionApi.checkToken(CheckTokenReq(req)).account
         val article = articleApi.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
@@ -141,7 +143,7 @@ object ArticleController {
         //只有管理员才能看到封禁和删除的文章内容
         if (article.state == Article.State.BAN || article.state == Article.State.DELETE) {
             tryExec(Err.ARTICLE_NOT_EXISTS) {
-                val account = sessionApi.checkSession(CheckSessionReq(req)).account
+                val account = sessionApi.checkToken(CheckTokenReq(req)).account
                 assert(account.role == Account.Role.ADMIN)
             }
         }

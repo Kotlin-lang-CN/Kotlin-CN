@@ -1,10 +1,10 @@
 package tech.kotlin.service.account
 
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.model.request.QueryUserReq
-import tech.kotlin.model.request.UpdateUserReq
-import tech.kotlin.model.response.EmptyResp
-import tech.kotlin.model.response.QueryUserResp
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.account.req.UpdateUserReq
+import tech.kotlin.service.domain.EmptyResp
+import tech.kotlin.service.article.resp.QueryUserResp
 import tech.kotlin.service.TypeDef
 
 /*********************************************************************
