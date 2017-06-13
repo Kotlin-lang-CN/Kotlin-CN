@@ -7,10 +7,10 @@
           <div class="btn"><span>更多<i class="choice-icon"></i></span>
             <div class="sub-menu">
               <section v-on:click="postCancel">放弃编辑</section>
-              <section v-on:click="postCancel">删除文章</section>
+              <section v-on:click="postDelete">删除文章</section>
             </div>
           </div>
-          <button class="post" v-on:click="postArticle">发布新话题</button>
+          <button class="post" v-on:click="preparePostArticle">发布新话题</button>
         </div>
       </div>
       <div class="edit-operation">
@@ -111,6 +111,9 @@
         this.category = obj.category;
         this.title = obj.title;
         this.tags = obj.tags;
+      });
+      Event.on('article-meta-post', () => {
+        this.postArticle();
       });
       this.getCategories();
     },
@@ -257,12 +260,16 @@
       postCancel(){
         history.back();
       },
+      postDelete(){
+        history.back();
+        //TODO
+      },
+      preparePostArticle(){
+        Event.emit('article-meta-edit', 'post');
+      },
       postArticle(){
-        debugger;
-        if (this.title.trim().length === 0
-          || this.tags.trim().length === 0
-          || this.input.trim().length === 0) {
-          layer.msg('文章信息不完整');
+        if (this.input.trim().length < 30) {
+          layer.msg('文章文字不少于三十字');
           return;
         }
         let url = Config.URL.article.post;
@@ -270,10 +277,10 @@
           url = Config.URL.article.update.format(this.articleId);
         }
         let targetCategory = 0;
-        for(let i = 0; i < this.categories.length ; i++){
-            if(this.category === this.categories[i]){
-              targetCategory = i + 1;
-            }
+        for (let i = 0; i < this.categories.length; i++) {
+          if (this.category === this.categories[i]) {
+            targetCategory = i + 1;
+          }
         }
         Net.post({
           url: url,
@@ -285,7 +292,7 @@
             author: LoginMgr.info().uid
           }
         }, (data) => {
-          //TODO
+          layer.msg('发布成功');
           this.articleId = data.id;
           history.back();
         });
@@ -324,17 +331,17 @@
     font: 16px "Avenir", Helvetica, Arial, sans-serif;
     color: #666;
     #edit-root {
+      min-width: 1050px;
       position: absolute;
       top: 0;
       bottom: 0;
       left: 0;
       right: 0;
       nav {
+        min-width: 1050px;
         position: fixed;
         height: 140px;
-        min-width: 360px;
         width: 100%;
-
         .edit-title {
           margin: auto;
           padding: 0 160px;

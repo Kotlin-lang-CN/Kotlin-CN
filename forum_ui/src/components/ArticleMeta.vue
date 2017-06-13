@@ -24,7 +24,7 @@
     },
     methods: {
       showDialog(){
-        Event.emit('article-meta-edit', '');
+        Event.emit('article-meta-edit', 'edit');
       }
     }
   }
