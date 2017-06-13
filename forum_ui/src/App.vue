@@ -193,7 +193,7 @@
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    padding: 20px;
+    padding: 0 16px;
   }
 
   #drawer-toggle {

@@ -2,28 +2,32 @@
   <div>
     <div class="content">
       <div class="list" v-for="value in articles">
-        <a href="javascript:void(0);">
-          <div class="footnote" v-on:click="toArticle(value.meta.id)">
+        <section>
+          <div class="footnote">
             最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
           </div>
-          <app-avatar :avatar="value.author.username"></app-avatar>
-          <div class="aside">
-            <div class="title">
-              <span v-on:click="toArticle(value.meta.id)">{{ value.meta.title }}</span>
-              <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="right" v-if="isAdmin">
-                <option v-for="option in options" v-bind:value="option.value">
-                  {{ option.text }}
-                </option>
-              </select>
-            </div>
-            <span v-if="categories.length >= value.meta.category"> [{{ categories[value.meta.category - 1] }}]</span>
-            <span class="tag" v-on:click="toArticle(value.meta.id)" v-for="tag in value.meta.tags.split(/;/)">{{ tag }}
+          <div class="flex">
+            <app-avatar :avatar="value.author.username"></app-avatar>
+            <div class="wrap">
+              <div class="title">
+                <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
+                <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
+                  <option v-for="option in options" v-bind:value="option.value">
+                    {{ option.text }}
+                  </option>
+                </select>
+              </div>
+              <span v-if="categories.length >= value.meta.category" class="category"> {{ categories[value.meta.category - 1] }}</span>
+              <span class="tag focus" v-on:click="toArticle(value.meta.id)"
+                    v-for="tag in value.meta.tags.split(/;/)">{{ tag
+                }}
             </span>
-            <div class="footnote right" v-on:click="toArticle(value.meta.id)">
-              {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
+              <div class="footnote right">
+                {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
+              </div>
             </div>
           </div>
-        </a>
+        </section>
       </div>
     </div>
     <button v-on:click="get(requestUrl, offset)" v-show="hasMore">加载更多</button>
@@ -126,35 +130,64 @@
 
 <style scoped lang="less">
   .content {
-    .list a {
+    border-top: 1px solid #f1f1f1;
+    .list:nth-child(1) {
+      border-top: 0;
+    }
+    .list {
+      border-top: 1px #f1f1f1 solid;
       display: block;
-      padding: 16px 16px;
-      text-align: left;
-      border-top: 1px solid #f1f1f1;
-      background: white;
-      .footnote {
-        font-size: 12px;
-        color: #999;
-      }
-      .aside {
-        display: inline-block;
-        padding-top: 10px;
-        width: 85%;
-        .title {
-          line-height: 28px;
-          font-size: 24px;
-          color: #333;
-        }
-        .tag {
-          display: inline-block;
-          font-size: 16px;
+      section {
+        padding: 12px 0 30px 0;
+        text-align: left;
+
+        background: white;
+        .footnote {
+          font-size: 12px;
           color: #999;
         }
-        .right {
-          float: right;
+        .flex {
+          margin-top: 16px;
+          position: relative;
+          display: flex;
+          .wrap{
+            margin-left: 10px;
+          }
+          .title {
+            line-height: 28px;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 6px;
+          }
+          .tag {
+            display: inline-block;
+            font-size: 16px;
+            color: #999;
+          }
+          .category{
+            display: inline-block;
+            background-color: #256fe8;
+            color: white;
+            margin-right: 10px;
+            padding: 0 7px;
+          }
+          .focus {
+            cursor: pointer;
+          }
+          .control{
+            position: absolute;
+            right: 0;
+            bottom: 36px;
+          }
+          .right {
+            position: absolute;
+            right: 0;
+            bottom: 5px;
+          }
         }
       }
     }
+
     button {
       background-color: #f2f7fd;
       outline: none;

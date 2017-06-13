@@ -74,14 +74,12 @@
 </script>
 <style scoped lang="less">
   .content {
-    padding: 0 16px;
     display: flex;
     box-sizing: border-box;
     max-width: 1120px;
     margin: auto;
 
     .post {
-      float: left;
       width: 75%;
 
       .sub-nav {
@@ -108,8 +106,9 @@
       }
     }
     .side {
-      width: 23%;
-      padding-top: 8px;
+      width: 25%;
+      padding-left: 30px;
+      padding-top: 20px;
     }
     .page {
       > div {
@@ -119,7 +118,7 @@
     }
   }
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1000px) {
     .content {
       display: block;
       .post {
@@ -128,6 +127,7 @@
         width: 100%;
       }
       .side {
+        padding: 40px 0;
         display: block;
         width: 100%;
       }

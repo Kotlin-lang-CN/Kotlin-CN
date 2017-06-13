@@ -36,6 +36,7 @@
     text-align: center;
     font-style: normal;
     vertical-align: top;
+    cursor: default;
   }
 
   .small {

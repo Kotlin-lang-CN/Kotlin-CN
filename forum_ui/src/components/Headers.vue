@@ -2,7 +2,7 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
-        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> China</a></div>
+        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> CHINA</a></div>
         <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
 
         <div class="menu-authen menu-right" v-if="strUserName ===''">
@@ -91,6 +91,7 @@
         > div {
           display: inline-block;
         }
+
         .menu-header, .menu-main {
           height: 38px;
           line-height: 38px;
@@ -99,9 +100,14 @@
           padding-top: 24px;
           padding-bottom: 24px;
         }
-        .menu-header b {
-          color: #2572e5;
-          font-weight: normal;
+        .menu-header {
+          a {
+            color: #6f6f6f;
+          }
+          b {
+            color: #2572e5;
+            font-weight: normal;
+          }
         }
         .menu-user {
           .add-icon {

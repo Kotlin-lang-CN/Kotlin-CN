@@ -73,11 +73,9 @@
 
 <style scoped lang="less">
   .side-bar {
-    margin: auto 16px;
-    max-width: 230px;
-    min-width: 200px;
     .button {
-      padding: 6px 12px;
+      line-height: 26px;
+      height: 38px;
       display: block;
       color: white;
       background: #2572e5;
@@ -87,7 +85,6 @@
     }
 
     .part {
-      margin: 0 8px;
       header {
         font-size: 18px;
         color: #999;
@@ -109,9 +106,9 @@
           display: block;
           i {
             display: block;
-            width: 230px;
+            width: 138px;
             height: 40px;
-            margin-bottom: 16px;
+            margin: 0 auto 16px auto;
           }
           .cnodejs {
             background: url(../assets/img/friendship1.png) no-repeat;
@@ -136,7 +133,7 @@
     }
   }
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1000px) {
     .side-bar {
       border-left: none;
       margin: auto;

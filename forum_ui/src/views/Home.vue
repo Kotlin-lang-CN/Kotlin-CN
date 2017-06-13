@@ -61,10 +61,11 @@
 </script>
 
 <style scoped lang="less">
-  .home-root{
+  .home-root {
     max-width: 1120px;
     margin: auto;
   }
+
   .banner {
     background: #73abfb;
     text-align: center;
@@ -77,7 +78,6 @@
   }
 
   .content {
-    padding: 0 16px;
     display: flex;
     box-sizing: border-box;
     .sub-title {
@@ -87,9 +87,7 @@
     }
 
     .post {
-      float: left;
       width: 75%;
-
       .sub-nav {
         text-align: left;
         > button {
@@ -114,7 +112,8 @@
       }
     }
     .side {
-      width: 23%;
+      padding-left: 30px;
+      width: 25%;
       padding-top: 8px;
     }
     .page {
@@ -125,7 +124,7 @@
     }
   }
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1000px) {
     .content {
       display: block;
       .post {
@@ -134,6 +133,7 @@
         width: 100%;
       }
       .side {
+        padding: 0;
         display: block;
         width: 100%;
       }
