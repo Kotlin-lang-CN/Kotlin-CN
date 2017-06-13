@@ -63,9 +63,7 @@
     },
     created() {
       this.getCategories();
-      Event.on('login', () => {
-        this.isAdmin = LoginMgr.isAdmin()
-      });
+      Event.on('login', () => this.isAdmin = LoginMgr.isAdmin());
     },
     methods: {
       get(url, offset){

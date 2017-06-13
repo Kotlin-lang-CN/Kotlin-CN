@@ -65,7 +65,7 @@ class LoginMgr {
     Cookie.del('X-App-UID');
     Cookie.del('X-App-Name');
     Cookie.del('X-App-Role');
-    Event.emit('login', this.info());
+    Event.emit('login', false);
   }
 
 }

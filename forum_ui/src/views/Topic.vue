@@ -58,7 +58,8 @@
     created(){
       this.id = this.$root.params.id;
       this.getArticle();
-      this.getCategories()
+      this.getCategories();
+      Event.on('login', () => this.renderEditUrl())
     },
     mounted(){
       this.articleId = this.id;
@@ -72,11 +73,8 @@
         }, (data) => {
           this.topic = data;
           this.content = data.content.content;
-          if (LoginMgr.info() && (LoginMgr.info().uid === data.author.uid || LoginMgr.isAdmin())) {
-            this.editUrl = Config.UI.edit + "/" + this.articleId;
-          }
+          this.renderEditUrl()
         }, (resp) => {
-          window.console.log(resp);
           if (resp.code === 34) window.location.href = "/404"
         })
       },
@@ -89,6 +87,15 @@
             window.data.categories = resp.category;
             this.categories = resp.category;
           });
+        }
+      },
+      renderEditUrl() {
+        if (this.topic !== null && this.topic.author
+          && LoginMgr.info() && LoginMgr.info().uid === this.topic.author.uid
+          || LoginMgr.isAdmin()) {
+          this.editUrl = Config.UI.edit + "/" + this.articleId;
+        } else {
+          this.editUrl = ''
         }
       }
     }

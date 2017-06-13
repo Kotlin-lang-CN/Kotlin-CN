@@ -50,9 +50,7 @@
       }
     },
     created: function () {
-      Event.on("login", () => {
-        this.strUserName = LoginMgr.check((it) => it.username, () => '')
-      });
+      Event.on("login", () => this.strUserName = LoginMgr.check((it) => it.username, () => ''));
       Event.on("fullscreen", (on) => {
         this.moduleShow = !on;
       });
