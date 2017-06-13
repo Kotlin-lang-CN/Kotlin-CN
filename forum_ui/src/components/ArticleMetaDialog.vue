@@ -3,23 +3,27 @@
     <div class="bg" v-on:click="show = false"></div>
     <div class="cont">
       <input v-model="titleInput" type="text" placeholder="请输入文章标题"/>
-      <input v-model="topicInput" type="text" placeholder="请输入／选择一个话题"/>
+      <select v-model="categoryInput">
+        <option v-for="category in categories" :value="category">{{ category }}</option>
+      </select>
       <input-tag :tags="tagInput"></input-tag>
       <button v-on:click="save">OK</button>
     </div>
   </div>
 </template>
-<!--TODO 拦截器-->
 <script>
   import InputTag from 'vue-input-tag';
   import Event from "../assets/js/Event.js";
+  import Net from "../assets/js/Net.js";
+  import Config from "../assets/js/Config.js";
   export default {
     data: function () {
       return {
         show: false,
         titleInput: '',
-        topicInput: '',
+        categoryInput: '',
         tagInput: [],
+        categories: []
       }
     },
     props: {
@@ -33,16 +37,54 @@
     created(){
       Event.on("article-meta-edit", () => {
         this.show = true;
-      })
+      });
+      this.getCategories();
+    },
+    mounted(){
+      this.titleInput = this.title;
+      this.categoryInput = this.category;
+      if (this.tags !== undefined) {
+        this.tagInput = this.tags.split(';');
+      }
     },
     methods: {
       save(){
+        let tags = '';
+        this.tagInput.forEach((t) => {
+          tags += t;
+          tags += ';'
+        });
+        tags = tags.substr(0, tags.length - 1);
         Event.emit('article-meta-update', {
-          'category': this.topicInput,
+          'category': this.categoryInput,
           'title': this.titleInput,
-          'tags': this.tagInput.toString(),//TODO
+          'tags': tags
         });
         this.show = false;
+      },
+      getCategories() {
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.category;
+            this.categories = resp.category;
+          });
+        }
+      }
+    },
+    watch: {
+      title(){
+        this.titleInput = this.title;
+      },
+      category(){
+        this.categoryInput = this.category;
+      },
+      tags(){
+        if (this.tags !== undefined) {
+          this.tagInput = this.tags.split(';');
+        }
       }
     }
   }

@@ -4,7 +4,12 @@
       <div class="edit-title">
         <div class="logo"><b>Kotlin</b>China</div>
         <div class="right">
-          <button class="give-up" v-on:click="postCancel">放弃编辑</button>
+          <div class="btn"><span>更多<i class="choice-icon"></i></span>
+            <div class="sub-menu">
+              <section v-on:click="postCancel">放弃编辑</section>
+              <section v-on:click="postCancel">删除文章</section>
+            </div>
+          </div>
           <button class="post" v-on:click="postArticle">发布新话题</button>
         </div>
       </div>
@@ -72,12 +77,13 @@
     data() {
       return {
         articleId: '',
-        category:1,
+        category: '',
         title: 'title',
         tags: '',
         updateMode: false,
         author: LoginMgr.username,
         input: '',
+        categories: [],
 
         editStatus: true,
         previewStatus: true,
@@ -101,11 +107,12 @@
         this.updateMode = true;
         this.getArticle();
       }
-      Event.on('article-meta-update',(obj)=>{
-          this.category = obj.category;
-          this.title = obj.title;
-          this.tag = obj.tag;
-      })
+      Event.on('article-meta-update', (obj) => {
+        this.category = obj.category;
+        this.title = obj.title;
+        this.tags = obj.tags;
+      });
+      this.getCategories();
     },
     methods: {
       tabFn: function (evt) {
@@ -243,7 +250,7 @@
         };
         Net.ajax(request, (data) => {
           this.title = data.article.title;
-          this.tag = data.article.tags.split(';');
+          this.tags = data.article.tags;
           this.input = data.content.content;
         })
       },
@@ -251,8 +258,9 @@
         history.back();
       },
       postArticle(){
+        debugger;
         if (this.title.trim().length === 0
-          || this.tag.length === 0
+          || this.tags.trim().length === 0
           || this.input.trim().length === 0) {
           layer.msg('文章信息不完整');
           return;
@@ -261,20 +269,20 @@
         if (this.updateMode) {
           url = Config.URL.article.update.format(this.articleId);
         }
-        let tags = '';
-        this.tag.forEach((t) => {
-          tags += t;
-          tags += ';'
-        });
-        tags = tags.substr(0, tags.length - 1);
+        let targetCategory = 0;
+        for(let i = 0; i < this.categories.length ; i++){
+            if(this.category === this.categories[i]){
+              targetCategory = i + 1;
+            }
+        }
         Net.post({
           url: url,
           condition: {
             title: this.title,
-            category: this.category,
+            category: targetCategory,
             content: this.input,
-            tags: tags,
-            author: LoginMgr.uid
+            tags: this.tags,
+            author: LoginMgr.info().uid
           }
         }, (data) => {
           //TODO
@@ -282,6 +290,19 @@
           history.back();
         });
       },
+      getCategories() {
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+          this.category = this.categories[0];
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.category;
+            this.categories = resp.category;
+            this.category = this.categories[0];
+          });
+        }
+      }
     },
     watch: {
       input: function () {
@@ -310,21 +331,20 @@
       right: 0;
       nav {
         position: fixed;
-        height: 116px;
+        height: 140px;
         min-width: 360px;
         width: 100%;
 
         .edit-title {
           margin: auto;
-          max-width: 1120px;
-          padding: 0 16px;
-          height: 86px;
+          padding: 0 160px;
+          height: 80px;
           line-height: 38px;
           color: #333;
           .logo {
             display: inline-block;
             font-size: 20px;
-            padding: 24px 0;
+            padding: 21px 0;
             b {
               color: #2572e5;
               display: inline-block;
@@ -334,9 +354,9 @@
           .right {
             display: inline-block;
             float: right;
-            cursor: pointer;
-            padding: 24px 0;
             button {
+              cursor: pointer;
+              margin: 21px 0;
               line-height: 26px;
               height: 38px;
               color: #333;
@@ -351,9 +371,66 @@
               color: white;
             }
           }
+
+          .btn {
+            position: relative;
+            vertical-align: top;
+            margin-right: 60px;
+            height: 80px;
+            display: inline-block;
+            text-align: center;
+
+            .sub-menu {
+              display: none;
+            }
+            > span {
+              margin-right: auto;
+              display: block;
+              line-height: 80px;
+              min-height: 80px;
+              width: 78px;
+              i {
+                margin-top: 24px;
+              }
+              .choice-icon {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                vertical-align: bottom;
+                margin-bottom: 12px;
+                background: url(../assets/img/choice-icon.png) no-repeat;
+              }
+            }
+            > span:hover {
+              background-color: #f9f9f9;
+            }
+          }
+          .btn:hover .sub-menu {
+            margin-top: -15px;
+            position: absolute;
+            background-color: white;
+            right: -1px;
+            width: 182px;
+            height: 88px;
+            display: block;
+            box-shadow: 0 0 10px #ccc;
+            section {
+              height: 44px;
+              line-height: 52px;
+              color: #333;
+            }
+            section:hover {
+              background-color: #f8fbff;
+              color: #2572e5;
+            }
+            section:nth-child(1) {
+              border-bottom: 1px #e4e4e4 solid;
+            }
+          }
         }
         .edit-operation {
           border-top: 1px #f1f1f1 solid;
+          padding: 0 160px;
           text-align: center;
           ul {
             list-style: none;
@@ -362,9 +439,10 @@
             width: auto;
             li {
               float: left;
-              width: 30px;
-              height: 30px;
-              border-right: 1px #ccc solid;
+              width: 36px;
+              height: 36px;
+              margin: 12px;
+              border: 1px #ccc solid;
             }
             li:hover {
               background-color: #f9f9f9;
@@ -375,7 +453,7 @@
       }
       .main {
         position: absolute;
-        top: 116px;
+        top: 140px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -389,20 +467,25 @@
           background-color: transparent;
           font-size: 15px;
           color: #666;
-
           height: 20000px;
           overflow: hidden;
         }
         .inside {
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          overflow: auto;
           background-color: #f6f7f8;
+          padding-left: 160px;
+          padding-right: 54px;
         }
-        .inside,
         .outside {
           width: 100%;
           height: 100%;
           box-sizing: border-box;
           overflow: auto;
-          padding: 10px;
+          padding-right: 160px;
+          padding-left: 54px;
         }
       }
     }

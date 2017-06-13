@@ -60,7 +60,7 @@
           this.categories = window.data.categories;
         } else {
           Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.categories;
+            window.data.categories = resp.category;
             this.categories = resp.category;
           });
         }
