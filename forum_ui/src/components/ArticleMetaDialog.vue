@@ -17,6 +17,7 @@
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
   import Config from "../assets/js/Config.js";
+
   export default {
     data: function () {
       return {
@@ -116,6 +117,20 @@
     }
   }
 </script>
+<style scoped>
+  .dialog .cont {
+    margin-left: calc(50% - 253px);
+  }
+
+  @media screen and (max-width: 480px) {
+    .dialog div.cont {
+      margin-left: calc(50% - 153px);
+      margin-top: 10%;
+      width: 300px;
+      padding: 16px;
+    }
+  }
+</style>
 <style scoped lang="less">
   .dialog {
     position: fixed;
@@ -135,15 +150,55 @@
     }
     .cont {
       position: absolute;
-      left: 50%;
-      top: 300px;
-      width: 480px;
-      margin-left: -240px;
+      width: 506px;
+      margin-top: 200px;
+      padding: 40px;
+      box-sizing: border-box;
       background: white;
       border: 1px #f1f1f1 solid;
-      box-shadow: 0 0 10px #2e8ded;
+      box-shadow: 0 0 3px #2572e5;
+
       input {
         display: block;
+        margin: 20px auto 10px auto;
+        border: 1px #ddd solid;
+        border-radius: 3px;
+        outline: none;
+        width: 100%;
+        height: 60px;
+        font-size: 20px;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+      input:hover {
+        -webkit-box-shadow: 0 0 3px #2e8ded;
+      }
+      input::-webkit-input-placeholder {
+        color: #999;
+      }
+      input::-moz-placeholder {
+        color: #999;
+      }
+      input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px #fff inset;
+      }
+
+      .vue-input-tag-wrapper{
+        margin: 20px 0 30px 0;
+        padding: 8px 16px;
+        line-height: 30px;
+      }
+
+      button{
+        cursor: pointer;
+        margin-bottom: 30px;
+        width: 100%;
+        height: 60px;
+        background-color: #2572e5;
+        color: white;
+        font-size: 24px;
+        border: none;
+        outline: none;
       }
     }
   }

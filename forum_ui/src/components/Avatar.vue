@@ -7,7 +7,7 @@
   export default {
     data: function () {
       return {
-        colors: ["#94a8c9", "#9caebe", "#bdc0c5", "black", "gray"],
+        colors: ["#bdc0c5", "#c5d3e8", "#93a7c8", "#9baebe"],
         avatarSize: 'big',
         text: '',
         color: ''

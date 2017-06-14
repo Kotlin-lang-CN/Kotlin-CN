@@ -2,7 +2,7 @@
   <div class="dialog" v-if="showMode !==0">
     <div class="bg" v-on:click="hide"></div>
     <div class="cont">
-      <div class="header"><span class="blue">Kotlin</span>China</div>
+      <i class="logo"></i>
       <div class="login" v-if="showMode === 1">
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
         <span v-if="error && error.key == 'login-name'" class="error">{{ error.value }}</span>
@@ -15,16 +15,16 @@
         </div>
       </div>
       <div class="register" v-if="showMode === 2">
-        <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/><br>
+        <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/>
         <span v-if="error && error.key == 'register-email'" class="error">{{ error.value }}</span>
-        <input v-model="nameInput" type="text" name="user" placeholder="用户名"/><br>
+        <input v-model="nameInput" type="text" name="user" placeholder="用户名"/>
         <span v-if="error && error.key == 'register-name'" class="error">{{ error.value }}</span>
-        <input v-model="passwordInput" type="password" name="password" placeholder="密码"/><br>
+        <input v-model="passwordInput" type="password" name="password" placeholder="密码"/>
         <span v-if="error && error.key == 'register-password'" class="error">{{ error.value }}</span>
         <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
                type="password" name="password" placeholder="再次输入密码"/>
         <span v-if="error && error.key == 'register-password-repeat'" class="error">{{ error.value }}</span>
-        <button v-on:click="register" class="big-btn">注册</button>
+        <button v-on:click="register" class="big-btn">注册并登录</button>
         <div class="small-btn">
           <button v-on:click="switchMode">已有账号，去登陆</button>
         </div>
@@ -36,6 +36,15 @@
 <style scoped>
   .dialog .cont {
     margin-left: calc(50% - 253px);
+  }
+
+  @media screen and (max-width: 480px) {
+    .dialog div.cont {
+      margin-left: calc(50% - 153px);
+      margin-top: 10%;
+      width: 300px;
+      padding: 16px;
+    }
   }
 </style>
 
@@ -65,48 +74,58 @@
       background: white;
       border: 1px #f1f1f1 solid;
       box-shadow: 0 0 3px #2572e5;
-      .header {
-        line-height: 60px;
-        text-align: center;
-        .blue {
-          display: inline-block;
-          padding-right: 4px;
-          color: #2e8ded;
-        }
+      .logo {
+        display: block;
+        width: 192px;
+        height: 45px;
+        background: url(../assets/img/logo.png) no-repeat;
+        margin: 15px auto 40px auto;
       }
       input {
         display: block;
-        margin: 0 auto 20px auto;
-        border: 1px #ccc solid;
+        margin: 20px auto 10px auto;
+        border: 1px #ddd solid;
+        border-radius: 3px;
         outline: none;
         width: 100%;
-        height: 40px;
+        height: 60px;
+        font-size: 20px;
+        padding: 0 10px;
       }
       input:hover {
         -webkit-box-shadow: 0 0 3px #2e8ded;
+      }
+      input::-webkit-input-placeholder {
+        color: #999;
+      }
+      input::-moz-placeholder {
+        color: #999;
       }
       input:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 1000px #fff inset;
       }
       .error {
         display: block;
-        font-size: .8em;
-        margin: -15px auto -15px auto;
-        color: #f00;
+        font-size: 14px;
+        color: #fb6666;
         width: 100%;
-        height: 40px;
+        height: 20px;
       }
       .big-btn {
-        margin: auto;
+        margin: 30px auto 0 auto;
         display: block;
         width: 100%;
-        height: 40px;
+        height: 60px;
         background-color: #2572e5;
         color: white;
+        font-size: 24px;
       }
       .small-btn {
-        margin: 4px auto 40px auto;
+        margin: 4px auto 10px auto;
         width: 100%;
+        button {
+          color: #3989f8;
+        }
         button:nth-child(2) {
           float: right;
         }

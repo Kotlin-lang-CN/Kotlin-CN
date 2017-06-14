@@ -165,7 +165,7 @@
     -ms-user-select: none;
     user-select: none;
     left: 0;
-    height: 50px;
+    height: 87px;
     width: 50px;
 
     position: fixed;
@@ -181,7 +181,7 @@
     width: 24px;
     background: #8d8d8d;
     left: 13px;
-    top: 18px;
+    top: 32px;
     box-shadow: 0 6px 0 #8d8d8d, 0 12px 0 #8d8d8d;
   }
 

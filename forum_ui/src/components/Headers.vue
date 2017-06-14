@@ -2,7 +2,7 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
-        <div class="menu-header"><a :href="urlRoot" title=""><b>Kotlin</b> CHINA</a></div>
+        <a :href="urlRoot" class="menu-header"><i class="logo"></i></a>
         <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
 
         <div class="menu-authen menu-right" v-if="strUserName ===''">
@@ -92,21 +92,24 @@
           display: inline-block;
         }
 
-        .menu-header, .menu-main {
+        .menu-main {
           height: 38px;
           line-height: 38px;
           text-align: center;
           margin-right: 20px;
-          padding-top: 24px;
+          padding-top: 26px;
           padding-bottom: 24px;
+          vertical-align: top;
         }
-        .menu-header {
-          a {
-            color: #6f6f6f;
-          }
-          b {
-            color: #2572e5;
-            font-weight: normal;
+        a.menu-header {
+          display: inline-block;
+          padding-top: 21px;
+          padding-bottom: 14px;
+          .logo {
+            display: inline-block;
+            width: 192px;
+            height: 45px;
+            background: url(../assets/img/logo.png) no-repeat;
           }
         }
         .menu-user {
@@ -194,8 +197,11 @@
   }
 
   @media screen and (max-width: 480px) {
-    .header .nav-bar .nav-content .menu-main {
-      display: none;
+    .header .nav-bar .nav-content a.menu-header{
+      padding-left: 50px;
+    }
+    .header .nav-bar .nav-content > div {
+      display: none !important;
     }
   }
 </style>
