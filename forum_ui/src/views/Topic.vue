@@ -4,18 +4,17 @@
       <article v-if="topic !== null ">
         <header>
           <div>
-          <span v-if="topic && categories.length >= topic.article.category">
-            [{{ categories[topic.article.category - 1]}}]
+          <span v-if="topic && categories.length >= topic.article.category" class="category">
+            {{ categories[topic.article.category - 1]}}
           </span>{{ topic.article.title }}
             <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> {{ tag }} </small>
           </div>
           <div>
-            <span>{{ topic.author.username }}</span>于
-            <span>{{ topic.article.create_time | moment}}</span>创建
-            <i v-if="topic.article.create_time !== topic.article.last_edit_time">
-              , 最近更新于 <span>{{ topic.article.last_edit_time | moment}}</span>
-            </i>
-            <a :href="editUrl" v-if="editUrl !== ''" class="button">编辑</a>
+            <label
+              v-if="topic.article.create_time !== topic.article.last_edit_time">最近更新于{{ topic.article.last_edit_time | moment}}，
+            </label>
+            <span>{{ topic.author.username }}</span> 发布于 {{ topic.article.create_time | moment}}
+            <a :href="editUrl" v-if="editUrl !== ''" class="edit">编辑</a>
           </div>
         </header>
         <section>
@@ -104,24 +103,46 @@
 <style scoped lang="less">
   div.topic {
     text-align: left;
-    margin: 30px auto 10px auto;
+    margin: 0 auto 10px auto;
     max-width: 1120px;
     article {
       max-width: 840px;
       padding: 0 16px;
       header {
-        margin-bottom: 28px;
+        border-top: 1px #e4e4e4 solid;
+        border-bottom: 1px #e4e4e4 solid;
+        padding-top: 30px;
+        padding-bottom: 24px;
+        margin-bottom: 20px;
         > div:nth-child(1) {
-          font-size: 25px;
+          font-size: 24px;
+          margin-bottom: 12px;
+          color: #333;
+
+          .category {
+            display: inline-block;
+            background-color: #2572e5;
+            color: white;
+            margin-right: 10px;
+            padding: 0 7px;
+            font-size: 16px;
+          }
         }
         > div:nth-child(2) {
-          font-size: 16px;
-        }
-        span {
+          font-size: 12px;
           color: #999;
-          display: inline-block;
-          margin-right: 6px;
-          margin-left: 6px;
+
+          span {
+            color: #2572e5;
+            display: inline-block;
+            margin-right: 4px;
+            margin-left: 4px;
+          }
+          .edit {
+            padding: 0 20px;
+            color: red;
+            display: inline-block;
+          }
         }
       }
     }

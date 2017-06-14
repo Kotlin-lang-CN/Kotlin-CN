@@ -33,6 +33,12 @@
   </div>
 </template>
 
+<style scoped>
+  .dialog .cont {
+    margin-left: calc(50% - 253px);
+  }
+</style>
+
 <style scoped lang="less">
   .dialog {
     position: fixed;
@@ -52,13 +58,13 @@
     }
     .cont {
       position: absolute;
-      left: 50%;
-      top: 300px;
-      width: 480px;
-      margin-left: -240px;
+      width: 506px;
+      margin-top: 200px;
+      padding: 40px;
+      box-sizing: border-box;
       background: white;
       border: 1px #f1f1f1 solid;
-      box-shadow: 0 0 10px #2e8ded;
+      box-shadow: 0 0 3px #2572e5;
       .header {
         line-height: 60px;
         text-align: center;
@@ -71,29 +77,36 @@
       input {
         display: block;
         margin: 0 auto 20px auto;
-        border: 1px #f1f1f1 solid;
-        width: 360px;
+        border: 1px #ccc solid;
+        outline: none;
+        width: 100%;
         height: 40px;
+      }
+      input:hover {
+        -webkit-box-shadow: 0 0 3px #2e8ded;
+      }
+      input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px #fff inset;
       }
       .error {
         display: block;
         font-size: .8em;
         margin: -15px auto -15px auto;
         color: #f00;
-        width: 360px;
+        width: 100%;
         height: 40px;
       }
       .big-btn {
         margin: auto;
         display: block;
-        width: 360px;
+        width: 100%;
         height: 40px;
         background-color: #2572e5;
         color: white;
       }
       .small-btn {
         margin: 4px auto 40px auto;
-        width: 360px;
+        width: 100%;
         button:nth-child(2) {
           float: right;
         }
@@ -124,11 +137,11 @@
     created() {
       Event.on('request_login', (loginAlready) => {
         this.loginAlready = loginAlready;
-        this.showMode = 1
+        this.showMode = 1;
       });
       Event.on('request_register', (loginAlready) => {
         this.loginAlready = loginAlready;
-        this.showMode = 2
+        this.showMode = 2;
       });
     },
     watch: {
