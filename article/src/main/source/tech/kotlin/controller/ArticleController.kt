@@ -3,10 +3,6 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.strDict
-import tech.kotlin.service.domain.Account
-import tech.kotlin.service.domain.Article
-import tech.kotlin.service.domain.TextContent
-import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.SessionApi
@@ -20,6 +16,7 @@ import tech.kotlin.common.utils.tryExec
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.*
+import tech.kotlin.service.domain.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -47,6 +44,9 @@ object ArticleController {
 
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
         account.check(Err.UNAUTHORIZED) { it.id == author }
+                .check(Err.UNAUTHORIZED, "只有管理员才能发布【站务】话题") {
+                    category != Category.STATION.ordinal + 1 || it.role == Account.Role.ADMIN
+                }
 
         val id = articleApi.create(CreateArticleReq().apply {
             this.title = title
