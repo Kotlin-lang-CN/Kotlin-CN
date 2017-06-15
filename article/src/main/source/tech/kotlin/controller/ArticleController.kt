@@ -80,8 +80,12 @@ object ArticleController {
             check(Err.PARAMETER, "内容过短") { !it.isNullOrBlank() && it.trim().length >= 30 }
         } ?: ""
 
-        //只有作者和管理员才能修改文章内容
+        //只有作者和管理员才能修改文章内容, 只有管理员才能发布站务话题
         val me = sessionApi.checkToken(CheckTokenReq(req)).account
+                .check(Err.UNAUTHORIZED, "只有管理员才能发布【站务】话题") {
+                    category != Category.STATION.ordinal + 1 || it.role == Account.Role.ADMIN
+                }
+
         val article = articleApi.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
