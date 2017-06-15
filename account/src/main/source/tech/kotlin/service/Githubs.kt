@@ -2,10 +2,6 @@ package tech.kotlin.service
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.eclipse.jetty.http.HttpMethod
-import tech.kotlin.service.domain.Account
-import tech.kotlin.service.domain.GithubUser
-import tech.kotlin.service.domain.AccountSession
-import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.service.account.req.GithubCreateStateReq
 import tech.kotlin.service.account.req.GithubAuthReq
 import tech.kotlin.service.account.resp.GithubCreateStateResp
@@ -17,8 +13,10 @@ import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.GithubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.account.resp.GithubCheckTokenReq
-import tech.kotlin.service.account.resp.CheckCheckTokenResp
+import tech.kotlin.service.account.resp.GithubCheckTokenResp
 import tech.kotlin.service.account.GithubApi
+import tech.kotlin.service.account.req.GithubBindReq
+import tech.kotlin.service.domain.*
 import tech.kotlin.utils.*
 import java.util.*
 
@@ -40,17 +38,15 @@ object Githubs : GithubApi {
 
     override fun createState(req: GithubCreateStateReq): GithubCreateStateResp {
         return GithubCreateStateResp().apply {
-            this.state = JWT.dumps(key = jwtToken, content = AccountSession().apply {
-                id = IDs.next()
-                device = req.device
-                uid = 0
+            this.state = JWT.dumps(key = jwtToken, content = GithubSession().apply {
+                this.device = req.device
             })
         }
     }
 
     override fun createSession(req: GithubAuthReq): GithubAuthResp {
         tryExec(Err.GITHUB_AUTH_ERR, "无效的code") {
-            val session = JWT.loads<AccountSession>(key = jwtToken, jwt = req.state, expire = jwtExpire)
+            val session = JWT.loads<GithubSession>(key = jwtToken, jwt = req.state, expire = jwtExpire)
             assert(session.device.isEquals(req.device))
         }
         val githubInfo = getUser(req.code, req.state)
@@ -64,20 +60,31 @@ object Githubs : GithubApi {
             return@read true
         }
         return GithubAuthResp().apply {
-            this.github = githubInfo
             this.hasAccount = hasAccount
             this.userInfo = userInfo
             this.account = account
-            this.token = JWT.dumps(key = jwtToken, content = AccountSession().apply {
-                id = IDs.next()
+            this.token = JWT.dumps(key = jwtToken, content = GithubSession().apply {
                 device = req.device
-                uid = github.id
+                user = githubInfo
             })
         }
     }
 
-    override fun checkToken(req: GithubCheckTokenReq): CheckCheckTokenResp {
-        TODO()
+    override fun checkToken(req: GithubCheckTokenReq): GithubCheckTokenResp {
+        val session = tryExec(Err.GITHUB_AUTH_ERR, "无效的code") {
+            val session = JWT.loads<GithubSession>(key = jwtToken, jwt = req.token, expire = jwtExpire)
+            assert(session.device.isEquals(req.device))
+            assert(session.user.id != 0L)
+            return@tryExec session
+        }
+        return GithubCheckTokenResp().apply {
+            this.info = session.user
+        }
+    }
+
+    override fun bindAccount(req: GithubBindReq): EmptyResp {
+
+        return EmptyResp()
     }
 
     private fun getUser(code: String, state: String): GithubUser {

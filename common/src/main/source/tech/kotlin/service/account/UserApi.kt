@@ -6,6 +6,7 @@ import tech.kotlin.service.account.req.UpdateUserReq
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.article.resp.QueryUserResp
 import tech.kotlin.service.TypeDef
+import tech.kotlin.service.account.req.ActivateEmailReq
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -18,5 +19,8 @@ interface UserApi {
 
     @RpcInterface(TypeDef.User.UPDATE_BY_ID)
     fun updateById(req: UpdateUserReq): EmptyResp
+
+    @RpcInterface(TypeDef.User.ACTIVATE_EMAIL)
+    fun activateEmail(req: ActivateEmailReq): EmptyResp
 
 }

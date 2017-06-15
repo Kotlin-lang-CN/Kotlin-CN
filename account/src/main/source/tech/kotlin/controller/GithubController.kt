@@ -44,6 +44,9 @@ object GithubController {
             return@Route ok {
                 it["need_create_account"] = true
                 it["github_token"] = authResp.token
+                it["github_email"] = authResp.github.email
+                it["github_name"] = authResp.github.name
+                it["github_avatar"] = authResp.github.avatar
             }
         } else {
             val token = sessionApi.createSession(CreateSessionReq().apply {
@@ -55,7 +58,6 @@ object GithubController {
             })
             return@Route ok {
                 it["need_create_account"] = false
-                it["github_token"] = authResp.token
                 it["uid"] = authResp.account.id
                 it["token"] = token
                 it["username"] = meta.info[authResp.account.id]?.username ?: ""

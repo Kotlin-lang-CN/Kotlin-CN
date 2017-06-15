@@ -1,4 +1,4 @@
-package tech.kotlin.service.account.req
+package tech.kotlin.service.domain
 
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
@@ -8,14 +8,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-class ActivateEmailReq {
+class GithubSession {
 
-    @Protobuf(order = 1, required = true, fieldType = FieldType.UINT64)
-    @JsonProperty("uid")
-    var uid = 0L
+    @Protobuf(order = 1, required = true, fieldType = FieldType.OBJECT, description = "设备信息")
+    @JsonProperty("device")
+    var device: Device = Device()
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.STRING)
-    @JsonProperty("email")
-    var email = ""
+    @Protobuf(order = 2, required = true, fieldType = FieldType.OBJECT, description = "用户id")
+    @JsonProperty("github_user")
+    var user: GithubUser = GithubUser()
 
 }

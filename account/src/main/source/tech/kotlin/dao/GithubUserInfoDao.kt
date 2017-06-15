@@ -41,11 +41,6 @@ object GithubUserInfoDao {
         }
     }
 
-    fun bindUID(session: SqlSession, uid: Long, id: Long) {
-        val mapper = session[GithubUserInfoMapper::class]
-        mapper.bindUID(uid = uid, githubId = id)
-    }
-
     internal object Cache {
 
         fun key(id: Long) = "github_user_info:$id"
@@ -70,14 +65,6 @@ object GithubUserInfoDao {
     }
 
     interface GithubUserInfoMapper {
-
-        @Update("""
-        UPDATE github_user_info SET
-        uid = #{uid}
-        WHERE
-        id = #{github_id}
-        """)
-        fun bindUID(@Param("uid") uid: Long, @Param("githubId") githubId: Long)
 
         @Update("""
         UPDATE github_user_info SET

@@ -8,9 +8,11 @@ import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.article.resp.QueryUserResp
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
+import tech.kotlin.common.utils.check
 import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.account.UserApi
+import tech.kotlin.service.account.req.ActivateEmailReq
 import tech.kotlin.utils.Mysql
 
 /*********************************************************************
@@ -63,7 +65,19 @@ object Users : UserApi {
         }
         return EmptyResp()
     }
+
+    //激活邮箱
+    override fun activateEmail(req: ActivateEmailReq): EmptyResp {
+        Mysql.write {
+            UserInfoDao.getById(it, req.uid)
+                    ?.check(Err.ILLEGAL_EMAIL_ACTIVATE_CODE) { it.email == req.email }
+                    ?: abort(Err.USER_NOT_EXISTS)
+            UserInfoDao.update(it, req.uid, hashMapOf("email_state" to "${UserInfo.EmailState.VERIFIED}"))
+        }
+        return EmptyResp()
+    }
 }
+
 
 
 

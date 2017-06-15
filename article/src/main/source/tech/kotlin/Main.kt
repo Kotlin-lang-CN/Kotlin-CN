@@ -75,6 +75,8 @@ fun initHttpCgi() {
         path("/misc") {
             get("/dashboard", MiscController.getDashboard.gate("网站公告栏"))
             post("/dashboard", MiscController.setDashboard.gate("设置网站公告"))
+            get("/home/link", MiscController.getHomeLink.gate("首页链接"))
+            post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
         }
     }
     notFound { req, response ->

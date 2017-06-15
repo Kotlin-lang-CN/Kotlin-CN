@@ -31,4 +31,16 @@ object MiscController {
         return@Route ok()
     }
 
+    //首页链接
+    val getHomeLink = Route { _, _ ->
+        return@Route ok { it["link"] = Redis.read { it["link"] ?: "" } }
+    }
+
+    //设置首页链接
+    val setHomeLink = Route { req, _ ->
+        val dashboard = req.queryParams("link") ?: ""
+        sessionApi.checkToken(CheckTokenReq(req)).account.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN }
+        Redis.write { it["link"] = dashboard }
+        return@Route ok()
+    }
 }

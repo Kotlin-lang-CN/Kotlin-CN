@@ -1,11 +1,10 @@
 package tech.kotlin.service.account.req
 
-import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.FieldType.OBJECT
 import com.baidu.bjf.remoting.protobuf.FieldType.STRING
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
-import tech.kotlin.service.domain.Device
+import tech.kotlin.service.domain.GithubUser
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -25,4 +24,7 @@ class LoginReq {
     @JsonProperty("password")
     var password: String = ""
 
+    @Protobuf(order = 4, required = false, fieldType = OBJECT)
+    @JsonProperty("github")
+    var githubUser = GithubUser()
 }

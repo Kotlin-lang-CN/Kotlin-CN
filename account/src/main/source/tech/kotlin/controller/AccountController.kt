@@ -3,10 +3,10 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
-import tech.kotlin.common.utils.ok
-import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.*
 import tech.kotlin.service.account.req.*
+import tech.kotlin.service.account.resp.GithubCheckTokenReq
+import tech.kotlin.service.article.req.EmailCheckTokenReq
 import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.Device
 import tech.kotlin.service.domain.UserInfo
@@ -21,8 +21,12 @@ object AccountController {
     val accountApi by Serv.bind(AccountApi::class)
     val sessionApi by Serv.bind(SessionApi::class)
     val userApi by Serv.bind(UserApi::class)
+    val githubApi by Serv.bind(GithubApi::class)
+    val emailApi by Serv.bind(EmailApi::class)
 
     val login = Route { req, _ ->
+        val githubToken = req.queryParams("github_token")
+
         val loginResp = accountApi.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
@@ -31,6 +35,13 @@ object AccountController {
 
             this.password = req.queryParams("password")
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
+
+            if (!githubToken.isNullOrBlank()) {
+                this.githubUser = githubApi.checkToken(GithubCheckTokenReq().apply {
+                    this.token = githubToken
+                    this.device = Device(req)
+                }).info
+            }
         })
 
         return@Route ok {
@@ -55,12 +66,20 @@ object AccountController {
                     ))
                 }
 
+        val githubToken = req.queryParams("github_token")
+
         //创建账号
         val createResp = accountApi.create(CreateAccountReq().apply {
             this.username = username
             this.password = password
             this.email = email
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
+            if (!githubToken.isNullOrBlank()) {
+                this.githubUser = githubApi.checkToken(GithubCheckTokenReq().apply {
+                    this.token = githubToken
+                    this.device = Device(req)
+                }).info
+            }
         })
 
         //修改头像
@@ -82,7 +101,8 @@ object AccountController {
 
     val activateEmail = Route { req, _ ->
         val token = URLDecoder.decode(req.queryParams("token"), "UTF-8")
-        //emailActivateApi.createSession(ActivateEmailReq().apply { this.token = token })
+        val resp = emailApi.checkToken(EmailCheckTokenReq().apply { this.token = token })
+        userApi.activateEmail(ActivateEmailReq().apply { this.uid = resp.uid ;this.email = resp.email})
         return@Route ok()
     }
 

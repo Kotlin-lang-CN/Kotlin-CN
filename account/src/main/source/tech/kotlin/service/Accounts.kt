@@ -5,6 +5,7 @@ import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
+import tech.kotlin.dao.GithubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.UserInfo
@@ -80,7 +81,6 @@ object Accounts : AccountApi {
             email = req.email
             emailState = UserInfo.EmailState.TO_BE_VERIFY
         }
-
         //注册事务
         Mysql.write {
             var user = UserInfoDao.getByName(it, req.username)
@@ -91,6 +91,11 @@ object Accounts : AccountApi {
 
             AccountDao.saveOrUpdate(it, account)
             UserInfoDao.saveOrUpdate(it, userInfo)
+            //绑定github账号
+            if (req.githubUser.id != 0L) {
+                req.githubUser.uid = account.id
+                GithubUserInfoDao.saveOrUpdate(it, req.githubUser)
+            }
         }
 
         return CreateAccountResp().apply {
@@ -111,9 +116,8 @@ object Accounts : AccountApi {
             userInfo = UserInfoDao.getByName(it, req.loginName) ?: //查询缓存
                     UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
                     abort(Err.USER_NOT_EXISTS)
-            return@read Mysql.read {
-                AccountDao.getById(it, id = userInfo.uid, useCache = false, updateCache = true)
-            } ?: abort(Err.USER_NOT_EXISTS)
+            return@read AccountDao.getById(it, id = userInfo.uid, useCache = false, updateCache = true) ?:
+                    abort(Err.USER_NOT_EXISTS)
         }
 
         //校验密码
@@ -121,6 +125,11 @@ object Accounts : AccountApi {
 
         //执行登录, 更新登录时间，禁用缓存
         val currentAccount = Mysql.write {
+            //绑定github账号
+            if (req.githubUser.id != 0L) {
+                req.githubUser.uid = account.id
+                GithubUserInfoDao.saveOrUpdate(it, req.githubUser)
+            }
             AccountDao.saveOrUpdate(it, account.apply { lastLogin = System.currentTimeMillis() })
             AccountDao.getById(it, account.id)!!
         }
@@ -152,10 +161,6 @@ object Accounts : AccountApi {
         return EmptyResp()
     }
 
-    //激活邮箱
-//    override fun activateEmail(req: ActivateEmailReq): EmptyResp {
-//        TODO("not implemented")
-//    }
 }
 
 

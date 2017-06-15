@@ -11,7 +11,6 @@ object TypeDef {
         const val LOGIN_WITH_NAME = 10001
         const val CHANGE_USER_STATE = 10002
         const val UPDATE_PASSWORD = 10003
-        const val ACTIVATE_EMAIL = 10004
     }
 
     object Session {
@@ -22,6 +21,7 @@ object TypeDef {
     object User {
         const val QUERY_BY_ID = 30000
         const val UPDATE_BY_ID = 30001
+        const val ACTIVATE_EMAIL = 30002
     }
 
     object Article {
@@ -55,6 +55,7 @@ object TypeDef {
         const val CREATE_STATE = 80000
         const val CREATE_SESSION = 80001
         const val CHECK_TOKEN = 80002
+        const val BIND_ACCOUNT = 80003
     }
 
 }
