@@ -31,6 +31,8 @@ dependencies {
     compile 'com.baidu:jprotobuf:2.0.8'
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.7'
 
-    compile 'org.eclipse.jetty:jetty-client:9.4.5.v20170502'
+    compile 'com.relops:snowflake:1.1'
+    compile 'com.sparkjava:spark-core:2.6.0'
+    compile 'org.slf4j:slf4j-jdk14:1.7.25'
     testCompile 'junit:junit:4.12'
 }

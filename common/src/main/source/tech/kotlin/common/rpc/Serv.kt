@@ -2,15 +2,15 @@ package tech.kotlin.common.rpc
 
 import tech.kotlin.common.os.HandlerThread
 import tech.kotlin.common.os.Log
-import tech.kotlin.common.rpc.exceptions.ServiceErr
+import tech.kotlin.common.rpc.exceptions.ServiceBusy
 import tech.kotlin.common.rpc.invoker.Consumer
 import tech.kotlin.common.rpc.invoker.Provider
+import tech.kotlin.common.rpc.registrator.ServiceRegistrator
 import tech.kotlin.common.tcp.Connection
 import tech.kotlin.common.tcp.IOThread
 import tech.kotlin.common.tcp.TcpHandler
 import tech.kotlin.common.tcp.TcpPackage
 import java.net.InetSocketAddress
-import java.nio.channels.Selector
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
@@ -25,14 +25,23 @@ import kotlin.reflect.KProperty
  *********************************************************************/
 object Serv : HandlerThread("Serv") {
 
+    private var registrator by Delegates.notNull<ServiceRegistrator>()
     private var executorService by Delegates.notNull<ExecutorService>()
     private var ioThread by Delegates.notNull<IOThread>()
-    private var port = 8900
 
-    private val init: Unit by lazy { start(); initLatch.await(); Log.d("init finish"); Unit }//延迟加载初始化
     private val provider = Provider()
     private val initLatch = CountDownLatch(1)
     private val services = ConcurrentHashMap<Class<*>, Any>()
+
+    fun init(registrator: ServiceRegistrator = object : ServiceRegistrator {
+        override fun getService(serviceName: String): InetSocketAddress = TODO("not implments")
+        override fun publishService(serviceName: String, address: InetSocketAddress) = Unit
+    }) {
+        this.registrator = registrator
+        start()
+        initLatch.await()
+        Log.d("service initiate success!")
+    }
 
     override fun onLooperPrepared() {
         ioThread = IOThread(RpcHandler())
@@ -40,25 +49,20 @@ object Serv : HandlerThread("Serv") {
         initLatch.countDown()//init finish
     }
 
-    fun <T : Any> register(interfaceType: Class<T>, implement: T) {
-        init
-        provider.register(interfaceType, implement)
-        services[interfaceType] = implement
+    fun <T : Any> register(interfaceType: KClass<T>, implement: T) {
+        provider.register(interfaceType.java, implement)
+        services[interfaceType.java] = implement
     }
 
-    fun publish(executorService: ExecutorService, port: Int, name: String) {
-        init
+    fun publish(address: InetSocketAddress, serviceName: String, executorService: ExecutorService) {
         this.executorService = executorService
-        this.port = port
-        ioThread.listen(InetSocketAddress("0.0.0.0", port))
-        //TODO: publish service to etcd.
+        this.registrator.publishService(serviceName, address)
+        this.ioThread.listen(address)
     }
 
     internal class RpcHandler : TcpHandler() {
 
-        override fun onConnect(connection: Connection) {
-            Log.i("new connection init")
-        }
+        override fun onConnect(connection: Connection) = Unit
 
         override fun onData(connection: Connection, data: TcpPackage) {
             val binder = connection.attachment()
@@ -80,18 +84,17 @@ object Serv : HandlerThread("Serv") {
 
     }
 
-    class bind<T : Any>(val name: String, val api: KClass<T>) : ReadOnlyProperty<Any, T>, Consumer() {
+    class bind<T : Any>(val api: KClass<T>, val name: String = "") : ReadOnlyProperty<Any, T>, Consumer() {
 
         internal var conn: Connection? = null
 
         override fun onProxyTransport(requestId: Long, type: Int, data: ByteArray) {
-            init
             val connection: Connection = synchronized(this) {
                 val connection = conn
                 if (connection != null) return@synchronized connection
-
-                //TODO: fetch service from etcd.
-                val newConn = ioThread.connect(InetSocketAddress("127.0.0.1", port)).apply { attach(this@bind) }
+                Log.i("Service init binder ${api.java.name} for ${this.javaClass.name}")
+                val address = registrator.getService(name)
+                val newConn = ioThread.connect(address).apply { attach(this@bind) }
                 conn = newConn
                 return@synchronized newConn
             }
@@ -99,7 +102,7 @@ object Serv : HandlerThread("Serv") {
             if (connection.send(type, requestId, data) == 0) {
                 connection.close()
                 conn = null
-                throw ServiceErr("service busy while invoke $type")
+                throw ServiceBusy("service busy while invoke $type")
             }
         }
 

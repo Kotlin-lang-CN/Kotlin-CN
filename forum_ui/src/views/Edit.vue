@@ -1,55 +1,263 @@
 <template>
-  <div class="mdContainer" :class="{ fullPage: fullPageStatus }">
-    <div class="navContainer" v-if="navStatus">
-      <div class="nameContainer">Kotlin-CN</div>
-      <div class="markContainer">
-        <ul class="markListGroup">
-          <li class="markListItem" @click="addStrong" title="strong"><b>B</b></li>
-          <li class="markListItem" @click="addItalic" title="italic"><i>I</i></li>
-          <li class="markListItem" @click="addStrikethrough" title="strikethrough"><i class="fa fa-strikethrough"
-                                                                                      aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addHTitle(1)" title="H1-title">H1</li>
-          <li class="markListItem" @click="addHTitle(2)" title="H2-title">H2</li>
-          <li class="markListItem" @click="addHTitle(3)" title="H3-title">H3</li>
-          <li class="markListItem" @click="addHTitle(4)" title="H4-title">H4</li>
-          <li class="markListItem" @click="addHTitle(5)" title="H5-title">H5</li>
-          <li class="markListItem" @click="addHTitle(6)" title="H6-title">H6</li>
-          <li class="markListItem" @click="addLine" title="line">一</li>
-          <li class="markListItem" @click="addQuote" title="quote"><i class="fa fa-quote-left" aria-hidden="true"></i>
-          </li>
-          <li class="markListItem" @click="addCode"><i class="fa fa-code" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addLink"><i class="fa fa-link" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addImage"><i class="fa fa-picture-o" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addTable" title="table"><i class="fa fa-table" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addUl" title="ul-list"><i class="fa fa-list-ul" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addOl" title="ol-list"><i class="fa fa-list-ol" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="previewFn" title="preview"><i class="fa fa-eye-slash" aria-hidden="true"></i>
-          </li>
-          <li class="markListItem" @click="previewAllFn" title="previewAll"><i class="fa fa-eye" aria-hidden="true"></i>
-          <li>
-            <button v-on:click="postCancel">放弃编辑</button>
-          </li>
-          <li>
-            <button v-on:click="postArticle">发布</button>
-          </li>
+  <div id="edit-root">
+    <nav>
+      <div class="edit-title">
+        <i class="logo"></i>
+        <div class="right">
+          <div class="btn"><span>更多<i class="choice-icon"></i></span>
+            <div class="sub-menu">
+              <section v-on:click="postCancel">放弃编辑</section>
+              <section v-on:click="postDelete">删除文章</section>
+            </div>
+          </div>
+          <button class="post" v-on:click="preparePostArticle">发布新话题</button>
+        </div>
+      </div>
+      <div class="edit-operation">
+        <ul>
+          <li v-on:click="addStrong"><i class="strong"></i></li>
+          <li v-on:click="addItalic"><i class="italic"></i></li>
+          <li v-on:click="addLine"><i class="line"></i></li>
+          <li v-on:click="addQuote"><i class="quote"></i></li>
+          <li v-on:click="addCode"><i class="code"></i></li>
+          <li v-on:click="addLink"><i class="link"></i></li>
+          <li v-on:click="addImage"><i class="image"></i></li>
+          <!--<li v-on:click="addTable"><i class="table"></i></li>-->
+          <li v-on:click="addUl"><i class="un-order-list"></i></li>
+          <li v-on:click="addOl"><i class="order-list"></i></li>
+          <li v-on:click="addUndo"><i class="undo"></i></li>
+          <li v-on:click="addRedo"><i class="redo"></i></li>
         </ul>
       </div>
-    </div>
-    <div class="meta">
-      <input-tag :tags="tag"></input-tag>
-      <input v-model="title" type="text" name="text" placeholder="标题"/>
-      <div>Author:{{ author }}</div>
-    </div>
-    <div class="mdBodyContainer">
-      <div class="editContainer" v-if="editStatus">
-        <textarea name="" class="mdEditor" @keydown.9="tabFn" v-scroll="editScroll" v-model="input"></textarea>
+    </nav>
+    <div class="main">
+      <div class="inside" @keydown.9="tabFn" v-scroll="editScroll">
+        <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
+        <textarea name="" class="editor" v-model="input"></textarea>
       </div>
-      <div class="previewContainer markdown-body" v-scroll="previewScroll" v-html="compiledMarkdown"
-           v-if="previewStatus">
+      <div class="outside" v-scroll="previewScroll">
+        <article-meta :category="category" :title="title" :tags="tags"></article-meta>
+        <display-panels :content="input"></display-panels>
       </div>
     </div>
+    <article-meta-dialog :category="category" :title="title" :tags="tags"></article-meta-dialog>
   </div>
 </template>
+<style lang="less" scoped>
+  .strong{
+    background: url(../assets/img/toolbar_blod.png) no-repeat center;
+  }
+  .italic{
+    background: url(../assets/img/toolbar_Italic.png) no-repeat center;
+  }
+  .line{
+    background: url(../assets/img/toolbar_cut_off_rule.png) no-repeat center;
+  }
+  .quote{
+    background: url(../assets/img/toolbar_paragraph_reference.png) no-repeat center;
+  }
+  .code{
+    background: url(../assets/img/toolbar_pre.png) no-repeat center;
+  }
+  .link{
+    background: url(../assets/img/toolbar_a.png) no-repeat center;
+  }
+  .image{
+    background: url(../assets/img/toolbar_image.png) no-repeat center;
+  }
+  .un-order-list{
+    background: url(../assets/img/toolbar_unordered_list.png) no-repeat center;
+  }
+  .order-list{
+    background: url(../assets/img/toolbar_ordered_list.png) no-repeat center;
+  }
+  .redo{
+    background: url(../assets/img/toolbar_next.png) no-repeat center;
+  }
+  .undo{
+    background: url(../assets/img/toolbar_back.png) no-repeat center;
+  }
+  body {
+    position: relative;
+    margin: 0;
+    font: 16px "Avenir", Helvetica, Arial, sans-serif;
+    color: #666;
+    #edit-root {
+      min-width: 1050px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      nav {
+        min-width: 1050px;
+        position: fixed;
+        height: 140px;
+        width: 100%;
+        .edit-title {
+          margin: auto;
+          padding: 0 160px;
+          height: 80px;
+          line-height: 38px;
+          color: #333;
+
+          .logo {
+            display: inline-block;
+            width: 192px;
+            height: 45px;
+            margin-top: 21px;
+            background: url(../assets/img/logo_big.png) no-repeat center;
+            background-size: 99% 99%;
+          }
+          .right {
+            display: inline-block;
+            float: right;
+            button {
+              cursor: pointer;
+              margin: 21px 0;
+              line-height: 26px;
+              height: 38px;
+              color: #333;
+              padding: 6px 12px;
+              background: transparent;
+              outline: none;
+              border: none;
+              font-size: 16px;
+            }
+            .post {
+              background-color: #2572e5;
+              color: white;
+            }
+          }
+
+          .btn {
+            position: relative;
+            vertical-align: top;
+            margin-right: 60px;
+            height: 80px;
+            display: inline-block;
+            text-align: center;
+
+            .sub-menu {
+              display: none;
+            }
+            > span {
+              margin-right: auto;
+              display: block;
+              line-height: 80px;
+              min-height: 80px;
+              width: 78px;
+              i {
+                margin-top: 24px;
+              }
+              .choice-icon {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                vertical-align: bottom;
+                margin-bottom: 12px;
+                background: url(../assets/img/choice-icon.png) no-repeat;
+              }
+            }
+            > span:hover {
+              background-color: #f9f9f9;
+            }
+          }
+          .btn:hover .sub-menu {
+            margin-top: -15px;
+            position: absolute;
+            background-color: white;
+            right: -1px;
+            width: 182px;
+            height: 88px;
+            display: block;
+            box-shadow: 0 0 10px #ccc;
+            section {
+              height: 44px;
+              line-height: 52px;
+              color: #333;
+            }
+            section:hover {
+              background-color: #f8fbff;
+              color: #2572e5;
+            }
+            section:nth-child(1) {
+              border-bottom: 1px #e4e4e4 solid;
+            }
+          }
+        }
+        .edit-operation {
+          border-top: 1px #f1f1f1 solid;
+          padding: 0 160px;
+          text-align: center;
+          ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: auto;
+            i{
+              cursor: pointer;
+              display: inline-block;
+              width: 36px;
+              height: 36px;
+              background-size:50% 50%;
+            }
+            i:hover{
+              background-color: #f9f9f9;
+            }
+            li {
+              float: left;
+              width: 36px;
+              height: 36px;
+              margin: 12px;
+            }
+            li:hover {
+              background-color: #f9f9f9;
+            }
+          }
+        }
+
+      }
+      .main {
+        position: absolute;
+        top: 140px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+
+        textarea {
+          outline: none;
+          border: none;
+          resize: none;
+          width: 100%;
+          background-color: transparent;
+          font-size: 15px;
+          color: #666;
+          height: 20000px;
+          overflow: hidden;
+        }
+        .inside {
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          overflow: auto;
+          background-color: #f6f7f8;
+          padding-left: 160px;
+          padding-right: 54px;
+        }
+        .outside {
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
+          overflow: auto;
+          padding-right: 160px;
+          padding-left: 54px;
+        }
+      }
+    }
+  }
+</style>
 
 <script>
   import Config from "../assets/js/Config.js";
@@ -57,30 +265,20 @@
   import Util from "../assets/js/Util.js";
   import Net from "../assets/js/Net.js";
   import Event from "../assets/js/Event.js";
-  import Vue from 'vue'
-  import marked from 'marked'
-  import scroll from 'vue-scroll'
-  import hljs from '../../static/js/highlight.min.js'
-  import range from '../../static/js/rangeFn.js'
-  import InputTag from 'vue-input-tag'
+  import Vue from 'vue';
+  import marked from 'marked';
+
+  import scroll from 'vue-scroll';
+  import range from '../../static/js/rangeFn.js';
+
+  import InputTag from 'vue-input-tag';
+  import DisplayPanels from '../components/DisplayPanels.vue';
+  import ArticleMeta from '../components/ArticleMeta.vue';
+  import ArticleMetaDialog from '../components/ArticleMetaDialog.vue';
 
   Vue.use(scroll);
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    gfm: true,
-    tables: true,
-    breaks: false,
-    pedantic: false,
-    sanitize: true,
-    smartLists: true,
-    smartypants: false,
-    highlight: function (code) {
-      return hljs.highlightAuto(code).value
-    }
-  });
-
   function insertContent(val, that) {
-    let textareaDom = document.querySelector('.mdEditor');
+    let textareaDom = document.querySelector('.editor');
     let value = textareaDom.value;
     let point = range.getCursortPosition(textareaDom);
     let lastChart = value.substring(point - 1, point);
@@ -91,18 +289,19 @@
     } else {
       range.insertAfterText(textareaDom, val);
     }
-    that.input = document.querySelector('.mdEditor').value;
+    that.input = document.querySelector('.editor').value;
   }
   export default {
-    name: 'markdown',
     data() {
       return {
         articleId: '',
-        title: '',
-        tag: [],
+        category: '',
+        title: 'title',
+        tags: '',
         updateMode: false,
         author: LoginMgr.username,
         input: '',
+        categories: [],
 
         editStatus: true,
         previewStatus: true,
@@ -114,20 +313,27 @@
       }
     },
     components: {
-      'input-tag': InputTag
+      ArticleMeta,
+      'input-tag': InputTag,
+      'article-meta': ArticleMeta,
+      'article-meta-dialog': ArticleMetaDialog,
+      'display-panels': DisplayPanels
     },
     created: function () {
-      Event.emit('fullscreen', true);
-      if (!this.editStatus && !this.previewStatus) {
-        this.editStatus = true;
-        this.previewStatus = true;
-      }
-
-      this.articleId = this.$route.params.id;
+      this.articleId = this.$root.params.id;
       if (this.articleId !== undefined && this.articleId !== '') {
         this.updateMode = true;
         this.getArticle();
       }
+      Event.on('article-meta-update', (obj) => {
+        this.category = obj.category;
+        this.title = obj.title;
+        this.tags = obj.tags;
+      });
+      Event.on('article-meta-post', () => {
+        this.postArticle();
+      });
+      this.getCategories();
     },
     methods: {
       tabFn: function (evt) {
@@ -168,7 +374,7 @@
         insertContent(tmp, this);
       },
       addCode: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -180,7 +386,7 @@
         }
       },
       addStrikethrough: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -192,7 +398,7 @@
         }
       },
       addStrong: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -204,7 +410,7 @@
         }
       },
       addItalic: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -222,7 +428,7 @@
         insertContent("[Vue](https://cn.vuejs.org/images/logo.png)", this);
       },
       addQuote: function () {
-        let textareaDom = document.querySelector('.mdEditor');
+        let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
         let point = range.getCursortPosition(textareaDom);
         let lastChart = value.substring(point - 1, point);
@@ -245,33 +451,22 @@
       addOl: function () {
         insertContent('1. ', this);
       },
-      previewFn: function () {
-        if (!this.editStatus) {
-          this.editStatus = true;
-          this.previewStatus = !this.previewStatus;
-        } else {
-          this.previewStatus = !this.previewStatus;
-        }
+      addRedo:function () {
+
       },
-      previewAllFn: function () {
-        if (!this.editStatus && this.previewStatus) {
-          this.editStatus = true;
-          this.previewStatus = true;
-        } else {
-          this.editStatus = false;
-          this.previewStatus = true;
-        }
+      addUndo:function () {
+
       },
       previewScroll: function (e, position) {
         if (this.maxEditScrollHeight !== 0) {
           let topPercent = position.scrollTop / this.maxPreviewScrollHeight;
-          document.querySelector('.mdEditor').scrollTop = this.maxEditScrollHeight * topPercent;
+          document.querySelector('.inside').scrollTop = this.maxEditScrollHeight * topPercent;
         }
       },
       editScroll: function (e, position) {
         if (this.maxPreviewScrollHeight !== 0) {
           let topPercent = position.scrollTop / this.maxEditScrollHeight;
-          document.querySelector('.previewContainer').scrollTop = this.maxPreviewScrollHeight * topPercent;
+          document.querySelector('.outside').scrollTop = this.maxPreviewScrollHeight * topPercent;
         }
       },
       getArticle(){
@@ -282,169 +477,73 @@
         };
         Net.ajax(request, (data) => {
           this.title = data.article.title;
-          this.tag = data.article.tags;
+          this.tags = data.article.tags;
           this.input = data.content.content;
         })
       },
       postCancel(){
         history.back();
       },
+      postDelete(){
+        history.back();
+        //TODO
+      },
+      preparePostArticle(){
+        Event.emit('article-meta-edit', 'post');
+      },
       postArticle(){
-        if (this.title.trim().length === 0
-          || this.tag.trim().length === 0
-          || this.input.trim().length === 0) {
-          layer.msg('文章信息不完整');
+        if (this.input.trim().length < 30) {
+          layer.msg('文章文字不少于三十字');
           return;
         }
         let url = Config.URL.article.post;
         if (this.updateMode) {
           url = Config.URL.article.update.format(this.articleId);
         }
-        let request = {
+        let targetCategory = 0;
+        for (let i = 0; i < this.categories.length; i++) {
+          if (this.category === this.categories[i]) {
+            targetCategory = i + 1;
+          }
+        }
+        Net.post({
           url: url,
-          type: "POST",
           condition: {
             title: this.title,
-            category: 1,
+            category: targetCategory,
             content: this.input,
-            tags: this.tag,
-            author: LoginMgr.uid
+            tags: this.tags,
+            author: LoginMgr.info().uid
           }
-        };
-        Net.ajax(request, (data) => {
-          //TODO
+        }, (data) => {
+          layer.msg('发布成功');
           this.articleId = data.id;
           history.back();
         });
       },
-    },
-    computed: {
-      compiledMarkdown: function () {
-        return marked(this.input, {
-          sanitize: true
-        })
+      getCategories() {
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+          this.category = this.categories[0];
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.category;
+            this.categories = resp.category;
+            this.category = this.categories[0];
+          });
+        }
       }
-    },
-    destroyed(){
-      Event.emit('fullscreen', false);
     },
     watch: {
       input: function () {
         let data = {};
-        data.mdValue = this.input;
-        data.htmlValue = marked(this.input, {
-          sanitize: true
-        });
         this.$emit('childevent', data);
-        let maxEditScrollHeight = document.querySelector('.mdEditor').scrollHeight - document.querySelector('.mdEditor').clientHeight;
-        let maxPreviewScrollHeight = document.querySelector('.previewContainer').scrollHeight - document.querySelector('.previewContainer').clientHeight;
+        let maxEditScrollHeight = document.querySelector('.inside').scrollHeight - document.querySelector('.inside').clientHeight;
+        let maxPreviewScrollHeight = document.querySelector('.outside').scrollHeight - document.querySelector('.outside').clientHeight;
         this.maxEditScrollHeight = maxEditScrollHeight;
         this.maxPreviewScrollHeight = maxPreviewScrollHeight;
       }
     }
   }
 </script>
-
-<style lang="scss" scoped>
-  @import "../../static/css/reset.scss";
-  @import "../../static/css/github-markdown.css";
-  @import "../../static/css/atom-one-dark.min.css";
-
-  #app > div {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: left;
-  }
-
-  .mdContainer {
-    width: 100%;
-    height: 100%;
-    background: lightblue;
-    &.fullPage {
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-    }
-    .navContainer {
-      width: 100%;
-      height: 36px;
-      background: #fff;
-      box-sizing: border-box;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 0 10px;
-      .nameContainer {
-        color: lightblue;
-        margin-right: 10px;
-        cursor: pointer;
-      }
-      .markContainer {
-        width: auto;
-        height: 100%;
-        margin-left: 0px;
-        ul.markListGroup {
-          height: 100%;
-          width: auto;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          li.markListItem {
-            list-style: none;
-            width: 20px;
-            height: 20px;
-            margin: 0 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 12px;
-            color: #333;
-            &:hover {
-              background: #eee;
-            }
-          }
-        }
-      }
-    }
-    .mdBodyContainer {
-      width: 100%;
-      height: calc(100% - 36px);
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-sizing: border-box;
-    }
-  }
-
-  .editContainer {
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    border-right: 1px solid #ddd;
-    color: #666;
-    padding: 10px;
-    .mdEditor {
-      height: 100%;
-      width: 100%;
-      background: transparent;
-      outline: none;
-      resize: none;
-    }
-  }
-
-  .previewContainer {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    background: #fff;
-    overflow: auto;
-    padding: 10px;
-  }
-</style>

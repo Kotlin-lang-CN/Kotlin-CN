@@ -1,46 +1,18 @@
 <template>
-  <div class="mdContainer">
-    <div class="metaContainer">
-      <button @click="previewFn">编辑</button>
-      <button @click="previewAllFn">预览</button>
-      <button @click="postComment">发表评论</button>
+  <div class="comment">
+    <div class="switcher">
+      <button @click="editMode" v-bind:class="{ 'select': editStatus, 'normal': !editStatus }">编辑</button>
+      <button @click="previewMode" v-bind:class="{ 'select': !editStatus, 'normal': editStatus }">预览</button>
     </div>
-    <div class="navContainer" v-if="navStatus">
-      <div class="markContainer">
-        <ul class="markListGroup">
-          <li class="markListItem" @click="addStrong" title="strong"><b>B</b></li>
-          <li class="markListItem" @click="addItalic" title="italic"><i>I</i></li>
-          <li class="markListItem" @click="addStrikethrough" title="strikethrough">DEL<i class="fa fa-strikethrough"
-                                                                                      aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addHTitle(1)" title="H1-title">H1</li>
-          <li class="markListItem" @click="addHTitle(2)" title="H2-title">H2</li>
-          <li class="markListItem" @click="addHTitle(3)" title="H3-title">H3</li>
-          <li class="markListItem" @click="addHTitle(4)" title="H4-title">H4</li>
-          <li class="markListItem" @click="addHTitle(5)" title="H5-title">H5</li>
-          <li class="markListItem" @click="addHTitle(6)" title="H6-title">H6</li>
-          <li class="markListItem" @click="addLine" title="line">一</li>
-          <li class="markListItem" @click="addQuote" title="quote"><i class="fa fa-quote-left" aria-hidden="true"></i>
-          </li>
-          <li class="markListItem" @click="addCode"><i class="fa fa-code" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addLink"><i class="fa fa-link" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addImage"><i class="fa fa-picture-o" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addTable" title="table"><i class="fa fa-table" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addUl" title="ul-list"><i class="fa fa-list-ul" aria-hidden="true"></i></li>
-          <li class="markListItem" @click="addOl" title="ol-list"><i class="fa fa-list-ol" aria-hidden="true"></i></li>
-        </ul>
+    <div class="content">
+      <textarea v-bind:class="{ 'hide': !editStatus }" v-model="input"></textarea>
+      <div class="previewContainer markdown-body" v-html="compiledMarkdown"
+           v-bind:class="{ 'hide': editStatus }">
       </div>
     </div>
-    <div class="mdBodyContainer">
-      <div class="editContainer" v-if="editStatus">
-        <textarea name="" class="mdEditor" @keydown.9="tabFn" v-scroll="editScroll" v-model="input"></textarea>
-      </div>
-      <div class="previewContainer markdown-body" v-scroll="previewScroll" v-html="compiledMarkdown"
-           v-if="previewStatus">
-      </div>
-    </div>
+    <button @click="post" class="big-btn">发表评论</button>
   </div>
 </template>
-
 <script>
   import Config from "../assets/js/Config.js";
   import LoginMgr from "../assets/js/LoginMgr.js";
@@ -52,7 +24,6 @@
   import scroll from 'vue-scroll'
   import hljs from '../../static/js/highlight.min.js'
   import range from '../../static/js/rangeFn.js'
-  Vue.use(scroll);
   marked.setOptions({
     renderer: new marked.Renderer(),
     gfm: true,
@@ -66,21 +37,6 @@
       return hljs.highlightAuto(code).value
     }
   });
-
-  function insertContent(val, that) {
-    let textareaDom = document.querySelector('.mdEditor');
-    let value = textareaDom.value;
-    let point = range.getCursortPosition(textareaDom);
-    let lastChart = value.substring(point - 1, point);
-    let lastFourCharts = value.substring(point - 4, point);
-    if (lastChart !== '\n' && value !== '' && lastFourCharts !== '    ') {
-      val = '\n' + val;
-      range.insertAfterText(textareaDom, val);
-    } else {
-      range.insertAfterText(textareaDom, val);
-    }
-    that.input = document.querySelector('.mdEditor').value;
-  }
   export default {
     name: 'markdown',
     data() {
@@ -88,191 +44,44 @@
         title: '',
         tag: '',
         author: LoginMgr.username,
-        input:  '',
+        input: '',
         editStatus: true,
-        previewStatus:  true,
-        fullPageStatus:  false,
-        navStatus: true,
-        icoStatus: true,
-        maxEditScrollHeight: 0,
-        maxPreviewScrollHeight: 0
       }
     },
     props: {
       articleId: ''
     },
-    created() {
-      if (!this.editStatus && !this.previewStatus) {
-        this.editStatus = true;
-        this.previewStatus = true;
-      }
-    },
     mounted(){
-      this.previewFn();
+      this.editMode();
     },
     methods: {
-      tabFn (evt) {
-        insertContent("    ", this);
-        if (evt.preventDefault) {
-          evt.preventDefault();
-        } else {
-          evt.returnValue = false;
-        }
+      editMode() {
+        this.editStatus = true;
       },
-      addImage (evt) {
-        insertContent("![Vue](https://cn.vuejs.org/images/logo.png)", this);
+      previewMode () {
+        this.editStatus = false;
       },
-      addHTitle (index) {
-        let tmp = '';
-        switch (index) {
-          case 1:
-            tmp = '# ';
-            break;
-          case 2:
-            tmp = '## ';
-            break;
-          case 3:
-            tmp = '### ';
-            break;
-          case 4:
-            tmp = '#### ';
-            break;
-          case 5:
-            tmp = '##### ';
-            break;
-          case 6:
-            tmp = '###### ';
-            break;
-          default:
-            break;
-        }
-        insertContent(tmp, this);
-      },
-      addCode () {
-        let textareaDom = document.querySelector('.mdEditor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('```\n\n```', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 5);
-        } else {
-          range.setCaretPosition(textareaDom, point + 4);
-        }
-      },
-      addStrikethrough () {
-        let textareaDom = document.querySelector('.mdEditor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('~~~~', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 3);
-        } else {
-          range.setCaretPosition(textareaDom, point + 2);
-        }
-      },
-      addStrong() {
-        let textareaDom = document.querySelector('.mdEditor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('****', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 3);
-        } else {
-          range.setCaretPosition(textareaDom, point + 2);
-        }
-      },
-      addItalic () {
-        let textareaDom = document.querySelector('.mdEditor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('**', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 2);
-        } else {
-          range.setCaretPosition(textareaDom, point + 1);
-        }
-      },
-      addLine () {
-        insertContent('\n----\n', this);
-      },
-      addLink () {
-        insertContent("[Vue](https://cn.vuejs.org/images/logo.png)", this);
-      },
-      addQuote () {
-        let textareaDom = document.querySelector('.mdEditor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('> ', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 3);
-        } else {
-          range.setCaretPosition(textareaDom, point + 2);
-        }
-      },
-      addTable () {
-        insertContent('\nheader 1 | header 2\n', this);
-        insertContent('---|---\n', this);
-        insertContent('row 1 col 1 | row 1 col 2\n', this);
-        insertContent('row 2 col 1 | row 2 col 2\n\n', this);
-      },
-      addUl() {
-        insertContent('* ', this);
-      },
-      addOl() {
-        insertContent('1. ', this);
-      },
-      previewFn() {
-        if (!this.editStatus) {
-          this.editStatus = true;
-          this.previewStatus = !this.previewStatus;
-        } else {
-          this.previewStatus = !this.previewStatus;
-        }
-      },
-      previewAllFn () {
-        if (!this.editStatus && this.previewStatus) {
-          this.editStatus = true;
-          this.previewStatus = true;
-        } else {
-          this.editStatus = false;
-          this.previewStatus = true;
-        }
-      },
-      previewScroll(e, position) {
-        if (this.maxEditScrollHeight !== 0) {
-          let topPercent = position.scrollTop / this.maxPreviewScrollHeight;
-          document.querySelector('.mdEditor').scrollTop = this.maxEditScrollHeight * topPercent;
-        }
-      },
-      editScroll(e, position) {
-        if (this.maxPreviewScrollHeight !== 0) {
-          let topPercent = position.scrollTop / this.maxEditScrollHeight;
-          document.querySelector('.previewContainer').scrollTop = this.maxPreviewScrollHeight * topPercent;
-        }
-      },
-      postComment(){
-        console.log(this.input);
+      post(){
         if (this.input.length === 0) {
-          Event.emit("error", '评论不能为空');
+          layer.msg("评论不能为空");
+          return;
+        } else if (this.input.length < 10) {
+          layer.msg("评论不少于十个字");
           return;
         }
-        let request = {
-          url: Config.URL.article.reply.format(this.articleId),
-          type: "POST",
-          condition: {
-            content: this.input
-          }
-        };
-        Net.ajax(request, (data) => {
-          if (data.id.length > 0) {
-            this.input = '';
-            Event.emit('comment-change');
-          }
+        LoginMgr.require(() => {
+          Net.post({
+            url: Config.URL.article.reply.format(this.articleId),
+            condition: {
+              content: this.input
+            }
+          }, (data) => {
+            if (data.id.length > 0) {
+              this.input = '';
+              Event.emit('comment-change');
+              layer.msg("已评论");
+            }
+          })
         })
       }
     },
@@ -290,16 +99,13 @@
         data.htmlValue = marked(this.input, {
           sanitize: true
         });
-        this.$emit('childevent', data);
-        let maxEditScrollHeight = document.querySelector('.mdEditor').scrollHeight - document.querySelector('.mdEditor').clientHeight;
-        let maxPreviewScrollHeight = document.querySelector('.previewContainer').scrollHeight - document.querySelector('.previewContainer').clientHeight;
-        this.maxEditScrollHeight = maxEditScrollHeight;
-        this.maxPreviewScrollHeight = maxPreviewScrollHeight;
+        //adjust textarea height
+        let editText = $('textarea');
+        editText.css('height', 'auto').css('height', editText[0].scrollHeight);
       }
     }
   }
 </script>
-
 <style lang="scss" scoped>
   @import "../../static/css/reset.scss";
   @import "../../static/css/github-markdown.css";
@@ -308,92 +114,74 @@
   #app > div {
     text-align: left;
   }
-  .mdContainer {
-    max-width: 1000px;
-    height: 240px;
-    background: lightblue;
-    &.fullPage {
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-    }
-    .navContainer {
-      width: 100%;
-      height: 36px;
-      background: #fff;
-      box-sizing: border-box;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 0 10px;
-      .nameContainer {
-        color: lightblue;
-        margin-right: 10px;
-        cursor: pointer;
+
+  .comment {
+    max-width: 840px;
+    background-color: #fcfcfe;
+    border: 1px #e4e4e4 solid;
+
+    .switcher {
+      margin-top: 20px;
+      margin-left: 20px;
+      button {
+        min-width: 64px;
+        font-size: 18px;
       }
-      .markContainer {
-        width: auto;
-        height: 100%;
-        margin-left: 0px;
-        ul.markListGroup {
-          height: 100%;
-          width: auto;
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          li.markListItem {
-            list-style: none;
-            width: 20px;
-            height: 20px;
-            margin: 0 2px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 12px;
-            color: #333;
-            &:hover {
-              background: #eee;
-            }
-          }
-        }
+      .select {
+        color: #2572e5;
+        border-bottom: 4px #2572e5 solid;
+      }
+      .normal {
+        color: #999;
+        border-bottom: 4px transparent solid;
       }
     }
-    .mdBodyContainer {
-      width: 100%;
-      height: calc(100% - 36px);
+    .big-btn {
+      min-height: 38px;
+      line-height: 38px;
+      display: block;
+      margin-bottom: 40px;
+      margin-top: 20px;
+      margin-left: 20px;
+      min-width: 120px;
+      border-radius: 2px;
+      font-size: 20px;
+      color: white;
+      background-color: #2572e5;
+    }
+    .content {
+      margin: 0 20px;
       background: #fff;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-sizing: border-box;
-    }
-  }
+      border: 1px #e4e4e4 solid;
 
-  .editContainer {
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    border-right: 1px solid #ddd;
-    color: #666;
-    padding: 10px;
-    .mdEditor {
-      height: 100%;
-      width: 100%;
-      background: transparent;
-      outline: none;
-      resize: none;
-    }
-  }
+      .hide {
+        display: none;
+      }
 
-  .previewContainer {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    background: #fff;
-    overflow: auto;
-    padding: 10px;
+      textarea {
+        box-sizing: border-box;
+        color: #666;
+        padding: 10px;
+        width: 100%;
+        overflow-y: hidden;
+        background: transparent;
+        outline: none;
+        resize: none;
+        min-height: 200px;
+      }
+      .previewContainer {
+        width: 100%;
+        min-height: 200px;
+        box-sizing: border-box;
+        background: #fff;
+        overflow: auto;
+        padding: 10px;
+      }
+    }
   }
 </style>
+

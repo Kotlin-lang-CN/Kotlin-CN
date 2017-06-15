@@ -31,12 +31,12 @@ function generateHeaders() {
 class Net {
   ajax(request, success, fail) {
     let errHandler = function (error) {
-      Event.emit('error', error);
+      Event.emit('error', error.msg ? error.msg + '(' + error.code + ')' : error);
       console.log(error);
       if (fail) fail(error)
     };
     $.ajax({
-      url: Config.HOST + Config.API + request.url,
+      url: request.url,
       cache: !1,
       type: request.type,
       dataType: "text",
@@ -46,7 +46,7 @@ class Net {
         try {
           let resp = bigJSON.parse(data);
           if (0 !== resp.code) {
-            errHandler(resp.msg + "(" + resp.code + ")");
+            errHandler(resp);
           } else {
             if (success) success(resp);
           }

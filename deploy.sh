@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
-cp ../release/project.properties forum/src/main/resources/project.properties
+cp ../release/project.properties project.properties
+cp project.properties account/src/main/resources && cp project.properties article/src/main/resources
 
-./gradlew forum:jar
+echo "++ recompile projects ++"
+./gradlew account:jar && ./gradlew article:jar
 
-pid=$(ps -ef | egrep "forum-" | grep -v grep | awk '{print $2}')
-if [ ${pid} ]; then
-    kill ${pid}
+echo '++ service stop ++'
+pkill -f *article* && pkill -f *account*
+
+#如果文件夹不存在，创建文件夹
+if [ ! -d "log" ]; then
+  mkdir log
 fi
 
-nohup java -jar ./forum/build/libs/forum-1.0.0-release.jar > ../forum.log &
+nohup java -jar ./account/build/libs/account-1.0.0-release.jar > log/account.log &
+nohup java -jar ./article/build/libs/article-1.0.0-release.jar > log/article.log &
+echo '++ service restart ++'

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [{
@@ -29,6 +29,12 @@ export default new Router({
       require(['@/views/Account.vue'], resolve);
     }
   }, {
+    path: '/account/github',
+    name: 'Github',
+    component: (resolve) => {
+      require(["@/views/Github.vue"], resolve);
+    }
+  }, {
     path: '/topic/:id',
     name: 'Topic',
     component: function (resolve) {
@@ -40,12 +46,5 @@ export default new Router({
     component: function (resolve) {
       require(['@/views/Topics.vue'], resolve);
     }
-  }, {
-    path: '/manager',
-    name: 'Manager',
-    component: function (resolve) {
-      resolve(['@/views/Manager.vue'], resolve)
-    }
-  }
-  ]
+  }]
 })

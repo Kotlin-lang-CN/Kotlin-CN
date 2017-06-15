@@ -9,6 +9,7 @@ class LoginMgr {
     let username = Cookie.get("X-App-Name");
     let email = Cookie.get("X-App-Email");
     let token = Cookie.get("X-App-Token");
+    let role = Cookie.get('X-App-Role');
     if (uid && uid.length > 0
       && username && username.length > 0
       && email && email.length > 0
@@ -17,7 +18,8 @@ class LoginMgr {
         uid: uid,
         username: username,
         email: email,
-        token: token
+        token: token,
+        role: role
       }
     } else {
       return false
@@ -31,6 +33,11 @@ class LoginMgr {
     } else {
       return guestMode ? guestMode() : '';
     }
+  }
+
+  isAdmin() {
+    let info = this.info();
+    return info && info.role === '1'
   }
 
   require(loginAlready) {
@@ -48,7 +55,8 @@ class LoginMgr {
     Cookie.set('X-App-Email', data.email);
     Cookie.set('X-App-UID', data.uid);
     Cookie.set('X-App-Token', data.token);
-    Event.emit('login');
+    Cookie.set('X-App-Role', data.role);
+    Event.emit('login', this.info());
   }
 
   logout() {
@@ -56,7 +64,8 @@ class LoginMgr {
     Cookie.del('X-App-Token');
     Cookie.del('X-App-UID');
     Cookie.del('X-App-Name');
-    Event.emit('login');
+    Cookie.del('X-App-Role');
+    Event.emit('login', false);
   }
 
 }

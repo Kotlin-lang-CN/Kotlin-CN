@@ -1,9 +1,15 @@
 <template>
   <div class="side-bar">
-    <a class="button" :href="uiEdit">发布新话题</a>
+    <a class="button" :href="uiEdit" v-if="showPostBtn">发布新话题</a>
     <div class="part">
-      <header>网站通告</header>
-      <div class="card"><display-panels :content="dashboard"></display-panels></div>
+      <header>网站通告
+        <button v-if="isAdmin" v-on:click="inputDashboard">编辑</button>
+      </header>
+      <div class="card">
+        <display-panels :content="dashboard"></display-panels>
+        <textarea v-if="isAdmin && showDashboardInput" v-model="dashboardInput" title=""></textarea>
+        <button v-if="isAdmin && showDashboardInput" v-on:click="updateDashboard">确认</button>
+      </div>
     </div>
     <div class="part">
       <header>友情链接</header>
@@ -12,7 +18,7 @@
         <li><a href="https://laravel-china.org/" target="_blank"><i class="laravel"></i></a></li>
         <li><a href="http://golangtc.com/" target="_blank"><i class="golangtc"></i></a></li>
         <li><a href="http://elixir-cn.com/" target="_blank"><i class="elixir"></i></a></li>
-        <li><a href="http://ionichina.com/" target="_blank"><i class="ioni"></i></a></li>
+        <!--<li><a href="http://ionichina.com/" target="_blank"><i class="ioni"></i></a></li>-->
         <li><a href="https://testerhome.com/" target="_blank"></a><i class="tester"></i></li>
       </ul>
     </div>
@@ -22,28 +28,43 @@
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import DisplayPanels from '../components/DisplayPanels.vue';
+  import LoginMgr from '../assets/js/LoginMgr.js';
+  import Event from '../assets/js/Event.js'
+
   export default {
     data() {
       return {
         uiEdit: Config.UI.edit,
-        dashboard:''
+        dashboard: '',
+        isAdmin: LoginMgr.isAdmin(),
+        showDashboardInput: false,
+        dashboardInput: '',
       }
+    },
+    props: {
+      showPostBtn: true
     },
     components: {
       'display-panels': DisplayPanels
     },
     created(){
-      this.updateDashboard();
+      this.getDashboard();
+      Event.on('login', () => this.isAdmin = LoginMgr.isAdmin())
     },
     methods: {
-      updateDashboard(){
-        let request = {
-          url: Config.URL.misc.dashboard,
-          type: "GET",
-          condition: {}
-        };
-        Net.ajax(request, (data) => {
+      getDashboard(){
+        Net.get({url: Config.URL.misc.dashboard}, (data) => {
           this.dashboard = data.text;
+        })
+      },
+      inputDashboard() {
+        this.dashboardInput = '';
+        this.showDashboardInput = !this.showDashboardInput
+      },
+      updateDashboard() {
+        const input = this.dashboardInput;
+        Net.post({url: Config.URL.misc.dashboard, condition: {dashboard: input}}, () => {
+          this.dashboard = input
         })
       }
     }
@@ -52,11 +73,9 @@
 
 <style scoped lang="less">
   .side-bar {
-    margin: auto 16px;
-    max-width: 230px;
-    min-width: 200px;
     .button {
-      padding: 6px 12px;
+      line-height: 26px;
+      height: 38px;
       display: block;
       color: white;
       background: #2572e5;
@@ -66,7 +85,6 @@
     }
 
     .part {
-      margin: 0 8px;
       header {
         font-size: 18px;
         color: #999;
@@ -88,9 +106,9 @@
           display: block;
           i {
             display: block;
-            width: 230px;
+            width: 138px;
             height: 40px;
-            margin-bottom: 16px;
+            margin: 0 auto 16px auto;
           }
           .cnodejs {
             background: url(../assets/img/friendship1.png) no-repeat;
@@ -115,7 +133,7 @@
     }
   }
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 1000px) {
     .side-bar {
       border-left: none;
       margin: auto;

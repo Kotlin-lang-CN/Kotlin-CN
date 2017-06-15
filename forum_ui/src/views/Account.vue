@@ -17,6 +17,8 @@
   import Config from '../assets/js/Config';
   import Net from '../assets/js/Net.js';
   import LoginMgr from '../assets/js/LoginMgr.js';
+  import AppLayout from '../App.vue'
+
   export default {
     data(){
       return {
@@ -26,6 +28,9 @@
           Email: LoginMgr.info().email
         }
       }
+    },
+    components: {
+      AppLayout
     },
     methods: {
       logout(){
