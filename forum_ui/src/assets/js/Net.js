@@ -1,6 +1,5 @@
 import bigJSON from './Parse.js';
-import Cookie from './Cookie.js';
-import Config from './Config.js';
+import Cookie from 'js-cookie';
 import Event from './Event.js';
 
 function generateHeaders() {

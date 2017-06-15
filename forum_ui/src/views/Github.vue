@@ -106,7 +106,7 @@
         let loginAlready = this.loginAlready;
         if (loginAlready) {
           this.loginAlready = false;
-          this.loginAlready(LoginMgr.info());
+          loginAlready(LoginMgr.info());
         }
       }
     }

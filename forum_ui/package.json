@@ -13,6 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs"
   },
   "dependencies": {
+    "js-cookie": "^2.1.4",
     "lodash": "latest",
     "marked": "^0.3.6",
     "moment": "^2.18.1",

@@ -5,16 +5,16 @@
         <a :href="urlRoot" class="menu-header"><i class="logo"></i></a>
         <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
 
-        <div class="menu-authen menu-right" v-if="strUserName ===''">
+        <div class="menu-authen menu-right" v-if="!loginInfo.isLogin">
           <a v-on:click="register" title="注册">注册</a>
           <a v-on:click="login" title="登录">登录</a>
         </div>
 
-        <div class="menu-user menu-right" v-if="strUserName !==''">
+        <div class="menu-user menu-right" v-if="loginInfo.isLogin">
           <div class="btn"><span><i class="add-icon"></i></span>
             <div class="sub-menu"><a :href="urlEdit">发布新话题</a></div>
           </div>
-          <div class="btn"><span><app-avatar :avatar="strUserName" :size="'small'"></app-avatar><i
+          <div class="btn"><span><app-avatar :avatar="loginInfo.username" :size="'small'"></app-avatar><i
             class="choice-icon"></i></span>
             <div class="sub-menu">
               <button v-on:click="logout">退出登录</button>
@@ -44,19 +44,14 @@
         urlAccount: Config.UI.account,
         urlEdit: Config.UI.edit,
         urlLogin: Config.UI.login,
-        strUserName: LoginMgr.check((it) => it.username, () => ''),
+        loginInfo: LoginMgr.info(),
         moduleShow: true,
         top: true
       }
     },
     created: function () {
-      Event.on("login", () => this.strUserName = LoginMgr.check((it) => it.username, () => ''));
-      Event.on("fullscreen", (on) => {
-        this.moduleShow = !on;
-      });
-      Event.on("page-scroll", (top) => {
-        this.top = top;
-      })
+      Event.on("fullscreen", (on) => this.moduleShow = !on);
+      Event.on("page-scroll", (top) => this.top = top)
     },
     methods: {
       login() {
@@ -198,9 +193,10 @@
   }
 
   @media screen and (max-width: 480px) {
-    .header .nav-bar .nav-content a.menu-header{
+    .header .nav-bar .nav-content a.menu-header {
       padding-left: 50px;
     }
+
     .header .nav-bar .nav-content > div {
       display: none !important;
     }

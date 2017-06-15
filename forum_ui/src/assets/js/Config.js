@@ -1,6 +1,6 @@
 const CGI = {
-  account: "http://localhost:8081/api",
-  article: "http://localhost:8083/api"
+  account: "//localhost:8081/api",
+  article: "//localhost:8083/api"
 };
 
 const Config = {
@@ -34,7 +34,8 @@ const Config = {
       fine: CGI.article + "/rss/fine",//精品文章订阅
     },
     misc: {
-      dashboard: CGI.article + '/misc/dashboard'//网站公告栏
+      dashboard: CGI.article + '/misc/dashboard',//网站公告栏
+      homeLink: CGI.article + '/misc/home/link',//首页广告栏链接
     },
   },
   UI: {

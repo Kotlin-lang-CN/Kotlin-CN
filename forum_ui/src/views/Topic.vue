@@ -89,8 +89,10 @@
         }
       },
       renderEditUrl() {
-        if (this.topic !== null && this.topic.author
-          && LoginMgr.info() && LoginMgr.info().uid === this.topic.author.uid
+        if (this.topic !== null
+          && this.topic.author
+          && LoginMgr.info().isLogin
+          && LoginMgr.info().uid === this.topic.author.uid
           || LoginMgr.isAdmin()) {
           this.editUrl = Config.UI.edit + "/" + this.articleId;
         } else {
