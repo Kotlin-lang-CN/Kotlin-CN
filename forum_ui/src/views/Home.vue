@@ -1,7 +1,13 @@
 <template>
   <app-layout>
     <div class="home-root">
-      <div class="banner">KOTLIN CHINA 上线了！</div>
+      <div class="banner" v-on:click="homeLink">KOTLIN CHINA 上线了！
+        <small v-if="isAdmin" v-on:click="editLink">编辑</small>
+      </div>
+      <div v-if="isAdmin && editURL">
+        <input type="text" v-model="urlInput"/>
+        <button v-on:click="applyEdit">确认</button>
+      </div>
       <div class="content">
         <div class="post">
           <div class="sub-nav">
@@ -20,7 +26,6 @@
       </div>
     </div>
   </app-layout>
-
 </template>
 
 <script>
@@ -29,14 +34,19 @@
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import LoginMgr from '../assets/js/LoginMgr';
-  import AppLayout from '../App.vue'
+  import AppLayout from '../App.vue';
+  import Event from '../assets/js/Event.js';
 
   export default {
     data() {
       return {
         uiEdit: Config.UI.edit,
         select: 'fine',
-        articleListUrl: ''
+        articleListUrl: '',
+        link: '',
+        editURL: false,
+        urlInput: '',
+        isAdmin: LoginMgr.isAdmin(),
       }
     },
     components: {
@@ -47,6 +57,12 @@
     mounted(){
       this.articleListUrl = Config.URL.article.fine;
     },
+    created() {
+      Net.get({url: Config.URL.misc.homeLink}, (resp) => {
+        this.urlInput = resp.link;
+        this.link = resp.link;
+      });
+    },
     methods: {
       selectFine(){
         this.select = 'fine';
@@ -55,6 +71,19 @@
       selectLatest(){
         this.select = 'latest';
         this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
+      },
+      homeLink() {
+        if (this.link !== '') window.location.href = this.link
+      },
+      editLink() {
+        this.link = '';
+        this.editURL = !this.editURL;
+      },
+      applyEdit() {
+        Net.post({url: Config.URL.misc.homeLink, condition: {link: this.urlInput}}, () => {
+          this.link = this.urlInput;
+          this.editURL = !this.editURL;
+        })
       }
     }
   }

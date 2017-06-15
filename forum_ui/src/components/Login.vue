@@ -250,8 +250,7 @@
         let loginAlready = this.loginAlready;
         if (loginAlready) {
           this.loginAlready = false;
-          let info = LoginMgr.info();
-          if (info) loginAlready(info);
+          if (LoginMgr.info().isLogin) loginAlready(info);
         }
         this.nameInput = '';
         this.emailInput = '';

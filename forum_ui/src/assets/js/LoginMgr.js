@@ -1,10 +1,8 @@
-import Cookie from './Cookie.js';
+import Cookie from 'js-cookie';
 import Event from './Event.js';
 
-
-class LoginMgr {
-
-  info() {
+const LoginMgr = {
+  info: function () {
     let uid = Cookie.get("X-App-UID");
     let username = Cookie.get("X-App-Name");
     let email = Cookie.get("X-App-Email");
@@ -14,59 +12,70 @@ class LoginMgr {
       && username && username.length > 0
       && email && email.length > 0
       && token && token.length > 0) {
-      return {
-        uid: uid,
-        username: username,
-        email: email,
-        token: token,
-        role: role
-      }
+      this.uid = uid;
+      this.username = username;
+      this.email = email;
+      this.token = token;
+      this.role = role;
+      this.isLogin = true;
+      this.isAdminRole = this.role === '1';
+      return this
     } else {
-      return false
+      this.uid = undefined;
+      this.username = undefined;
+      this.email = undefined;
+      this.token = undefined;
+      this.role = undefined;
+      this.isLogin = false;
+      this.isAdminRole = false;
+      return this
     }
-  }
+  },
 
-  check(loginMode, guestMode) {
+  check: function (loginMode, guestMode) {
     let userInfo = this.info();
-    if (userInfo) {
+    if (userInfo.isLogin) {
       return loginMode ? loginMode(userInfo) : '';
     } else {
       return guestMode ? guestMode() : '';
     }
-  }
+  },
 
-  isAdmin() {
-    let info = this.info();
-    return info && info.role === '1'
-  }
+  isAdmin: function () {
+    const info = this.info();
+    return info.isAdminRole
+  },
 
-  require(loginAlready) {
+  require: function (loginAlready) {
     let info = this.info();
     if (info) {
       loginAlready(info)
     } else {
       Event.emit('request_login', loginAlready)
     }
-  }
+  },
 
-  login(data) {
+  login: function (data) {
     console.log(data);
     Cookie.set('X-App-Name', data.username);
     Cookie.set('X-App-Email', data.email);
     Cookie.set('X-App-UID', data.uid);
     Cookie.set('X-App-Token', data.token);
     Cookie.set('X-App-Role', data.role);
-    Event.emit('login', this.info());
-  }
+    const info = this.info();
+    Event.emit('login', info);
+  },
 
-  logout() {
-    Cookie.del('X-App-Email');
-    Cookie.del('X-App-Token');
-    Cookie.del('X-App-UID');
-    Cookie.del('X-App-Name');
-    Cookie.del('X-App-Role');
+  logout: function () {
+    Cookie.remove('X-App-Email');
+    Cookie.remove('X-App-Token');
+    Cookie.remove('X-App-UID');
+    Cookie.remove('X-App-Name');
+    Cookie.remove('X-App-Role');
+    this.info();
     Event.emit('login', false);
   }
 
-}
-export default new LoginMgr();
+};
+
+export default LoginMgr
