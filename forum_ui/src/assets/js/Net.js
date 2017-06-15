@@ -4,7 +4,7 @@ import Event from './Event.js';
 
 function generateHeaders() {
   let deviceId = Cookie.get("X-App-Device");
-  if (deviceId.length === 0) {
+  if (deviceId === undefined) {
     deviceId = "WEB-" + Date.now().toString(36);
     deviceId += Math.random().toString(36).slice(2);
     deviceId += Math.random().toString(36).slice(3);
