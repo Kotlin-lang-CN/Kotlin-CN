@@ -1,7 +1,7 @@
 <template>
   <div class="meta">
     <div class="category">{{ category }}</div>
-    <button v-if="editable" v-on:click="showDialog"><i></i></button>
+    <i v-if="editable" v-on:click="showDialog"></i>
     <div class="title">{{ title }}</div>
     <div class="author">{{ author }}</div>
   </div>
@@ -50,16 +50,19 @@
       font-size: 20px;
       color: #999;
     }
-    button {
+    i{
       position: absolute;
       right: 0;
       top: 60px;
       width: 36px;
       height: 36px;
-      outline: none;
-      border: 1px #ccc solid;
-      background: white;
       cursor: pointer;
+      display: block;
+      background: url(../assets/img/edit-title.png) no-repeat center;
+      background-size:50% 50%;
+    }
+    i:hover{
+      border-bottom: 1px #ccc solid;
     }
   }
 </style>

@@ -109,7 +109,8 @@
             display: inline-block;
             width: 192px;
             height: 45px;
-            background: url(../assets/img/logo.png) no-repeat;
+            background: url(../assets/img/logo_big.png) no-repeat center;
+            background-size: 99% 99%;
           }
         }
         .menu-user {
