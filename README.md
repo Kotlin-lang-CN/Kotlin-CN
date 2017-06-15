@@ -44,11 +44,15 @@
 sudo apt-get install docker.io
 ```
 
-> mac 
+> Mac-OSX
 
 安装 [virtual-box](https://www.virtualbox.org/wiki/Downloads)
 
 安装 docker-machine(https://github.com/docker/machine)
+
+> Windows
+
+什么windows?
 
 > 更多
 
