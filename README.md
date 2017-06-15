@@ -1,6 +1,6 @@
-## Kotlin CN
+## [Kotlin China](http://kotlin-china.wiki)
 
-Kotlin China 论坛
+[Kotlin China](http://kotlin-china.wiki) 社区地址
 
 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区
 
