@@ -1,6 +1,6 @@
-## [Kotlin China](https://kotlin-china.wiki)
+## [Kotlin China](http://discuss.kotliner.cn/)
 
-[Kotlin China](https://kotlin-china.wiki) 社区地址
+[Kotlin China](http://discuss.kotliner.cn/) 社区地址
 
 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区
 
@@ -52,7 +52,7 @@ sudo apt-get install docker.io
 
 > Windows
 
-什么windows?
+Windows? 什么windows?
 
 > 更多
 
