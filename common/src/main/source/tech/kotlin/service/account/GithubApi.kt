@@ -26,9 +26,6 @@ interface GithubApi {
     @RpcInterface(TypeDef.Github.CHECK_TOKEN)
     fun checkToken(req: GithubCheckTokenReq): GithubCheckTokenResp
 
-    @RpcInterface(TypeDef.Github.BIND_ACCOUNT)
-    fun bindAccount(req: GithubBindReq): EmptyResp
-
 }
 
 

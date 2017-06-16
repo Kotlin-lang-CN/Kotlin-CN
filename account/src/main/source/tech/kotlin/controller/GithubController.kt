@@ -11,6 +11,7 @@ import tech.kotlin.service.Githubs
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.check
+import tech.kotlin.service.account.GithubApi
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.domain.UserInfo
@@ -21,11 +22,10 @@ import tech.kotlin.service.domain.UserInfo
  *********************************************************************/
 object GithubController {
 
-    val sessionApi by Serv.bind(SessionApi::class)
-    val userApi by Serv.bind(UserApi::class)
+    val githubApi by Serv.bind(GithubApi::class)
 
     val createState = Route { req, _ ->
-        val resp = Githubs.createState(GithubCreateStateReq().apply {
+        val resp = githubApi.createState(GithubCreateStateReq().apply {
             this.device = Device(req)
         })
         return@Route ok { it["state"] = resp.state }
@@ -33,9 +33,9 @@ object GithubController {
 
     val auth = Route { req, _ ->
         val device = Device(req)
-        val code = req.queryParams("code").check(Err.GITHUB_AUTH_ERR) { !it.isNullOrBlank() }
-        val state = req.queryParams("state").check(Err.GITHUB_AUTH_ERR) { !it.isNullOrBlank() }
-        val authResp = Githubs.createSession(GithubAuthReq().apply {
+        val code = req.queryParams("code").check(Err.GITHUB_AUTH_ERR, "缺少code") { !it.isNullOrBlank() }
+        val state = req.queryParams("state").check(Err.GITHUB_AUTH_ERR, "缺少state") { !it.isNullOrBlank() }
+        val authResp = githubApi.createSession(GithubAuthReq().apply {
             this.device = device
             this.code = code
             this.state = state
@@ -49,21 +49,14 @@ object GithubController {
                 it["github_avatar"] = authResp.github.avatar
             }
         } else {
-            val token = sessionApi.createSession(CreateSessionReq().apply {
-                this.uid = authResp.account.id
-                this.device = device
-            }).token
-            val meta = userApi.queryById(QueryUserReq().apply {
-                this.id = arrayListOf(authResp.account.id)
-            })
             return@Route ok {
                 it["need_create_account"] = false
                 it["uid"] = authResp.account.id
-                it["token"] = token
-                it["username"] = meta.info[authResp.account.id]?.username ?: ""
-                it["email"] = meta.info[authResp.account.id]?.email ?: ""
-                it["is_email_validate"] = meta.info[authResp.account.id]?.emailState == UserInfo.EmailState.VERIFIED
-                it["role"] = meta.account[authResp.account.id]?.role ?: 0
+                it["token"] = authResp.token
+                it["username"] = authResp.userInfo.username
+                it["email"] = authResp.userInfo.email
+                it["is_email_validate"] = authResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
+                it["role"] = authResp.account.role
             }
         }
     }

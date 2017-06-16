@@ -12,13 +12,16 @@ const Config = {
       password: CGI.account + '/account/user/{0}/password',
       update: CGI.account + '/account/user/{0}/update'
     },
+    github: {
+      createState: CGI.account + '/github/state',
+      auth: CGI.account + '/github/auth'
+    },
     admin: {
       articleList: CGI.account + '/admin/article/list',//管理员视角查看所有文章内容
       updateArticleState: CGI.account + '/admin/article/{0}/state',//更新文章状态
       updateUserState: CGI.account + '/admin/user/{0}/state',//跟新用户状态
       updateReplyState: CGI.account + '/admin/reply/{0}/state'//更新回复状态
     },
-
     article: {
       post: CGI.article + '/article/post',
       detail: CGI.article + '/article/post/{0}',
@@ -37,6 +40,13 @@ const Config = {
       dashboard: CGI.article + '/misc/dashboard',//网站公告栏
       homeLink: CGI.article + '/misc/home/link',//首页广告栏链接
     },
+  },
+  OAuth: {
+    github: {
+      cgi: 'http://github.com/login/oauth/authorize',
+      clientId: 'ed1760e81a41e5553b0d',
+      scope: 'user',
+    }
   },
   UI: {
     root: '/',
