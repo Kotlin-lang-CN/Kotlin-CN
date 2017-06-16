@@ -149,7 +149,7 @@
     left: -300px;
     height: 100%;
     width: 300px;
-    background: #2f2f2f;
+    background: #46546c;
     overflow-x: hidden;
     overflow-y: scroll;
     padding: 20px;

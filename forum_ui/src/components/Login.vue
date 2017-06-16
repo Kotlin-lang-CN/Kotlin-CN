@@ -3,6 +3,10 @@
     <div class="bg" v-on:click="hide"></div>
     <div class="cont">
       <i class="logo"></i>
+      <div class="switcher">
+        <div class="sel">注册</div>
+        <div>登录</div>
+      </div>
       <div class="login" v-if="showMode === 1 || showMode === 3">
         <p v-if="showMode === 3">绑定GitHub账号到一个已创建的账号</p>
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
@@ -37,22 +41,6 @@
     </div>
   </div>
 </template>
-
-<style scoped>
-  .dialog .cont {
-    margin-left: calc(50% - 253px);
-  }
-
-  @media screen and (max-width: 480px) {
-    .dialog div.cont {
-      margin-left: calc(50% - 153px);
-      margin-top: 10%;
-      width: 300px;
-      padding: 16px;
-    }
-  }
-</style>
-
 <script>
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
@@ -200,6 +188,52 @@
     }
   }
 </script>
+
+<style scoped>
+  .dialog .cont {
+    margin-left: calc(50% - 253px);
+  }
+
+  .switcher {
+    display: none;
+  }
+
+  /*adjust mobile*/
+  @media screen and (max-width: 480px) {
+    .dialog .cont {
+      position: relative;
+      margin: 0 !important;
+      padding: 0;
+    }
+
+    .switcher {
+      display: block;
+      border-bottom: 1px #f1f1f1 solid;
+    }
+
+    .switcher div {
+      text-align: center;
+      line-height: 40px;
+      color: #999;
+      display: inline-block;
+      width: 48%;
+      border-bottom: 2px transparent solid;
+    }
+
+    .switcher div.sel {
+      color: #2572e5;
+      border-bottom: 2px #2572e5 solid;
+    }
+
+    .dialog div.cont {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+    }
+
+  }
+</style>
 
 <style scoped lang="less">
   .dialog {
