@@ -167,6 +167,15 @@
               width: 182px;
             }
           }
+          .btn .sub-menu:hover {
+            background-color: #f8fbff;
+            a {
+              color: #2572e5;
+            }
+            button {
+              color: #2572e5;
+            }
+          }
         }
         .menu-authen {
           > a {
@@ -181,6 +190,14 @@
             border: 1px #2572e5 solid;
             border-radius: 2px;
             color: #2572e5;
+          }
+          > a:nth-child(2):hover {
+            color: #4599f7;
+            background-color: #f8fbff;
+          }
+          > a:nth-child(2):active {
+            color: #2572e5;
+            background-color: #ecf4ff;
           }
         }
         .menu-right {

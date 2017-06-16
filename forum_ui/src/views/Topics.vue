@@ -104,6 +104,9 @@
           color: #999;
         }
       }
+      > button:hover {
+        color: #2572e5;
+      }
     }
     .side {
       width: 25%;

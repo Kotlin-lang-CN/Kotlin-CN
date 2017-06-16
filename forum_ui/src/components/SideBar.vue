@@ -83,7 +83,12 @@
       border-radius: 2px;
       margin-bottom: 30px;
     }
-
+    .button:hover {
+      background-color: #4599f7;
+    }
+    .button:active {
+      background-color: #1c4ecf;
+    }
     .part {
       header {
         font-size: 18px;

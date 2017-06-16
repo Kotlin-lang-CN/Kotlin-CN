@@ -17,7 +17,8 @@
                   </option>
                 </select>
               </div>
-              <span v-if="categories.length >= value.meta.category" class="category"> {{ categories[value.meta.category - 1] }}</span>
+              <span v-if="categories.length >= value.meta.category"
+                    class="category"> {{ categories[value.meta.category - 1] }}</span>
               <span class="tag focus" v-on:click="toArticle(value.meta.id)"
                     v-for="tag in value.meta.tags.split(/;/)">{{ tag
                 }}
@@ -150,7 +151,7 @@
           margin-top: 16px;
           position: relative;
           display: flex;
-          .wrap{
+          .wrap {
             margin-left: 10px;
           }
           .title {
@@ -164,7 +165,7 @@
             font-size: 16px;
             color: #999;
           }
-          .category{
+          .category {
             display: inline-block;
             background-color: #256fe8;
             border-radius: 2px;
@@ -175,7 +176,7 @@
           .focus {
             cursor: pointer;
           }
-          .control{
+          .control {
             position: absolute;
             right: 0;
             bottom: 36px;
@@ -202,6 +203,14 @@
       padding: 8px;
       color: #6ba0f1;
       font-size: 16px;
+    }
+    button:hover {
+      background-color: #f8fbff;
+      color: #2572e5;
+    }
+    button:active {
+      background-color: #ecf4ff;
+      color: #2572e5;
     }
   }
 

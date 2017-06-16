@@ -120,6 +120,12 @@
         color: white;
         font-size: 24px;
       }
+      .big-btn:hover {
+        background-color: #4599f7;
+      }
+      .big-btn:active {
+        background-color: #1c4ecf;
+      }
       .small-btn {
         margin: 4px auto 10px auto;
         width: 100%;
