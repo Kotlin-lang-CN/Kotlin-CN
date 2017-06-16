@@ -3,9 +3,6 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.service.domain.Device
-import tech.kotlin.service.account.req.GithubCreateStateReq
-import tech.kotlin.service.account.req.CreateSessionReq
-import tech.kotlin.service.account.req.GithubAuthReq
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.Githubs
 import tech.kotlin.service.account.SessionApi
@@ -13,7 +10,7 @@ import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.service.account.GithubApi
 import tech.kotlin.service.account.UserApi
-import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.account.req.*
 import tech.kotlin.service.domain.UserInfo
 
 /*********************************************************************
@@ -23,6 +20,7 @@ import tech.kotlin.service.domain.UserInfo
 object GithubController {
 
     val githubApi by Serv.bind(GithubApi::class)
+    val sessionApi by Serv.bind(SessionApi::class)
 
     val createState = Route { req, _ ->
         val resp = githubApi.createState(GithubCreateStateReq().apply {
@@ -49,10 +47,14 @@ object GithubController {
                 it["github_avatar"] = authResp.github.avatar
             }
         } else {
+            val token = sessionApi.createSession(CreateSessionReq().apply {
+                this.device = device
+                this.uid = authResp.account.id
+            }).token
             return@Route ok {
                 it["need_create_account"] = false
                 it["uid"] = authResp.account.id
-                it["token"] = authResp.token
+                it["token"] = token
                 it["username"] = authResp.userInfo.username
                 it["email"] = authResp.userInfo.email
                 it["is_email_validate"] = authResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
