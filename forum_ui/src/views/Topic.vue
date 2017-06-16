@@ -124,10 +124,13 @@
           .category {
             display: inline-block;
             background-color: #2572e5;
+            border-radius: 2px;
             color: white;
             margin-right: 10px;
             padding: 0 7px;
             font-size: 16px;
+            vertical-align: top;
+            margin-top: 5px;
           }
         }
         > div:nth-child(2) {

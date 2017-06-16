@@ -167,6 +167,7 @@
           .category{
             display: inline-block;
             background-color: #256fe8;
+            border-radius: 2px;
             color: white;
             margin-right: 10px;
             padding: 0 7px;
