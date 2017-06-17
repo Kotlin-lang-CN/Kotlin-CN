@@ -9,22 +9,17 @@
         <button v-on:click="applyEdit">确认</button>
       </div>
       <div class="content">
-        <div class="post">
-          <div class="sub-nav">
-            <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
-            <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
-            <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
-                    v-bind:class="{
+        <div class="sub-nav">
+          <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
+          <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
+          <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
+                  v-bind:class="{
               'select': categories.length >= select - 1 && categories[select -2]===category,
               'normal': categories.length >= select - 1 && categories[select -2]!==category
               }">{{category}}
-            </button>
-          </div>
-          <article-list :requestUrl="articleListUrl"></article-list>
+          </button>
         </div>
-        <div class="side">
-          <side-bar :showPostBtn="true"></side-bar>
-        </div>
+        <article-list :requestUrl="articleListUrl"></article-list>
       </div>
     </div>
   </app-layout>
@@ -33,7 +28,7 @@
 <script>
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
-  import ArticleList from '../components/ArticleList.vue';
+  import ArticleList from '../componentsMobile/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import LoginMgr from '../assets/js/LoginMgr';
   import AppLayout from '../layout/AppMobile.vue';
@@ -59,8 +54,6 @@
     },
     mounted(){
       this.articleListUrl = Config.URL.article.fine;
-
-
     },
     created() {
       Net.get({url: Config.URL.misc.homeLink}, (resp) => {
@@ -115,33 +108,28 @@
 
 <style scoped lang="less">
   .home-root {
-    max-width: 1120px;
     margin: auto;
-  }
 
-  .banner {
-    background: #73abfb;
-    text-align: center;
-    line-height: 120px;
-    color: white;
-    font-size: 25px;
-    font-weight: bolder;
-    height: 120px;
-    margin-bottom: 30px;
-  }
-
-  .content {
-    display: flex;
-    box-sizing: border-box;
-
-    .sub-title {
-      text-align: left;
-      padding: 24px 16px;
-      font-size: 24px;
+    .banner {
+      background: #73abfb;
+      text-align: center;
+      line-height: 80px;
+      color: white;
+      font-size: 20px;
+      font-weight: bolder;
+      height: 80px;
+      margin-bottom: 15px;
     }
 
-    .post {
-      width: 75%;
+    .content {
+      box-sizing: border-box;
+      overflow-y: scroll;
+      padding: 0 16px;
+
+      .sub-title {
+        text-align: left;
+        padding: 24px 16px;
+      }
 
       .sub-nav {
         text-align: left;
@@ -149,52 +137,23 @@
           background: white;
           outline: none;
           border: 0;
-          color: #999;
           display: inline-block;
-          font-size: 18px;
+          font-size: 15px;
           padding: 0 16px;
           line-height: 50px;
           height: 50px;
         }
         .select {
-          border-bottom: 4px #2572e5 solid;
+          border-bottom: 2px #2572e5 solid;
           color: #2572e5;
         }
         .normal {
-          border-bottom: 4px white solid;
+          border-bottom: 2px white solid;
           color: #999;
         }
       }
       > button:hover {
         color: #2572e5;
-      }
-    }
-    .side {
-      width: 25%;
-      padding-left: 30px;
-      padding-top: 20px;
-    }
-    .page {
-      > div {
-        display: inline-block;
-        padding: 16px;
-      }
-    }
-
-  }
-
-  @media screen and (max-width: 1000px) {
-    .content {
-      display: block;
-      .post {
-        display: block;
-        float: none;
-        width: 100%;
-      }
-      .side {
-        padding: 0;
-        display: block;
-        width: 100%;
       }
     }
   }

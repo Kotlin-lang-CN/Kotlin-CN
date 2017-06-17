@@ -11,9 +11,9 @@
         <li><a :href="urlEdit">发布新话题</a></li>
       </ul>
       <div class="foot">
-        <div v-on:click="register" v-if="loginInfo.isLogin" class="register">注册</div>
-        <div v-on:click="login" v-if="loginInfo.isLogin" class="login">登录</div>
-        <div v-on:click="logout" v-if="!loginInfo.isLogin" class="logout">注销登录</div>
+        <div v-on:click="register" v-if="!loginInfo.isLogin" class="register">注册</div>
+        <div v-on:click="login" v-if="!loginInfo.isLogin" class="login">登录</div>
+        <div v-on:click="logout" v-if="loginInfo.isLogin" class="logout">注销登录</div>
       </div>
     </div>
   </div>

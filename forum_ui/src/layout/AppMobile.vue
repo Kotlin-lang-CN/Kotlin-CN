@@ -4,7 +4,7 @@
     <label for="drawer-toggle" id="drawer-toggle-label"></label>
 
     <header id="root-header">
-      <app-header></app-header>
+      <span class="logo"><b>Kotlin</b> CHINA</span>
     </header>
 
     <nav id="drawer">
@@ -24,7 +24,6 @@
 
 <script>
   import Event from '../assets/js/Event.js';
-  import Header from '../componentsMobile/Headers.vue';
   import Footer from '../components/Footers.vue';
   import Login from '../componentsMobile/Login.vue';
   import Drawer from '../componentsMobile/Drawer.vue';
@@ -32,7 +31,6 @@
   export default {
     name: 'app',
     components: {
-      'app-header': Header,
       'app-foot': Footer,
       'app-login': Login,
       'app-drawer': Drawer
@@ -47,7 +45,6 @@
         layer.msg(err)
       });
 
-      //TODO
       this.page = this.$refs.page;
       this.page.addEventListener('scroll', () => {
         if (this.page.scrollTop === 0) {
@@ -64,55 +61,7 @@
   }
 </script>
 
-<style>
-  body {
-    margin: 0;
-    font: 16px "Avenir", Helvetica, Arial, sans-serif;
-  }
-
-  .app {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-
-  a {
-    text-decoration: none;
-    font-weight: normal;
-    color: #333;
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  textarea {
-    outline: none;
-    border-radius: 8px;
-  }
-
-  .button, button {
-    cursor: pointer;
-    line-height: 36px;
-    height: 36px;
-    color: #2572e5;
-    padding: 6px 12px;
-    background: transparent;
-    outline: none;
-    border: none;
-    font-size: 16px;
-  }
-</style>
-<!--drawer-->
-<style>
+<style scoped>
   .app-root {
     position: absolute;
     top: 0;
@@ -139,6 +88,7 @@
   #root-header {
     width: 100%;
     position: fixed;
+    background-color: white;
     left: 0;
     z-index: 0;
   }
@@ -157,7 +107,6 @@
   }
 
   #drawer-toggle-label {
-    display: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -165,9 +114,8 @@
     -ms-user-select: none;
     user-select: none;
     left: 0;
-    height: 87px;
+    height: 60px;
     width: 50px;
-
     position: fixed;
     background: rgba(255, 255, 255, .0);
     z-index: 1;
@@ -180,20 +128,28 @@
     height: 2px;
     width: 24px;
     background: #8d8d8d;
-    left: 13px;
-    top: 32px;
+    left: 15px;
+    top: 23px;
     box-shadow: 0 6px 0 #8d8d8d, 0 12px 0 #8d8d8d;
   }
 
   #page-content {
-    margin-left: 0;
-    margin-top: 86px;
     width: 100%;
     height: calc(100% - 50px);
-    overflow-x: hidden;
-    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    padding: 0 16px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  @media all and (-webkit-transform-3d) {
+    #page-content {
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
   }
 
   #drawer-toggle {
@@ -221,10 +177,6 @@
   }
 
   @media screen and (max-width: 480px) {
-    #drawer-toggle-label {
-      display: block;
-    }
-
     #drawer-toggle:checked ~ #drawer-toggle-label {
       height: 100%;
       width: 50px;
@@ -243,6 +195,17 @@
     #drawer-toggle:checked ~ #page-content {
       margin-left: calc(100% - 50px);
     }
+  }
+
+  .logo {
+    color: #6f6f6f;
+    font-size: 20px;
+    line-height: 60px;
+    height: 60px;
+    padding-left: 60px;
+  }
+  .logo b {
+    color: #2572e5;
   }
 </style>
 
@@ -272,7 +235,6 @@
       padding: 0;
       margin: 0;
     }
-
     textarea {
       outline: none;
       border-radius: 8px;
