@@ -28,6 +28,7 @@ const Config = {
       update: CGI.article + '/article/post/{0}/update',
       delete: CGI.article + '/article/post/{0}/delete',
       reply: CGI.article + '/article/{0}/reply',
+      deleteReply: CGI.article + '/article/reply/{0}/delete',
       list: CGI.article + '/article/list',//获取最新文章列表
       fine: CGI.article + '/article/fine', //获取精品文章列表
       category: CGI.article + '/article/category/{0}',//获取特定类别最新文章列表
