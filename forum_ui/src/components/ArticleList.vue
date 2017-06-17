@@ -15,9 +15,7 @@
                 <small v-on:click="toArticle(value.meta.id)" class="tag focus">精品{{ value.is_fine }}</small>
                 <small v-if="showDelete(value)" class="tag focus" v-on:click="deleteArticle(value)">删除</small>
                 <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
-                  <option v-for="option in options" v-bind:value="option.value">
-                    {{ option.text }}
-                  </option>
+                  <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
                 </select>
               </div>
               <span v-if="categories.length >= value.meta.category"

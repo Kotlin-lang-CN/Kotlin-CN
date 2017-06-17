@@ -6,7 +6,9 @@
         <app-avatar :avatar="value.user.username" :size="'middle'"></app-avatar>
         <div class="cont">
           <div>
-            <span>{{ value.user.username }}</span><span>{{ value.meta.create_time | moment}}</span>
+            <span>{{ value.user.username }}</span>
+            <span>{{ value.meta.create_time | moment}}</span>
+            <small v-if="showDelete(value)" v-on:click="deleteArticle(value)">删除</small>
             <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="right" v-if="isAdmin">
               <option v-for="option in options" v-bind:value="option.value">
                 {{ option.text }}
@@ -24,6 +26,88 @@
     <markdown-comment :articleId="articleId"></markdown-comment>
   </div>
 </template>
+
+<script>
+  import Config from "../assets/js/Config.js";
+  import Event from "../assets/js/Event.js";
+  import Net from "../assets/js/Net.js";
+  import Util from "../assets/js/Util.js";
+  import Comment from "./Comment.vue";
+  import DisplayPanels from "./DisplayPanels.vue";
+  import Avatar from "./Avatar.vue";
+  import LoginMgr from '../assets/js/LoginMgr.js';
+
+  export default {
+    data () {
+      return {
+        isAdmin: LoginMgr.isAdmin(),
+        topic: null,
+        content: '',
+        offset: 0,
+        hasMore: true,
+        reply: [],
+        toReplyContent: '',
+        options: [
+          {text: '正常', value: 0},
+          {text: '冻结', value: 1},
+          {text: '删除', value: 2}
+        ],
+      }
+    },
+    props: {
+      articleId: ''
+    },
+    components: {
+      'markdown-comment': Comment,
+      "display-panels": DisplayPanels,
+      "app-avatar": Avatar
+    },
+    created(){
+      this.getReply(0);
+      Event.on('comment-change', () => this.getReply(0));
+      Event.on('login', () => {
+        this.isAdmin = LoginMgr.isAdmin();
+        if (this.isAdmin) this.getReply(0);
+      });
+    },
+    methods: {
+      getReply(index){
+        const limit = 20;
+        Net.get({
+          url: Config.URL.article.reply.format(this.articleId),
+          condition: {offset: index, limit: limit}
+        }, (data) => {
+          let list = data.reply;
+          this.offset = data.next_offset;
+          if (!Array.isArray(list))return;
+          if (index === 0) this.reply = [];
+          this.reply = Array.concat(this.reply, list);
+          this.hasMore = list.length >= limit;
+        })
+      },
+      loadMore(){
+        this.getReply(this.offset);
+      },
+      updateState(reply) {
+        Net.post({
+          url: Config.URL.admin.updateReplyState.format(reply.id),
+          condition: {state: reply.state},
+        }, () => {
+          window.console.log("success!")
+        }, () => {
+          this.get(this.requestUrl, 0)
+        })
+      },
+      showDelete(reply) {
+        let info = LoginMgr.info();
+        return !info.isAdminRole && info.isLogin && info.uid === reply.user.uid
+      },
+      deleteArticle(reply){
+        Net.post({url: Config.URL.article.deleteReply.format(reply.meta.id)}, () => reply.meta.state = 2)
+      }
+    }
+  }
+</script>
 
 <style scoped lang="less">
   .reply {
@@ -80,86 +164,4 @@
     }
   }
 </style>
-<script>
-  import Config from "../assets/js/Config.js";
-  import Event from "../assets/js/Event.js";
-  import Net from "../assets/js/Net.js";
-  import Util from "../assets/js/Util.js";
-  import Comment from "./Comment.vue";
-  import DisplayPanels from "./DisplayPanels.vue";
-  import Avatar from "./Avatar.vue";
-  import LoginMgr from '../assets/js/LoginMgr.js';
-
-  export default {
-    data () {
-      return {
-        isAdmin: LoginMgr.isAdmin(),
-        topic: null,
-        content: '',
-        offset: 0,
-        hasMore: true,
-        reply: [],
-        toReplyContent: '',
-        options: [
-          {text: '正常', value: 0},
-          {text: '冻结', value: 1},
-          {text: '删除', value: 2}
-        ],
-      }
-    },
-    props: {
-      articleId: ''
-    },
-    components: {
-      'markdown-comment': Comment,
-      "display-panels": DisplayPanels,
-      "app-avatar": Avatar
-    },
-    created(){
-      this.getReply(0);
-      Event.on('comment-change', () => {
-        this.getReply(0);
-      });
-      Event.on('login', () => {
-        this.isAdmin = LoginMgr.isAdmin();
-        if (this.isAdmin) this.getReply(0);
-      });
-    },
-    methods: {
-      getReply(index){
-        const limit = 20;
-        Net.ajax({
-          url: Config.URL.article.reply.format(this.articleId),
-          type: "GET",
-          condition: {
-            offset: index,
-            limit: limit
-          }
-        }, (data) => {
-          let list = data.reply;
-          this.offset = data.next_offset;
-          if (!Array.isArray(list))return;
-          if (index === 0) this.reply = [];
-          this.reply = Array.concat(this.reply, list);
-          this.hasMore = list.length >= limit;
-        })
-      },
-      loadMore(){
-        this.getReply(this.offset);
-      },
-      updateState(reply) {
-        Net.post({
-          url: Config.URL.admin.updateReplyState.format(reply.id),
-          condition: {
-            state: reply.state
-          },
-        }, () => {
-          window.console.log("success!")
-        }, () => {
-          this.get(this.requestUrl, 0)
-        })
-      },
-    }
-  }
-</script>
 
