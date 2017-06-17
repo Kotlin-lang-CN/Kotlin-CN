@@ -7,6 +7,7 @@
       </div>
       <ul>
         <li><a :href="urlHome" class="sel">首页</a></li>
+        <li><a href="http://www.kotliner.cn/">社区</a></li>
         <li><a :href="urlEdit">发布新话题</a></li>
       </ul>
       <div class="foot">

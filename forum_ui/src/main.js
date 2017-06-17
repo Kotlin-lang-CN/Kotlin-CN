@@ -1,14 +1,13 @@
 import Vue from 'vue'
 import page from 'page'
 import routes from './router/routes'
+import Event from './assets/js/Event.js'
 import moment from 'moment';
 
 Vue.config.productionTip = false;
 
 moment.locale('zh-cn');
 Vue.filter('moment', function (value) {
-  //formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
-  //return moment(value).format(formatString);
   return moment(value).fromNow();
 });
 
@@ -27,6 +26,7 @@ Object.keys(routes).forEach(route => {
   page(route, (ctx) => {
       app.$root.params = ctx.params;
       app.ViewComponent = Component;
+      Event.emit('update','');
     }
   )
 });

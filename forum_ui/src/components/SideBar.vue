@@ -18,7 +18,6 @@
         <li><a href="https://laravel-china.org/" target="_blank"><i class="laravel"></i></a></li>
         <li><a href="http://golangtc.com/" target="_blank"><i class="golangtc"></i></a></li>
         <li><a href="http://elixir-cn.com/" target="_blank"><i class="elixir"></i></a></li>
-        <!--<li><a href="http://ionichina.com/" target="_blank"><i class="ioni"></i></a></li>-->
         <li><a href="https://testerhome.com/" target="_blank"></a><i class="tester"></i></li>
       </ul>
     </div>

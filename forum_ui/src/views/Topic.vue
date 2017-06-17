@@ -58,7 +58,13 @@
       this.id = this.$root.params.id;
       this.getArticle();
       this.getCategories();
-      Event.on('login', () => this.renderEditUrl())
+      Event.on('login', () => this.renderEditUrl());
+      Event.on('update',() =>{
+        this.id = this.$root.params.id;
+        this.articleId = this.id;
+        this.getArticle();
+        this.getCategories();
+      })
     },
     mounted(){
       this.articleId = this.id;
