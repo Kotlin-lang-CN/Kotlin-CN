@@ -1,50 +1,47 @@
 <template>
   <div id="edit-root">
-    <div class="pc">
-      <nav>
-        <div class="edit-title">
-          <i class="logo"></i>
-          <div class="right">
-            <div class="btn"><span>更多<i class="choice-icon"></i></span>
-              <div class="sub-menu">
-                <section v-on:click="postCancel">放弃编辑</section>
-                <section v-on:click="postDelete">删除文章</section>
-              </div>
-
+    <nav>
+      <div class="edit-title">
+        <i class="logo"></i>
+        <div class="right">
+          <div class="btn"><span>更多<i class="choice-icon"></i></span>
+            <div class="sub-menu">
+              <section v-on:click="postCancel">放弃编辑</section>
+              <section v-on:click="postDelete">删除文章</section>
             </div>
-            <button class="post" v-on:click="preparePostArticle">发布新话题</button>
+
           </div>
-        </div>
-        <div class="edit-operation">
-          <ul>
-            <li v-on:click="addStrong"><i class="strong"></i></li>
-            <li v-on:click="addItalic"><i class="italic"></i></li>
-            <li v-on:click="addLine"><i class="line"></i></li>
-            <li v-on:click="addQuote"><i class="quote"></i></li>
-            <li v-on:click="addCode"><i class="code"></i></li>
-            <li v-on:click="addLink"><i class="link"></i></li>
-            <li v-on:click="addImage"><i class="image"></i></li>
-            <li v-on:click="addUl"><i class="un-order-list"></i></li>
-            <li v-on:click="addOl"><i class="order-list"></i></li>
-            <li v-on:click="addUndo"><i class="undo"></i></li>
-            <li v-on:click="addRedo"><i class="redo"></i></li>
-          </ul>
-        </div>
-      </nav>
-      <div class="main">
-        <div class="inside" @keydown.9="tabFn" v-scroll="editScroll">
-          <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
-          <textarea name="" class="editor" v-model="input"></textarea>
-        </div>
-        <div class="outside" v-scroll="previewScroll">
-          <article-meta :category="category" :title="title" :tags="tags"></article-meta>
-          <display-panels :content="input"></display-panels>
+          <button class="post" v-on:click="preparePostArticle">发布新话题</button>
         </div>
       </div>
-      <article-meta-dialog :category="category" :title="title" :tags="tags"></article-meta-dialog>
-      <app-login></app-login>
+      <div class="edit-operation">
+        <ul>
+          <li v-on:click="addStrong"><i class="strong"></i></li>
+          <li v-on:click="addItalic"><i class="italic"></i></li>
+          <li v-on:click="addLine"><i class="line"></i></li>
+          <li v-on:click="addQuote"><i class="quote"></i></li>
+          <li v-on:click="addCode"><i class="code"></i></li>
+          <li v-on:click="addLink"><i class="link"></i></li>
+          <li v-on:click="addImage"><i class="image"></i></li>
+          <li v-on:click="addUl"><i class="un-order-list"></i></li>
+          <li v-on:click="addOl"><i class="order-list"></i></li>
+          <li v-on:click="addUndo"><i class="undo"></i></li>
+          <li v-on:click="addRedo"><i class="redo"></i></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="main">
+      <div class="inside" @keydown.9="tabFn" v-scroll="editScroll">
+        <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
+        <textarea name="" class="editor" v-model="input"></textarea>
+      </div>
+      <div class="outside" v-scroll="previewScroll">
+        <article-meta :category="category" :title="title" :tags="tags"></article-meta>
+        <display-panels :content="input"></display-panels>
+      </div>
     </div>
-    <div class="mobile">移动端不支持编辑</div>
+    <article-meta-dialog :category="category" :title="title" :tags="tags"></article-meta-dialog>
+    <app-login></app-login>
   </div>
 </template>
 <script>
@@ -567,27 +564,4 @@
       }
     }
   }
-  .mobile{
-    display: none;
-  }
-  @media screen and (max-width: 700px) {
-    .pc{
-      display: none;
-    }
-    .mobile{
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: white;
-      text-align: left;
-      box-sizing: border-box;
-      color: #999;
-      padding-top: 180px;
-      padding-left: 16px;
-    }
-  }
-
 </style>

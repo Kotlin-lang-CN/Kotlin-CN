@@ -10,19 +10,16 @@
       </div>
       <div class="content">
         <div class="post">
-          <div class="post">
-            <div class="sub-nav">
-              <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
-              <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
-              <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
-                      v-bind:class="{
+          <div class="sub-nav">
+            <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
+            <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
+            <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
+                    v-bind:class="{
               'select': categories.length >= select - 1 && categories[select -2]===category,
               'normal': categories.length >= select - 1 && categories[select -2]!==category
               }">{{category}}
-              </button>
+            </button>
 
-            </div>
-            <article-list :requestUrl="articleListUrl"></article-list>
           </div>
           <article-list :requestUrl="articleListUrl"></article-list>
         </div>
