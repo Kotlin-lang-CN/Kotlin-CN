@@ -103,7 +103,7 @@
 
       },
       notifyError() {
-        if (this.showMode === 1) {
+        if (this.showMode === 1 || this.showMode === 3) {
           if (this.nameInput.trim().length < 2) {
             this.error = {key: 'login-name', value: '请输入正确的用户名'}
           } else if (this.passwordInput.length < 8) {
@@ -111,7 +111,7 @@
           } else {
             this.error = false
           }
-        } else if (this.showMode === 2) {
+        } else if (this.showMode === 2 || this.showMode === 4) {
           if (!Utils.isValidEmail(this.emailInput)) {
             this.error = {key: 'register-email', value: '请输入正确的邮箱'}
           } else if (this.nameInput.trim().length < 2) {
@@ -174,11 +174,11 @@
       hide() {
         Cookie.remove('X-App-GitHub');
         this.showMode = 0;
-        let loginAlready = this.loginAlready;
-        if (loginAlready) {
-          this.loginAlready = false;
-          if (LoginMgr.info().isLogin) loginAlready(info);
+        const info = LoginMgr.info();
+        if (this.loginAlready && info.isLogin) {
+          this.loginAlready(info);
         }
+        this.loginAlready = undefined;
         this.nameInput = '';
         this.emailInput = '';
         this.passwordInput = '';

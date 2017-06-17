@@ -11,6 +11,8 @@
             <div class="wrap">
               <div class="title">
                 <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
+                <small v-on:click="toArticle(value.meta.id)" class="tag focus">评论数{{ value.replies }}</small>
+                <small v-on:click="toArticle(value.meta.id)" class="tag focus">精品{{ value.is_fine }}</small>
                 <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
                   <option v-for="option in options" v-bind:value="option.value">
                     {{ option.text }}
@@ -20,8 +22,7 @@
               <span v-if="categories.length >= value.meta.category"
                     class="category"> {{ categories[value.meta.category - 1] }}</span>
               <span class="tag focus" v-on:click="toArticle(value.meta.id)"
-                    v-for="tag in value.meta.tags.split(/;/)">{{ tag
-                }}
+                    v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
             </span>
               <div class="footnote right">
                 {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
@@ -76,13 +77,9 @@
           return;
 
         const limit = 20;
-        Net.ajax({
+        Net.get({
           url: url,
-          type: "GET",
-          condition: {
-            'offset': offset,
-            'limit': limit
-          }
+          condition: {'offset': offset, 'limit': limit}
         }, (data) => {
           if (offset === 0) {
             this.articles = [];
