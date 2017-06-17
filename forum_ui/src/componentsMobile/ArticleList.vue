@@ -71,7 +71,6 @@
           url: url,
           condition: {'offset': offset, 'limit': limit}
         }, (data) => {
-          debugger;
           if (offset === 0) {
             this.articles = [];
           }

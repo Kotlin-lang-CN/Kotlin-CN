@@ -41,11 +41,11 @@
 
   .small {
     line-height: 32px;
-    font-size: 24px;
-    border-radius: 16px;
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
+    font-size: 20px;
+    border-radius: 15px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
   }
 
   .middle {

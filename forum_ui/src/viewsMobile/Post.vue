@@ -6,16 +6,14 @@
           <section>
             <app-avatar :avatar="topic.author.username" :size="'small'"></app-avatar>
             <span class="name">{{topic.author.username}}</span>
+            <span v-if="topic && categories.length >= topic.article.category" class="category">
+              {{ categories[topic.article.category - 1]}}
+            </span>
             <a :href="editUrl" v-if="editUrl !== ''" class="edit">编辑</a>
             <i class="fine"></i>
           </section>
-          <section>
-            <span v-if="topic && categories.length >= topic.article.category" class="category">
-            {{ categories[topic.article.category - 1]}}
-          </span>
-            <span class="title">{{ topic.article.title }}</span>
-          </section>
-          <section>
+          <section class="title">{{ topic.article.title }}</section>
+          <section class="tag-lay">
             <span class="tag" v-for="tag in topic.article.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}</span>
           </section>
           <section class="right">发布于 {{ topic.article.create_time | moment}}</section>
@@ -26,63 +24,10 @@
         </section>
       </article>
 
-      <div class="footer"><i class="icon-com"></i>评论</div>
+      <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论</a>
     </div>
   </app-layout>
 </template>
-
-<style scoped lang="less">
-  .fine {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background: url(../assets/img/fine.png) no-repeat;
-  }
-
-  div.topic {
-    text-align: left;
-    margin: 0 auto 10px auto;
-    article {
-      max-width: 840px;
-      padding: 0 16px;
-      header {
-        border-bottom: 1px #e4e4e4 solid;
-        padding-top: 30px;
-        padding-bottom: 24px;
-        margin-bottom: 20px;
-        .edit {
-          padding: 0 20px;
-          color: red;
-          display: inline-block;
-        }
-      }
-    }
-  }
-
-  .footer {
-    border-top: 1px #e3e3e3 solid;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    height: 45px;
-    line-height: 45px;
-    color: #999;
-    background-color: #fcfcfc;
-    font-size: .28rem;
-    .icon-com {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 1px #ccc solid;
-      margin-top: 10px;
-      vertical-align: top;
-      margin-right: 4px;
-    }
-  }
-</style>
-
 
 <script>
   import LoginMgr from "../assets/js/LoginMgr.js";
@@ -98,13 +43,16 @@
   export default {
     data () {
       return {
+        editUrl: '',
+        commentUrl: '',
+
         id: '',
+        articleId: '',
+
         topic: null,
         content: '',
         reply: [],
         toReplyContent: '',
-        articleId: '',
-        editUrl: '',
         categories: []
       }
     },
@@ -140,7 +88,8 @@
         }, (data) => {
           this.topic = data;
           this.content = data.content.content;
-          this.renderEditUrl()
+          this.renderEditUrl();
+          this.commentUrl = Config.UI.comments + "/" + this.articleId;
         }, (resp) => {
           if (resp.code === 34) window.location.href = "/404"
         })
@@ -170,3 +119,99 @@
     }
   }
 </script>
+
+
+<style scoped lang="less">
+  div.topic {
+    text-align: left;
+    margin: 0 auto 10px auto;
+    article {
+      max-width: 840px;
+      padding: 0 16px;
+      header {
+        border-bottom: 1px #e4e4e4 solid;
+        padding-top: 15px;
+        padding-bottom: 38px;
+        margin-bottom: 20px;
+        font-size: .2rem;
+        color: #999;
+
+        .name {
+          font-size: .28rem;
+          line-height: 30px;
+          margin-left: 8px;
+          vertical-align: top;
+        }
+        .category {
+          font-size: .2rem;
+          display: inline-block;
+          padding: 0 4px;
+          color: white;
+          background-color: #2572e5;
+          vertical-align: top;
+          margin-top: 8px;
+          margin-left: 8px;
+        }
+        .fine {
+          display: inline-block;
+          width: 30px;
+          height: 30px;
+          background: url(../assets/img/fine.png) no-repeat;
+          float: right;
+        }
+        .title {
+          color: #333;
+          font-size: .34rem;
+          line-height: 30px;
+          margin-bottom: 6px;
+        }
+        .tag-lay {
+          padding: 6px 0;
+        }
+        .tag {
+          display: inline-block;
+          background-color: #c9dcf5;
+          color: #333;
+          padding: 5px;
+          line-height: 20px;
+          margin-bottom: 10px;
+          margin-right: 8px;
+        }
+        .right {
+          float: right;
+        }
+        .edit {
+          padding: 8px 10px;
+          color: red;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .footer {
+    display: block;
+    border-top: 1px #e3e3e3 solid;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    height: 45px;
+    line-height: 45px;
+    color: #999;
+    background-color: #fcfcfc;
+    font-size: .28rem;
+
+    .icon-com {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 1px #ccc solid;
+      margin-top: 10px;
+      vertical-align: top;
+      margin-right: 4px;
+    }
+  }
+</style>
+

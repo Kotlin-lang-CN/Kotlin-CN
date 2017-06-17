@@ -1,7 +1,7 @@
 <template>
   <div class="app-root">
     <nav>
-      <div v-on:click="history.back()" class="back">
+      <div v-on:click="back" class="back">
         <i class="icon-back"></i>返回
       </div>
     </nav>
@@ -13,6 +13,16 @@
   </div>
 </template>
 
+<script>
+  export default {
+    methods: {
+      back(){
+        history.back();
+      }
+    }
+  }
+</script>
+
 <style lang="less">
   html {
     font-size: 13.333vw;
@@ -21,6 +31,23 @@
   body {
     margin: 0 !important;
     padding: 0;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: normal;
+    color: #333;
   }
 
   .app-root {
@@ -34,7 +61,8 @@
       position: fixed;
       left: 0;
       right: 0;
-      margin: 0 15px;
+      padding: 0 15px;
+      z-index: 2;
 
       .icon-back {
         vertical-align: top;

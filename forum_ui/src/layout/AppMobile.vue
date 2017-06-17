@@ -212,6 +212,9 @@
 
 <!--global style-->
 <style lang="less">
+  html {
+    font-size: 13.333vw;
+  }
   body {
     margin: 0;
     font: 16px "Avenir", Helvetica, Arial, sans-serif;
