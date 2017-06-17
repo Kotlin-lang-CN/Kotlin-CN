@@ -37,7 +37,7 @@
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import LoginMgr from '../assets/js/LoginMgr';
-  import AppLayout from '../App.vue';
+  import AppLayout from '../layout/AppMobile.vue';
   import Event from '../assets/js/Event.js';
 
   export default {

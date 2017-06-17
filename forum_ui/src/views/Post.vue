@@ -34,7 +34,7 @@
 
   import DisplayPanels from '../components/DisplayPanels.vue';
   import Reply from '../components/Reply.vue';
-  import AppLayout from '../App.vue'
+  import AppLayout from '../layout/AppMobile.vue'
 
   export default {
     data () {

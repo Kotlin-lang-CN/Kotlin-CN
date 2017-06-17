@@ -23,11 +23,11 @@
 </template>
 
 <script>
-  import Event from './assets/js/Event.js';
-  import Header from './components/Headers.vue';
-  import Footer from './components/Footers.vue';
-  import Login from './components/Login.vue';
-  import Drawer from './components/Drawer.vue';
+  import Event from '../assets/js/Event.js';
+  import Header from '../components/Headers.vue';
+  import Footer from '../components/Footers.vue';
+  import Login from '../components/Login.vue';
+  import Drawer from '../components/Drawer.vue';
 
   export default {
     name: 'app',
