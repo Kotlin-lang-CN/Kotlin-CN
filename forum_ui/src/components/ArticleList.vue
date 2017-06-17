@@ -50,7 +50,7 @@
       return {
         isAdmin: LoginMgr.isAdmin(),
         loading: false,
-        urlTopic: Config.UI.topic + '/',
+        urlTopic: Config.UI.post + '/',
         articles: [],
         offset: 0,
         hasMore: false,

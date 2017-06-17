@@ -10,18 +10,24 @@
       </div>
       <div class="content">
         <div class="post">
-          <div class="sub-nav">
-            <button v-bind:class="{ 'select': select==='fine', 'normal': select!=='fine' }"
-                    v-on:click="selectFine">精品
-            </button>
-            <button v-bind:class="{ 'select': select==='latest', 'normal': select!=='latest' }"
-                    v-on:click="selectLatest">最新
-            </button>
+          <div class="post">
+            <div class="sub-nav">
+              <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
+              <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
+              <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
+                      v-bind:class="{
+              'select': categories.length >= select - 1 && categories[select -2]===category,
+              'normal': categories.length >= select - 1 && categories[select -2]!==category
+              }">{{category}}
+              </button>
+
+            </div>
+            <article-list :requestUrl="articleListUrl"></article-list>
           </div>
           <article-list :requestUrl="articleListUrl"></article-list>
         </div>
         <div class="side">
-          <side-bar :showPost="false"></side-bar>
+          <side-bar :showPostBtn="true"></side-bar>
         </div>
       </div>
     </div>
@@ -47,6 +53,7 @@
         editURL: false,
         urlInput: '',
         isAdmin: LoginMgr.isAdmin(),
+        categories: [],
       }
     },
     components: {
@@ -62,15 +69,34 @@
         this.urlInput = resp.link;
         this.link = resp.link;
       });
+      this.getCategories();
+      setTimeout(() => {
+        this.getLatest()
+      }, 200)
     },
     methods: {
+      selectCategory(id){
+        this.articleListUrl = Config.URL.article.category.format(id);
+        this.select = id + 1;
+      },
       selectFine(){
-        this.select = 'fine';
+        this.select = 1;
         this.articleListUrl = Config.URL.article.fine;
       },
-      selectLatest(){
-        this.select = 'latest';
+      getCategories(){
+        if (!window.data) window.data = {};
+        if (window.data.categories) {
+          this.categories = window.data.categories;
+        } else {
+          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+            window.data.categories = resp.category;
+            this.categories = resp.category;
+          });
+        }
+      },
+      getLatest() {
         this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
+        this.select = 0;
       },
       homeLink() {
         if (this.link !== '') window.location.href = this.link
@@ -109,6 +135,7 @@
   .content {
     display: flex;
     box-sizing: border-box;
+
     .sub-title {
       text-align: left;
       padding: 24px 16px;
@@ -117,6 +144,7 @@
 
     .post {
       width: 75%;
+
       .sub-nav {
         text-align: left;
         > button {
@@ -139,11 +167,14 @@
           color: #999;
         }
       }
+      > button:hover {
+        color: #2572e5;
+      }
     }
     .side {
-      padding-left: 30px;
       width: 25%;
-      padding-top: 8px;
+      padding-left: 30px;
+      padding-top: 20px;
     }
     .page {
       > div {
@@ -151,6 +182,7 @@
         padding: 16px;
       }
     }
+
   }
 
   @media screen and (max-width: 1000px) {

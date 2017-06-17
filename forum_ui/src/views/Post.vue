@@ -59,11 +59,13 @@
       this.getArticle();
       this.getCategories();
       Event.on('login', () => this.renderEditUrl());
-      Event.on('update',() =>{
+      Event.on('update', () => {
         this.id = this.$root.params.id;
-        this.articleId = this.id;
-        this.getArticle();
-        this.getCategories();
+        if (this.id) {
+          this.articleId = this.id;
+          this.getArticle();
+          this.getCategories();
+        }
       })
     },
     mounted(){

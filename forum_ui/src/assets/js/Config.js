@@ -51,12 +51,8 @@ const Config = {
   UI: {
     root: '/',
     account: '/account',
-    register: '/register',
-    login: '/login',
     edit: '/edit',
-    topics: '/topics',
-    manager: '/manager',
-    topic: '/topic'
+    post: '/post'
   }
 };
 export default Config;

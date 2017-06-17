@@ -10,6 +10,7 @@
                 <section v-on:click="postCancel">放弃编辑</section>
                 <section v-on:click="postDelete">删除文章</section>
               </div>
+
             </div>
             <button class="post" v-on:click="preparePostArticle">发布新话题</button>
           </div>

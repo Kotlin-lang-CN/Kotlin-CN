@@ -21,7 +21,7 @@
       if (this.size === 'small' || this.size === 'middle') {
         this.avatarSize = this.size;
       }
-      if (this.avatar.length > 0) {
+      if (this.avatar && this.avatar.length > 0) {
         this.text = this.avatar.charAt(0).toUpperCase();
         this.color = "background-color:"
           + this.colors[this.avatar.charCodeAt(0) % this.colors.length];

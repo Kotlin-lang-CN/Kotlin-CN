@@ -1,9 +1,6 @@
 export default {
   '/': 'Home',
-  '/topics': 'Topics',
-  '/topic/:id': 'Topic',
+  '/post/:id': 'Post',
   '/edit': 'Edit',
   '/edit/:id': 'Edit',
-  '/account': 'Account',
-  '/account/github': 'Github'
 }

@@ -3,7 +3,8 @@
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
         <a :href="urlRoot" class="menu-header"><i class="logo"></i></a>
-        <div class="menu-main"><a :href="urlTopics" title="社区">社区</a></div>
+        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a>
+        </div>
 
         <div class="menu-authen menu-right" v-if="!loginInfo.isLogin">
           <a v-on:click="register" href="javascript:void(0);">注册</a>
@@ -140,6 +141,7 @@
           height: 38px;
           line-height: 38px;
           text-align: center;
+          margin-left: 20px;
           margin-right: 20px;
           padding-top: 26px;
           padding-bottom: 24px;

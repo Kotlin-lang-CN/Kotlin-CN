@@ -10,7 +10,6 @@ local.properties
 out
 !build.release
 node_modules
-*.log
 web/.DS_Store
 web/node_modules/
 web/dist/
@@ -19,4 +18,6 @@ web/yarn-debug.log*
 web/yarn-error.log*
 web/test/unit/coverage
 log/
+account/src/main/resources/project.properties
+article/src/main/resources/project.properties
 
