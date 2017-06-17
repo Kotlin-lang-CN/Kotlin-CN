@@ -36,9 +36,8 @@
   import ArticleList from '../components/ArticleList.vue';
   import SideBar from '../components/SideBar.vue';
   import LoginMgr from '../assets/js/LoginMgr';
-  import AppLayout from '../layout/AppWeb.vue';
+  import AppLayout from '../layout/AppMobile.vue';
   import Event from '../assets/js/Event.js';
-  import Util from '../assets/js/Util.js';
 
   export default {
     data() {
@@ -60,9 +59,8 @@
     },
     mounted(){
       this.articleListUrl = Config.URL.article.fine;
-      if(Util.isMobile()){
-          window.location.href = Config.MUI.root;
-      }
+
+
     },
     created() {
       Net.get({url: Config.URL.misc.homeLink}, (resp) => {
@@ -183,5 +181,21 @@
       }
     }
 
+  }
+
+  @media screen and (max-width: 1000px) {
+    .content {
+      display: block;
+      .post {
+        display: block;
+        float: none;
+        width: 100%;
+      }
+      .side {
+        padding: 0;
+        display: block;
+        width: 100%;
+      }
+    }
   }
 </style>

@@ -31,11 +31,10 @@
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
-  import Util from '../assets/js/Util.js';
 
   import DisplayPanels from '../components/DisplayPanels.vue';
   import Reply from '../components/Reply.vue';
-  import AppLayout from '../layout/AppWeb.vue'
+  import AppLayout from '../layout/AppMobile.vue'
 
   export default {
     data () {
@@ -71,9 +70,6 @@
     },
     mounted(){
       this.articleId = this.id;
-      if(Util.isMobile()){
-        window.location.href = Config.MUI.post + "/" + this.articleId;
-      }
     },
     methods: {
       getArticle(){

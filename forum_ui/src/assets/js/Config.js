@@ -54,6 +54,13 @@ const Config = {
     account: '/account',
     edit: '/edit',
     post: '/post'
+  },
+  MUI: {
+    root: '/m/',
+    account: '/m/account',
+    edit: '/m/edit',
+    post: '/m/post'
   }
+
 };
 export default Config;

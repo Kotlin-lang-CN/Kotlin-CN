@@ -35,7 +35,7 @@
   import LoginMgr from '../assets/js/LoginMgr.js';
   import Event from '../assets/js/Event.js';
   import Config from '../assets/js/Config.js';
-  import Avatar from "./Avatar.vue";
+  import Avatar from "../components/Avatar.vue";
   import Net from '../assets/js/Net.js';
   import Cookie from 'js-cookie';
 
@@ -119,144 +119,155 @@
 
 <style scoped lang="less">
   .header {
-    .not-top {
-      -webkit-box-shadow: 0 0 10px #f1f1f1;
-      -moz-box-shadow: 0 0 10px #f1f1f1;
-      box-shadow: 0 0 10px #f1f1f1;
+    min-width: 320px;
+  .not-top {
+    -webkit-box-shadow: 0 0 10px #f1f1f1;
+    -moz-box-shadow: 0 0 10px #f1f1f1;
+    box-shadow: 0 0 10px #f1f1f1;
+  }
+  .nav-bar {
+    background: white;
+    padding: 0 16px;
+    font-size: 20px;
+  .nav-content {
+    max-width: 1120px;
+    min-height: 86px;
+    margin: auto;
+  > div {
+      display: inline-block;
     }
-    .nav-bar {
-      background: white;
-      padding: 0 16px;
-      font-size: 20px;
-      .nav-content {
-        width: 1120px;
-        height: 86px;
-        margin: auto;
-        > div {
-          display: inline-block;
-        }
 
-        .menu-main {
-          height: 38px;
-          line-height: 38px;
-          text-align: center;
-          margin-left: 20px;
-          margin-right: 20px;
-          padding-top: 26px;
-          padding-bottom: 24px;
-          vertical-align: top;
-        }
-        a.menu-header {
-          display: inline-block;
-          padding-top: 21px;
-          padding-bottom: 14px;
-          .logo {
-            display: inline-block;
-            width: 192px;
-            height: 45px;
-            background: url(../assets/img/logo_big.png) no-repeat center;
-            background-size: 99% 99%;
-          }
-        }
-        .menu-user {
-          .add-icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            background: url(../assets/img/add-icon.png) no-repeat;
-          }
-          .choice-icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            vertical-align: bottom;
-            margin-bottom: 12px;
-            background: url(../assets/img/choice-icon.png) no-repeat;
-          }
-          .btn {
-            position: relative;
-            vertical-align: top;
-            height: 86px;
-            display: inline-block;
-            text-align: center;
-          }
-          .btn > span {
-            margin-right: auto;
-            display: block;
-            line-height: 86px;
-            min-height: 86px;
-            width: 78px;
-            i {
-              margin-top: 24px;
-            }
-          }
-          .btn > span:hover {
-            background-color: #f9f9f9;
-          }
-          .btn .sub-menu {
-            display: none;
-          }
-          .btn:hover .sub-menu {
-            position: absolute;
-            background-color: white;
-            right: -1px;
-            width: 182px;
-            height: 62px;
-            display: block;
-            box-shadow: 0 0 10px #ccc;
-            a {
-              display: block;
-              line-height: 62px;
-              color: #333;
-            }
-            button {
-              display: block;
-              line-height: 62px;
-              color: #333;
-              height: 62px;
-              width: 182px;
-            }
-          }
-          .btn .sub-menu:hover {
-            background-color: #f8fbff;
-            a {
-              color: #2572e5;
-            }
-            button {
-              color: #2572e5;
-            }
-          }
-        }
-        .menu-authen {
-          > a {
-            margin: 24px 0;
-            display: inline-block;
-            width: 96px;
-            height: 38px;
-            line-height: 38px;
-            text-align: center;
-          }
-          > a:nth-child(2) {
-            border: 1px #2572e5 solid;
-            border-radius: 2px;
-            color: #2572e5;
-          }
-          > a:nth-child(2):hover {
-            color: #4599f7;
-            background-color: #f8fbff;
-          }
-          > a:nth-child(2):active {
-            color: #2572e5;
-            background-color: #ecf4ff;
-          }
-        }
-        .menu-right {
-          float: right;
-          font-size: 16px;
-          position: relative;
-        }
+  .menu-main {
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 26px;
+    padding-bottom: 24px;
+    vertical-align: top;
+  }
+  a.menu-header {
+    display: inline-block;
+    padding-top: 21px;
+    padding-bottom: 14px;
+  .logo {
+    display: inline-block;
+    width: 192px;
+    height: 45px;
+    background: url(../assets/img/logo_big.png) no-repeat center;
+    background-size: 99% 99%;
+  }
+  }
+  .menu-user {
+  .add-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: url(../assets/img/add-icon.png) no-repeat;
+  }
+  .choice-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    vertical-align: bottom;
+    margin-bottom: 12px;
+    background: url(../assets/img/choice-icon.png) no-repeat;
+  }
+  .btn {
+    position: relative;
+    vertical-align: top;
+    height: 86px;
+    display: inline-block;
+    text-align: center;
+  }
+  .btn > span {
+    margin-right: auto;
+    display: block;
+    line-height: 86px;
+    min-height: 86px;
+    width: 78px;
+  i {
+    margin-top: 24px;
+  }
+  }
+  .btn > span:hover {
+    background-color: #f9f9f9;
+  }
+  .btn .sub-menu {
+    display: none;
+  }
+  .btn:hover .sub-menu {
+    position: absolute;
+    background-color: white;
+    right: -1px;
+    width: 182px;
+    height: 62px;
+    display: block;
+    box-shadow: 0 0 10px #ccc;
+  a {
+    display: block;
+    line-height: 62px;
+    color: #333;
+  }
+  button {
+    display: block;
+    line-height: 62px;
+    color: #333;
+    height: 62px;
+    width: 182px;
+  }
+  }
+  .btn .sub-menu:hover {
+    background-color: #f8fbff;
+  a {
+    color: #2572e5;
+  }
+  button {
+    color: #2572e5;
+  }
+  }
+  }
+  .menu-authen {
+  > a {
+      margin: 24px 0;
+      display: inline-block;
+      width: 96px;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+    }
+  > a:nth-child(2) {
+      border: 1px #2572e5 solid;
+      border-radius: 2px;
+      color: #2572e5;
+    }
+  > a:nth-child(2):hover {
+      color: #4599f7;
+      background-color: #f8fbff;
+    }
+  > a:nth-child(2):active {
+      color: #2572e5;
+      background-color: #ecf4ff;
+    }
+  }
+  .menu-right {
+    float: right;
+    font-size: 16px;
+    position: relative;
+  }
 
-      }
+  }
+  }
+  }
+
+  @media screen and (max-width: 480px) {
+    .header .nav-bar .nav-content a.menu-header {
+      padding-left: 50px;
+    }
+
+    .header .nav-bar .nav-content > div {
+      display: none !important;
     }
   }
 </style>

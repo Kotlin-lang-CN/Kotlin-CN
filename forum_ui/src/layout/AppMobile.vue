@@ -24,10 +24,10 @@
 
 <script>
   import Event from '../assets/js/Event.js';
-  import Header from '../components/Headers.vue';
+  import Header from '../componentsMobile/Headers.vue';
   import Footer from '../components/Footers.vue';
-  import Login from '../components/Login.vue';
-  import Drawer from '../components/Drawer.vue';
+  import Login from '../componentsMobile/Login.vue';
+  import Drawer from '../componentsMobile/Drawer.vue';
 
   export default {
     name: 'app',

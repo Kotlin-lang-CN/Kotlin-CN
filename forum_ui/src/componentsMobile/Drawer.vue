@@ -21,7 +21,7 @@
 <script>
   import LoginMgr from '../assets/js/LoginMgr.js';
   import Config from "../assets/js/Config.js";
-  import Avatar from "./Avatar.vue";
+  import Avatar from "../components/Avatar.vue";
   import Event from '../assets/js/Event.js';
 
   export default {

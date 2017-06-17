@@ -11,14 +11,16 @@ Vue.filter('moment', function (value) {
   return moment(value).fromNow();
 });
 
-Array.prototype.indexOf = function(val) {
+
+
+Array.prototype.indexOf = function (val) {
   for (let i = 0; i < this.length; i++) {
     if (this[i] === val) return i;
   }
   return -1;
 };
 
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
   const index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
@@ -36,11 +38,11 @@ const app = new Vue({
 });
 
 Object.keys(routes).forEach(route => {
-  const Component = require('./views/' + routes[route] + '.vue');
+  const Component = require(routes[route] + '.vue');
   page(route, (ctx) => {
       app.$root.params = ctx.params;
       app.ViewComponent = Component;
-      Event.emit('update','');
+      Event.emit('update', '');
     }
   )
 });
