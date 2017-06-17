@@ -71,9 +71,6 @@
     },
     mounted(){
       this.articleId = this.id;
-      if(Util.isMobile()){
-        window.location.href = Config.MUI.post + "/" + this.articleId;
-      }
     },
     methods: {
       getArticle(){

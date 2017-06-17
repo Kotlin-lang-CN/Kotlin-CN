@@ -204,6 +204,7 @@
     height: 60px;
     padding-left: 60px;
   }
+
   .logo b {
     color: #2572e5;
   }

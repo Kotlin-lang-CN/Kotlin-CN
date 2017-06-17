@@ -41,7 +41,7 @@
       return {
         isAdmin: LoginMgr.isAdmin(),
         loading: false,
-        urlTopic: Config.MUI.post + '/',
+        urlTopic: Config.UI.post + '/',
         articles: [],
         offset: 0,
         hasMore: false,
@@ -71,6 +71,7 @@
           url: url,
           condition: {'offset': offset, 'limit': limit}
         }, (data) => {
+          debugger;
           if (offset === 0) {
             this.articles = [];
           }
@@ -136,7 +137,7 @@
       color: #999;
       font-size: 10px;
       padding: 15px 0 10px 0;
-      section{
+      section {
         margin-bottom: 5px;
       }
       .name {
@@ -151,7 +152,7 @@
         font-size: 12px;
         padding: 0 6px;
       }
-      .title{
+      .title {
         color: #333;
         font-size: 15px;
       }

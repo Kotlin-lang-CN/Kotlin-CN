@@ -11,7 +11,12 @@ Vue.filter('moment', function (value) {
   return moment(value).fromNow();
 });
 
-
+function isMobile() {
+  let ua = navigator.userAgent;
+  return ua.match(/(Android)[\s\/]+([\d\.]+)/) !== null
+    || ua.match(/(iPad|iPhone|iPod)\s+OS\s([\d_\.]+)/) !== null
+    || ua.match(/(Windows\s+Phone)\s([\d\.]+)/) !== null;
+}
 
 Array.prototype.indexOf = function (val) {
   for (let i = 0; i < this.length; i++) {
@@ -38,7 +43,12 @@ const app = new Vue({
 });
 
 Object.keys(routes).forEach(route => {
-  const Component = require(routes[route] + '.vue');
+  let Component;
+  if (isMobile() && !route.startsWith("/m")) {
+    Component = require(routes["/m" + route] + '.vue');
+  } else {
+    Component = require(routes[route] + '.vue');
+  }
   page(route, (ctx) => {
       app.$root.params = ctx.params;
       app.ViewComponent = Component;

@@ -60,9 +60,6 @@
     },
     mounted(){
       this.articleListUrl = Config.URL.article.fine;
-      if(Util.isMobile()){
-          window.location.href = Config.MUI.root;
-      }
     },
     created() {
       Net.get({url: Config.URL.misc.homeLink}, (resp) => {
