@@ -71,7 +71,7 @@
     padding: 0 16px;
     color: #2c3e50;
   }
-
+  
   a {
     text-decoration: none;
     font-weight: normal;

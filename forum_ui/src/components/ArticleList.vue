@@ -11,12 +11,16 @@
             <div class="wrap">
               <div class="title">
                 <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
-                <small v-on:click="toArticle(value.meta.id)" class="tag focus">评论数{{ value.replies }}</small>
-                <small v-if="showDelete(value)" class="tag focus" v-on:click="deleteArticle(value)">删除</small>
-                <i v-if="value.is_fine" class="fine"></i>
-                <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
-                  <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
-                </select>
+
+                <div class="extra">
+                  <select v-on:change="updateState(value.meta)" v-model="value.meta.state" v-if="isAdmin">
+                    <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
+                  </select>
+                  <small v-if="showDelete(value)" class="delete" v-on:click="deleteArticle(value)">删除</small>
+                  <small v-on:click="toArticle(value.meta.id)" class="reply-count">{{ value.replies }}</small>
+                  <i v-if="value.is_fine" class="fine"></i>
+                </div>
+
               </div>
               <span v-if="categories.length >= value.meta.category"
                     class="category"> {{ categories[value.meta.category - 1] }}</span>
@@ -138,6 +142,10 @@
     .list:nth-child(1) {
       border-top: 0;
     }
+    .list section:hover .flex .delete{
+      display: inline-block;
+    }
+
     .list {
       border-top: 1px #f1f1f1 solid;
       display: block;
@@ -176,22 +184,33 @@
             margin-right: 10px;
             padding: 0 7px;
           }
+          .reply-count {
+            font-size: 18px;
+            padding: 0 18px;
+            background-color: #c9dcf6;
+            color: white;
+          }
+          .delete {
+            display: none;
+            font-size: 14px;
+            color: red;
+          }
           .fine {
             display: inline-block;
             width: 30px;
             height: 30px;
             float: right;
-            margin-top: 5px;
+            margin-top: 3px;
+            margin-left: 12px;
             background: url(../assets/img/fine.png) no-repeat;
-            background-size: 50% 50%;
           }
           .focus {
             cursor: pointer;
           }
-          .control {
+          .extra {
             position: absolute;
             right: 0;
-            bottom: 36px;
+            top: -3px;
           }
           .right {
             position: absolute;

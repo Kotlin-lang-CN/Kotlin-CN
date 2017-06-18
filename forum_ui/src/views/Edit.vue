@@ -10,7 +10,8 @@
               <section v-on:click="postDelete">删除文章</section>
             </div>
           </div>
-          <button class="post" v-on:click="preparePostArticle">发布新话题</button>
+          <button class="post" v-on:click="preparePostArticle" v-if="updateMode">确认修改</button>
+          <button class="post" v-on:click="preparePostArticle" v-if="!updateMode">发布新话题</button>
         </div>
       </div>
 
