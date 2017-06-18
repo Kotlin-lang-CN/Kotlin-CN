@@ -54,7 +54,6 @@
     font-weight: normal;
     color: #333;
   }
-
   .app-root {
     > nav {
       border-bottom: 1px #f1f1f1 solid;
