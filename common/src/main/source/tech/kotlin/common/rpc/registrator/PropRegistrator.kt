@@ -1,6 +1,6 @@
 package tech.kotlin.common.rpc.registrator
 
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.int
 import java.net.InetSocketAddress

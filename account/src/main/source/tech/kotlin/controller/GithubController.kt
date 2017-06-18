@@ -4,12 +4,10 @@ import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.service.domain.Device
 import tech.kotlin.common.utils.ok
-import tech.kotlin.service.Githubs
 import tech.kotlin.service.account.SessionApi
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.service.account.GithubApi
-import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.account.req.*
 import tech.kotlin.service.domain.UserInfo
 

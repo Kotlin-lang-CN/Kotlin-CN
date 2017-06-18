@@ -4,6 +4,7 @@ import spark.Route
 import tech.kotlin.common.os.Abort
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.service.Err
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

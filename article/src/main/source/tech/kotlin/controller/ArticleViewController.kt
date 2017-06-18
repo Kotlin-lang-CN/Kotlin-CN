@@ -12,7 +12,7 @@ import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.article.ArticleApi
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.req.QueryReplyCountByArticleReq

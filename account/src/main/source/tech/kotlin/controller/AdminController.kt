@@ -14,7 +14,7 @@ import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.ReplyApi
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.service.account.req.ChangeUserStateReq
 import tech.kotlin.service.account.req.CheckTokenReq
