@@ -21,7 +21,7 @@
       if (this.size === 'small' || this.size === 'middle') {
         this.avatarSize = this.size;
       }
-      if (this.avatar.length > 0) {
+      if (this.avatar && this.avatar.length > 0) {
         this.text = this.avatar.charAt(0).toUpperCase();
         this.color = "background-color:"
           + this.colors[this.avatar.charCodeAt(0) % this.colors.length];
@@ -41,11 +41,11 @@
 
   .small {
     line-height: 32px;
-    font-size: 24px;
-    border-radius: 16px;
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
+    font-size: 20px;
+    border-radius: 15px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
   }
 
   .middle {

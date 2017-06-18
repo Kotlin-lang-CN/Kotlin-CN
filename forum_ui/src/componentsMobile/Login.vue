@@ -1,20 +1,25 @@
 <template>
   <div class="dialog" v-if="showMode !==0">
-    <div class="bg" v-on:click="hide"></div>
+    <i class="close" v-on:click="showMode = 0"></i>
+
     <div class="cont">
-      <i class="logo"></i>
+      <div class="logo"><b>Kotlin</b> CHINA</div>
+      <div class="switcher">
+        <div v-bind:class="{'sel' : showMode === 2 || showMode === 4 ,'nor' : showMode === 1 || showMode === 3} "
+             v-on:click="switchMode">注册
+        </div>
+        <div v-bind:class="{'sel' : showMode === 1 || showMode === 3 ,'nor' : showMode === 2 || showMode === 4} "
+             v-on:click="switchMode">登录
+        </div>
+      </div>
       <div class="login" v-if="showMode === 1 || showMode === 3">
         <p v-if="showMode === 3">绑定GitHub账号到一个已创建的账号</p>
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
         <span v-if="error && error.key == 'login-name'" class="error">{{ error.value }}</span>
         <input v-model="passwordInput" type="password" name="password" placeholder="用户密码"/>
         <span v-if="error && error.key == 'login-password'" class="error">{{ error.value }}</span>
-        <button v-on:click="login" class="big-btn" v-if="showMode === 1">登录</button>
-        <button v-on:click="login" class="big-btn" v-if="showMode === 3">确认基本信息</button>
-        <div class="small-btn">
-          <button v-on:click="switchMode" v-if="showMode === 1">还没有账号</button>
-          <button v-on:click="switchMode" v-if="showMode === 3">或者创建全新的账号</button>
-        </div>
+        <button v-on:click="login" class="btn" v-if="showMode === 1">登录</button>
+        <button v-on:click="login" class="btn" v-if="showMode === 3">确认基本信息</button>
       </div>
       <div class="register" v-if="showMode === 2 || showMode === 4">
         <p v-if="showMode === 4">使用GitHub账号首次登录需要完善以下基本信息</p>
@@ -27,16 +32,124 @@
         <input v-model="passwordRepeatInput" v-if="passwordInput.length >=8"
                type="password" name="password" placeholder="再次输入密码"/>
         <span v-if="error && error.key == 'register-password-repeat'" class="error">{{ error.value }}</span>
-        <button v-on:click="register" class="big-btn" v-if="showMode === 2">注册并登录</button>
-        <button v-on:click="register" class="big-btn" v-if="showMode === 4">创建并绑定</button>
-        <div class="small-btn">
-          <button v-on:click="switchMode" v-if="showMode === 2">已有账号，去登陆</button>
-          <button v-on:click="switchMode" v-if="showMode === 4">绑定一个已有账号</button>
-        </div>
+        <button v-on:click="register" class="btn" v-if="showMode === 2">注册并登录</button>
+        <button v-on:click="register" class="btn" v-if="showMode === 4">创建并绑定</button>
       </div>
     </div>
+
   </div>
 </template>
+
+<style scoped lang="less">
+  .dialog {
+    z-index: 5;
+    position: absolute;
+    background-color: white;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .cont {
+    text-align: center;
+    width: 292px;
+    line-height: 44px;
+    margin: 8% auto 0 auto;
+    color: #999;
+  }
+
+  .logo {
+    font-size: 25px;
+    font-weight: bolder;
+    color: #6f6f6f;
+    margin-bottom: 30px;
+
+    b {
+      color: #2572e5;
+    }
+  }
+
+  .close {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    border: 1px #ccc solid;
+    margin-left: 15px;
+    margin-top: 15px;
+  }
+
+  .switcher {
+    border-bottom: 1px #f1f1f1 solid;
+    margin-bottom: 7px;
+    > div {
+      display: inline-block;
+      width: 49%;
+    }
+    .sel {
+      color: #2572e5;
+      border-bottom: 3px #2572e5 solid;
+    }
+    .nor {
+      border-bottom: 3px transparent solid;
+    }
+  }
+
+  input {
+    box-sizing: border-box;
+    display: block;
+    margin-top: 5px;
+    border: 1px #ddd solid;
+    border-radius: 3px;
+    outline: none;
+    width: 100%;
+    height: 44px;
+    font-size: 13px;
+    padding: 0 10px;
+  }
+
+  input:hover {
+    -webkit-box-shadow: 0 0 3px #2e8ded;
+  }
+
+  input::-webkit-input-placeholder {
+    color: #999;
+  }
+
+  input::-moz-placeholder {
+    color: #999;
+  }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 15px;
+    display: block;
+    height: 44px;
+    line-height: 33px;
+    background-color: #2572e5;
+    color: white;
+    font-size: 15px;
+    border-radius: 2px;
+  }
+  .btn:active {
+    background-color: #1c4ecf;
+  }
+  .error {
+    text-align: left;
+    display: block;
+    font-size: 10px;
+    color: #fb6666;
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+  }
+
+</style>
+
 <script>
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
@@ -184,101 +297,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .dialog .cont {
-    margin-left: calc(50% - 253px);
-  }
-</style>
-
-<style scoped lang="less">
-  .dialog {
-    position: fixed;
-    z-index: 3;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    .bg {
-      position: absolute;
-      background: #000000;
-      filter: alpha(opacity=50);
-      -moz-opacity: 0.5;
-      opacity: 0.5;
-      width: 100%;
-      height: 100%;
-    }
-    .cont {
-      position: absolute;
-      width: 506px;
-      margin-top: 200px;
-      padding: 40px;
-      box-sizing: border-box;
-      background: white;
-      border: 1px #f1f1f1 solid;
-      box-shadow: 0 0 3px #2572e5;
-      .logo {
-        display: block;
-        width: 192px;
-        height: 45px;
-        background: url(../assets/img/logo.png) no-repeat;
-        margin: 15px auto 40px auto;
-      }
-      input {
-        display: block;
-        margin: 20px auto 10px auto;
-        border: 1px #ddd solid;
-        border-radius: 3px;
-        outline: none;
-        width: 100%;
-        height: 60px;
-        font-size: 20px;
-        padding: 0 10px;
-      }
-      input:hover {
-        -webkit-box-shadow: 0 0 3px #2e8ded;
-      }
-      input::-webkit-input-placeholder {
-        color: #999;
-      }
-      input::-moz-placeholder {
-        color: #999;
-      }
-      input:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0 1000px #fff inset;
-      }
-      .error {
-        display: block;
-        font-size: 14px;
-        color: #fb6666;
-        width: 100%;
-        height: 20px;
-      }
-      .big-btn {
-        margin: 30px auto 0 auto;
-        display: block;
-        width: 100%;
-        height: 60px;
-        background-color: #2572e5;
-        color: white;
-        font-size: 24px;
-      }
-      .big-btn:hover {
-        background-color: #4599f7;
-      }
-      .big-btn:active {
-        background-color: #1c4ecf;
-      }
-      .small-btn {
-        margin: 4px auto 10px auto;
-        width: 100%;
-        button {
-          color: #3989f8;
-        }
-        button:nth-child(2) {
-          float: right;
-        }
-      }
-    }
-  }
-</style>

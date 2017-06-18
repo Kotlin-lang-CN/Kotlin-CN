@@ -14,13 +14,14 @@ import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.ReplyApi
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.service.account.req.ChangeUserStateReq
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.ChangeReplyStateReq
 import tech.kotlin.service.article.req.QueryLatestArticleReq
+import tech.kotlin.service.article.req.QueryReplyCountByArticleReq
 import tech.kotlin.service.article.req.UpdateArticleReq
 
 /*********************************************************************
@@ -127,12 +128,21 @@ object AdminController {
             }).info)
         }
 
+        val replies = HashMap<Long, Int>()
+        if (articles.isNotEmpty()) {
+            replies.putAll(replyApi.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+                this.id = articles.map { it.id }.toList()
+            }).result)
+        }
+
         return@Route ok {
             it["articles"] = articles.map {
                 dict {
                     this["meta"] = it
                     this["author"] = users[it.author] ?: UserInfo()
                     this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                    this["replies"] = replies[it.id] ?: 0
+                    this["is_fine"] = it.state == Article.State.FINE
                 }
             }
             it["next_offset"] = offset + articles.size

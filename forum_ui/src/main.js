@@ -1,16 +1,36 @@
 import Vue from 'vue'
 import page from 'page'
 import routes from './router/routes'
+import Event from './assets/js/Event.js'
 import moment from 'moment';
 
 Vue.config.productionTip = false;
 
 moment.locale('zh-cn');
 Vue.filter('moment', function (value) {
-  //formatString = formatString || 'YYYY-MM-DD HH:mm:ss';
-  //return moment(value).format(formatString);
   return moment(value).fromNow();
 });
+
+function isMobile() {
+  let ua = navigator.userAgent;
+  return ua.match(/(Android)[\s\/]+([\d\.]+)/) !== null
+    || ua.match(/(iPad|iPhone|iPod)\s+OS\s([\d_\.]+)/) !== null
+    || ua.match(/(Windows\s+Phone)\s([\d\.]+)/) !== null;
+}
+
+Array.prototype.indexOf = function (val) {
+  for (let i = 0; i < this.length; i++) {
+    if (this[i] === val) return i;
+  }
+  return -1;
+};
+
+Array.prototype.remove = function (val) {
+  const index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
 
 const app = new Vue({
   el: '#app',
@@ -23,10 +43,16 @@ const app = new Vue({
 });
 
 Object.keys(routes).forEach(route => {
-  const Component = require('./views/' + routes[route] + '.vue');
+  let Component;
+  if (isMobile() && !route.startsWith("/m")) {
+    Component = require(routes["/m" + route] + '.vue');
+  } else {
+    Component = require(routes[route] + '.vue');
+  }
   page(route, (ctx) => {
       app.$root.params = ctx.params;
       app.ViewComponent = Component;
+      Event.emit('update', '');
     }
   )
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="side-bar">
-    <a class="button" :href="uiEdit" v-if="showPostBtn">发布新话题</a>
+    <a class="button" href="javascript:void(0);" v-on:click="newPost" v-if="showPostBtn">发布新话题</a>
     <div class="part">
       <header>网站通告
         <button v-if="isAdmin" v-on:click="inputDashboard">编辑</button>
@@ -18,7 +18,6 @@
         <li><a href="https://laravel-china.org/" target="_blank"><i class="laravel"></i></a></li>
         <li><a href="http://golangtc.com/" target="_blank"><i class="golangtc"></i></a></li>
         <li><a href="http://elixir-cn.com/" target="_blank"><i class="elixir"></i></a></li>
-        <!--<li><a href="http://ionichina.com/" target="_blank"><i class="ioni"></i></a></li>-->
         <li><a href="https://testerhome.com/" target="_blank"></a><i class="tester"></i></li>
       </ul>
     </div>
@@ -66,6 +65,9 @@
         Net.post({url: Config.URL.misc.dashboard, condition: {dashboard: input}}, () => {
           this.dashboard = input
         })
+      },
+      newPost() {
+        LoginMgr.require(() => window.location.href = Config.UI.edit)
       }
     }
   }
@@ -83,7 +85,12 @@
       border-radius: 2px;
       margin-bottom: 30px;
     }
-
+    .button:hover {
+      background-color: #4599f7;
+    }
+    .button:active {
+      background-color: #1c4ecf;
+    }
     .part {
       header {
         font-size: 18px;

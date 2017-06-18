@@ -31,10 +31,11 @@
   import Config from "../assets/js/Config.js";
   import Event from "../assets/js/Event.js";
   import Net from "../assets/js/Net.js";
+  import Util from '../assets/js/Util.js';
 
   import DisplayPanels from '../components/DisplayPanels.vue';
   import Reply from '../components/Reply.vue';
-  import AppLayout from '../App.vue'
+  import AppLayout from '../layout/AppWeb.vue'
 
   export default {
     data () {
@@ -58,7 +59,15 @@
       this.id = this.$root.params.id;
       this.getArticle();
       this.getCategories();
-      Event.on('login', () => this.renderEditUrl())
+      Event.on('login', () => this.renderEditUrl());
+      Event.on('update', () => {
+        this.id = this.$root.params.id;
+        if (this.id) {
+          this.articleId = this.id;
+          this.getArticle();
+          this.getCategories();
+        }
+      })
     },
     mounted(){
       this.articleId = this.id;
@@ -124,10 +133,13 @@
           .category {
             display: inline-block;
             background-color: #2572e5;
+            border-radius: 2px;
             color: white;
             margin-right: 10px;
             padding: 0 7px;
             font-size: 16px;
+            vertical-align: top;
+            margin-top: 5px;
           }
         }
         > div:nth-child(2) {

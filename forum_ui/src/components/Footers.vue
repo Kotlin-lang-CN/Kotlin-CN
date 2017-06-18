@@ -5,7 +5,9 @@
       <a href=mailto:chpengzh@kotlin-cn.org><i class="email"></i></a>
       <a target="_blank" v-bind:href="rssURL"><i class="rss"></i></a>
       <a target="_blank" href="https://github.com/Kotlin-lang-CN"><i class="github"></i></a>
-      <span class="icp">ICP备案号：<a target="_blank" href="http://www.miitbeian.gov.cn/">81999922</a></span>
+      <div>
+        <span class="icp">ICP备案号：<a target="_blank" href="http://www.miitbeian.gov.cn/">粤ICP备16010004号-3</a></span>
+      </div>
     </div>
   </div>
 </template>

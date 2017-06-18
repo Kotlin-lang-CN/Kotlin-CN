@@ -2,6 +2,7 @@ import Cookie from 'js-cookie';
 import Event from './Event.js';
 
 const LoginMgr = {
+
   info: function () {
     let uid = Cookie.get("X-App-UID");
     let username = Cookie.get("X-App-Name");
@@ -48,7 +49,7 @@ const LoginMgr = {
 
   require: function (loginAlready) {
     let info = this.info();
-    if (info) {
+    if (info.isLogin) {
       loginAlready(info)
     } else {
       Event.emit('request_login', loginAlready)

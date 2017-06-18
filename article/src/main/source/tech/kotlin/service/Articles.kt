@@ -5,7 +5,6 @@ import tech.kotlin.common.rpc.Serv
 import tech.kotlin.service.domain.Article
 import tech.kotlin.service.article.resp.ArticleResp
 import tech.kotlin.service.article.resp.QueryArticleByIdResp
-import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao

@@ -3,6 +3,7 @@ package tech.kotlin.controller
 import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
+import tech.kotlin.service.Err
 import tech.kotlin.service.account.*
 import tech.kotlin.service.account.req.*
 import tech.kotlin.service.account.resp.GithubCheckTokenReq

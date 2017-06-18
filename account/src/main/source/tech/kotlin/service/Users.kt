@@ -6,7 +6,6 @@ import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.account.req.UpdateUserReq
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.article.resp.QueryUserResp
-import tech.kotlin.common.utils.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.dao.AccountDao

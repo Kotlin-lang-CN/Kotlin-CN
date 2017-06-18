@@ -2,11 +2,10 @@ package tech.kotlin.controller
 
 import spark.Route
 import tech.kotlin.common.rpc.Serv
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
-import tech.kotlin.service.TypeDef
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.domain.Account

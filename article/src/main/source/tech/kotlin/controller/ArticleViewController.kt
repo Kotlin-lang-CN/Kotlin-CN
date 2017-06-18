@@ -12,9 +12,12 @@ import tech.kotlin.common.utils.ok
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.article.ArticleApi
-import tech.kotlin.common.utils.Err
+import tech.kotlin.service.Err
 import tech.kotlin.common.utils.check
+import tech.kotlin.service.article.ReplyApi
+import tech.kotlin.service.article.req.QueryReplyCountByArticleReq
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /*********************************************************************
@@ -23,10 +26,9 @@ import java.util.*
  *********************************************************************/
 object ArticleViewController {
 
-
-
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
     val articleApi by Serv.bind(ArticleApi::class)
+    val replyApi by Serv.bind(ReplyApi::class)
 
     val getList = Route { req, _ ->
         val offset = req.queryParams("offset")
@@ -54,12 +56,21 @@ object ArticleViewController {
             }).info)
         }
 
+        val replies = HashMap<Long, Int>()
+        if (articles.isNotEmpty()) {
+            replies.putAll(replyApi.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+                this.id = articles.map { it.id }.toList()
+            }).result)
+        }
+
         return@Route ok {
             it["articles"] = articles.map {
                 dict {
                     this["meta"] = it
                     this["author"] = users[it.author] ?: UserInfo()
                     this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                    this["replies"] = replies[it.id] ?: 0
+                    this["is_fine"] = it.state == Article.State.FINE
                 }
             }
             it["next_offset"] = offset + articles.size
@@ -99,12 +110,21 @@ object ArticleViewController {
             }).info)
         }
 
+        val replies = HashMap<Long, Int>()
+        if (articles.isNotEmpty()) {
+            replies.putAll(replyApi.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+                this.id = articles.map { it.id }.toList()
+            }).result)
+        }
+
         return@Route ok {
             it["articles"] = articles.map {
                 dict {
                     this["meta"] = it
                     this["author"] = users[it.author] ?: UserInfo()
                     this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                    this["replies"] = replies[it.id] ?: 0
+                    this["is_fine"] = it.state == Article.State.FINE
                 }
             }
             it["next_offset"] = offset + articles.size
@@ -138,12 +158,21 @@ object ArticleViewController {
             }).info)
         }
 
+        val replies = HashMap<Long, Int>()
+        if (articles.isNotEmpty()) {
+            replies.putAll(replyApi.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+                this.id = articles.map { it.id }.toList()
+            }).result)
+        }
+
         return@Route ok {
             it["articles"] = articles.map {
                 dict {
                     this["meta"] = it
                     this["author"] = users[it.author] ?: UserInfo()
                     this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                    this["replies"] = replies[it.id] ?: 0
+                    this["is_fine"] = it.state == Article.State.FINE
                 }
             }
             it["next_offset"] = offset + articles.size

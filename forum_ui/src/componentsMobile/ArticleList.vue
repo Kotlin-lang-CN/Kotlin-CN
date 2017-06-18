@@ -1,33 +1,24 @@
 <template>
   <div>
     <div class="content">
-      <div class="list" v-for="value in articles">
+      <div class="list" v-for="value in articles" v-on:click="toArticle(value.meta.id)">
         <section>
-          <div class="footnote">
-            最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
-          </div>
-          <div class="flex">
-            <app-avatar :avatar="value.author.username"></app-avatar>
-            <div class="wrap">
-              <div class="title">
-                <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
-                <small v-on:click="toArticle(value.meta.id)" class="tag focus">评论数{{ value.replies }}</small>
-                <small v-on:click="toArticle(value.meta.id)" class="tag focus">精品{{ value.is_fine }}</small>
-                <small v-if="showDelete(value)" class="tag focus" v-on:click="deleteArticle(value)">删除</small>
-                <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
-                  <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
-                </select>
-              </div>
-              <span v-if="categories.length >= value.meta.category"
-                    class="category"> {{ categories[value.meta.category - 1] }}</span>
-              <span class="tag focus" v-on:click="toArticle(value.meta.id)"
-                    v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
-            </span>
-              <div class="footnote right">
-                {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
-              </div>
-            </div>
-          </div>
+          <app-avatar :avatar="value.author.username" :size="'small'"></app-avatar>
+          <span class="name">{{value.author.username}}</span>
+          <small class="tag focus">精品{{ value.is_fine }}</small>
+        </section>
+        <section>
+          <span v-if="categories.length >= value.meta.category"
+                class="category"> {{ categories[value.meta.category - 1] }}</span>
+          <span v-on:click="toArticle(value.meta.id)" class="title">{{ value.meta.title }}</span>
+        </section>
+        <section>
+           <span class="tag focus" v-on:click="toArticle(value.meta.id)"
+                 v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}</span>
+        </section>
+        <section class="right">
+          {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
+          {{ value.replies }}评论
         </section>
       </div>
     </div>
@@ -141,55 +132,31 @@
     .list {
       border-top: 1px #f1f1f1 solid;
       display: block;
+      text-align: left;
+      color: #999;
+      font-size: 10px;
+      padding: 15px 0 10px 0;
       section {
-        padding: 12px 0 30px 0;
-        text-align: left;
-
-        background: white;
-        .footnote {
-          font-size: 12px;
-          color: #999;
-        }
-        .flex {
-          margin-top: 16px;
-          position: relative;
-          display: flex;
-          .wrap {
-            margin-left: 10px;
-          }
-          .title {
-            line-height: 28px;
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 6px;
-          }
-          .tag {
-            display: inline-block;
-            font-size: 16px;
-            color: #999;
-          }
-          .category {
-            display: inline-block;
-            background-color: #256fe8;
-            border-radius: 2px;
-            color: white;
-            margin-right: 10px;
-            padding: 0 7px;
-          }
-          .focus {
-            cursor: pointer;
-          }
-          .control {
-            position: absolute;
-            right: 0;
-            bottom: 36px;
-          }
-          .right {
-            position: absolute;
-            right: 0;
-            bottom: 5px;
-          }
-        }
+        margin-bottom: 5px;
+      }
+      .name {
+        font-size: 14px;
+        line-height: 30px;
+        margin-left: 5px;
+      }
+      .category {
+        margin: 5px 0;
+        color: white;
+        background-color: #2572e5;
+        font-size: 12px;
+        padding: 0 6px;
+      }
+      .title {
+        color: #333;
+        font-size: 15px;
+      }
+      .right {
+        text-align: right;
       }
     }
 

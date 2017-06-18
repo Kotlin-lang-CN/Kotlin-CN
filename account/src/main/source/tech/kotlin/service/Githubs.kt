@@ -1,23 +1,29 @@
 package tech.kotlin.service
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.apache.commons.lang.RandomStringUtils
 import org.eclipse.jetty.http.HttpMethod
-import tech.kotlin.service.account.req.GithubCreateStateReq
-import tech.kotlin.service.account.req.GithubAuthReq
-import tech.kotlin.service.account.resp.GithubCreateStateResp
-import tech.kotlin.service.account.resp.GithubAuthResp
 import tech.kotlin.common.algorithm.JWT
+import tech.kotlin.common.os.Log
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.GithubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
+import tech.kotlin.service.account.GithubApi
+import tech.kotlin.service.account.req.GithubAuthReq
+import tech.kotlin.service.account.req.GithubCreateStateReq
+import tech.kotlin.service.account.resp.GithubAuthResp
 import tech.kotlin.service.account.resp.GithubCheckTokenReq
 import tech.kotlin.service.account.resp.GithubCheckTokenResp
-import tech.kotlin.service.account.GithubApi
-import tech.kotlin.service.account.req.GithubBindReq
-import tech.kotlin.service.domain.*
-import tech.kotlin.utils.*
+import tech.kotlin.service.account.resp.GithubCreateStateResp
+import tech.kotlin.service.domain.Account
+import tech.kotlin.service.domain.GithubSession
+import tech.kotlin.service.domain.GithubUser
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.utils.Http
+import tech.kotlin.utils.Mysql
+import tech.kotlin.utils.Redis
 import java.util.*
 
 /*********************************************************************
@@ -29,25 +35,28 @@ object Githubs : GithubApi {
     private val properties: Properties = Props.loads("project.properties")
     private val jwtToken: String = properties str "github.jwt.token"
     private val jwtExpire: Long = properties long "github.jwt.expire"
+    private val stateExpire: Int = properties int "github.state.expire"
 
     private val authHost: String = properties str "github.auth.host"
     private val clientId: String = properties str "github.auth.client.id"
     private val clientSecret: String = properties str "github.auth.client.secret"
-    private val redirectUrl: String = properties str "github.auth.redirect.url"
     private val userUrl: String = properties str "github.user.url"
+    private val frontendHost: String = properties str "deploy.frontend.host"
 
     override fun createState(req: GithubCreateStateReq): GithubCreateStateResp {
-        return GithubCreateStateResp().apply {
-            this.state = JWT.dumps(key = jwtToken, content = GithubSession().apply {
-                this.device = req.device
-            })
+        val state = RandomStringUtils.randomAlphanumeric(32)
+        Redis.write {
+            val key = "github:state:${req.device.token}"
+            it[key] = state
+            it.expire(key, stateExpire / 1000)
         }
+        return GithubCreateStateResp().apply { this.state = state }
     }
 
     override fun createSession(req: GithubAuthReq): GithubAuthResp {
-        tryExec(Err.GITHUB_AUTH_ERR, "无效的code") {
-            val session = JWT.loads<GithubSession>(key = jwtToken, jwt = req.state, expire = jwtExpire)
-            assert(session.device.isEquals(req.device))
+        Redis.read {
+            val key = "github:state:${req.device.token}"
+            if (it[key].isNullOrBlank()) abort(Err.GITHUB_AUTH_ERR, "无效的state")
         }
         val githubInfo = getUser(req.code, req.state)
         var account = Account()
@@ -71,8 +80,9 @@ object Githubs : GithubApi {
     }
 
     override fun checkToken(req: GithubCheckTokenReq): GithubCheckTokenResp {
-        val session = tryExec(Err.GITHUB_AUTH_ERR, "无效的code") {
+        val session = tryExec(Err.GITHUB_AUTH_ERR, "无效的token") {
             val session = JWT.loads<GithubSession>(key = jwtToken, jwt = req.token, expire = jwtExpire)
+            println(Json.dumps(session))
             assert(session.device.isEquals(req.device))
             assert(session.user.id != 0L)
             return@tryExec session
@@ -82,29 +92,29 @@ object Githubs : GithubApi {
         }
     }
 
-    override fun bindAccount(req: GithubBindReq): EmptyResp {
-
-        return EmptyResp()
-    }
 
     private fun getUser(code: String, state: String): GithubUser {
-        val token = Json.loads<GithubAccessTokenResp>(Http.newRequest(authHost)
+        val tokenResp = Http.newRequest(authHost)
                 .method(HttpMethod.GET)
                 .header("Accept", "application/json")
                 .param("client_id", clientId)
                 .param("client_secret", clientSecret)
                 .param("code", code)
-                .param("redirect_url", redirectUrl)
+                .param("redirect_url", frontendHost)
                 .param("state", state)
                 .send()
-                .contentAsString).token
-                .check(Err.GITHUB_AUTH_ERR) { it.isNullOrBlank() }
+                .contentAsString
+        Log.i("GitHub", tokenResp)
+        val token = Json.loads<GithubAccessTokenResp>(tokenResp).token
+                .check(Err.GITHUB_AUTH_ERR) { !it.isNullOrBlank() }
 
-        val info = Json.loads<GithubUserResp>(Http.newRequest(userUrl)
+        val infoResp = Http.newRequest(userUrl)
                 .method(HttpMethod.GET)
                 .param("access_token", token)
                 .send()
-                .contentAsString)
+                .contentAsString
+        Log.i("GitHub", infoResp)
+        val info = Json.loads<GithubUserResp>(infoResp)
                 .check(Err.GITHUB_AUTH_ERR) { it.id != 0L }
 
         return GithubUser().apply {
