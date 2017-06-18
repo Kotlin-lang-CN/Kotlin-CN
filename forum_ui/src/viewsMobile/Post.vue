@@ -18,7 +18,6 @@
           </section>
           <section class="right">发布于 {{ topic.article.create_time | moment}}</section>
         </header>
-
         <section>
           <display-panels :content="content"></display-panels>
         </section>
