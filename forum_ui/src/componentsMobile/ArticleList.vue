@@ -5,7 +5,7 @@
         <section>
           <app-avatar :avatar="value.author.username" :size="'small'"></app-avatar>
           <span class="name">{{value.author.username}}</span>
-          <small class="tag focus">精品{{ value.is_fine }}</small>
+          <i v-if="value.is_fine" class="fine"></i>
         </section>
         <section>
           <span v-if="categories.length >= value.meta.category"
@@ -134,13 +134,13 @@
       display: block;
       text-align: left;
       color: #999;
-      font-size: 10px;
+      font-size: .2rem;
       padding: 15px 0 10px 0;
       section {
         margin-bottom: 5px;
       }
       .name {
-        font-size: 14px;
+        font-size: .28rem;
         line-height: 30px;
         margin-left: 5px;
       }
@@ -148,15 +148,24 @@
         margin: 5px 0;
         color: white;
         background-color: #2572e5;
-        font-size: 12px;
+        font-size: .24rem;
         padding: 0 6px;
       }
       .title {
         color: #333;
-        font-size: 15px;
+        font-size: .3rem;
       }
       .right {
         text-align: right;
+      }
+      .fine {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        float: right;
+        margin-top: 4px;
+        background: url(../assets/img/fine.png) no-repeat;
+        background-size: 50% 50%;
       }
     }
 

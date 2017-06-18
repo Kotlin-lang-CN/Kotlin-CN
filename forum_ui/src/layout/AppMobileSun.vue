@@ -10,11 +10,16 @@
         <slot></slot>
       </div>
     </div>
+    <app-login></app-login>
   </div>
 </template>
 
 <script>
+  import Login from '../componentsMobile/Login.vue';
   export default {
+    components: {
+      'app-login': Login
+    },
     methods: {
       back(){
         history.back();

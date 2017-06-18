@@ -76,7 +76,7 @@
 <style scoped lang="less">
   .side-bar {
     .button {
-      line-height: 26px;
+      line-height: 38px;
       height: 38px;
       display: block;
       color: white;

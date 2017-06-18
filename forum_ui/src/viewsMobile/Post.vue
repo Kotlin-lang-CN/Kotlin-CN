@@ -158,6 +158,8 @@
           height: 30px;
           background: url(../assets/img/fine.png) no-repeat;
           float: right;
+          margin-top: 4px;
+          background-size: 50% 50%;
         }
         .title {
           color: #333;

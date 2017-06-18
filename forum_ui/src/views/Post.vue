@@ -118,7 +118,6 @@
     max-width: 1120px;
     article {
       max-width: 840px;
-      padding: 0 16px;
       header {
         border-top: 1px #e4e4e4 solid;
         border-bottom: 1px #e4e4e4 solid;

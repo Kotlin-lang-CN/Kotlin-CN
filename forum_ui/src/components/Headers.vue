@@ -2,7 +2,9 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
-        <a :href="urlRoot" class="menu-header"><i class="logo"></i></a>
+        <a :href="urlRoot" class="menu-header">
+          <i class="logo"></i><span><b>Kotlin</b> CHINA</span>
+        </a>
         <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a>
         </div>
 
@@ -141,21 +143,30 @@
           line-height: 38px;
           text-align: center;
           margin-left: 20px;
-          margin-right: 20px;
           padding-top: 26px;
           padding-bottom: 24px;
           vertical-align: top;
+          font-size: 18px;
         }
         a.menu-header {
           display: inline-block;
-          padding-top: 21px;
+          margin-top: 30px;
           padding-bottom: 14px;
+          color: #6b6b6b;
+          font-weight: bolder;
+          font-size: 20px;
           .logo {
             display: inline-block;
-            width: 192px;
-            height: 45px;
-            background: url(../assets/img/logo_big.png) no-repeat center;
-            background-size: 99% 99%;
+            width: 20px;
+            height: 22.5px;
+            background: url(../assets/img/logo_k.png) no-repeat;
+            background-size: 100% 100%;
+            vertical-align: top;
+            margin-top: 2px;
+            margin-right: 4px;
+          }
+          b{
+            color: #2b75e1;
           }
         }
         .menu-user {
@@ -211,7 +222,7 @@
             }
             button {
               display: block;
-              line-height: 62px;
+              line-height: 50px;
               color: #333;
               height: 62px;
               width: 182px;

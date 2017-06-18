@@ -12,8 +12,8 @@
               <div class="title">
                 <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
                 <small v-on:click="toArticle(value.meta.id)" class="tag focus">评论数{{ value.replies }}</small>
-                <small v-on:click="toArticle(value.meta.id)" class="tag focus">精品{{ value.is_fine }}</small>
                 <small v-if="showDelete(value)" class="tag focus" v-on:click="deleteArticle(value)">删除</small>
+                <i v-if="value.is_fine" class="fine"></i>
                 <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="control" v-if="isAdmin">
                   <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
                 </select>
@@ -175,6 +175,15 @@
             color: white;
             margin-right: 10px;
             padding: 0 7px;
+          }
+          .fine {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            float: right;
+            margin-top: 5px;
+            background: url(../assets/img/fine.png) no-repeat;
+            background-size: 50% 50%;
           }
           .focus {
             cursor: pointer;

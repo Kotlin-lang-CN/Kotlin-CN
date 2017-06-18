@@ -2,7 +2,9 @@
   <div class="dialog" v-if="showMode !==0">
     <div class="bg" v-on:click="hide"></div>
     <div class="cont">
-      <i class="logo"></i>
+      <section class="logo">
+        <span><b>Kotlin</b> CHINA</span>
+      </section>
       <div class="login" v-if="showMode === 1 || showMode === 3">
         <p v-if="showMode === 3">绑定GitHub账号到一个已创建的账号</p>
         <input v-model="nameInput" type="text" name="user" placeholder="用户名或邮箱"/>
@@ -217,13 +219,17 @@
       background: white;
       border: 1px #f1f1f1 solid;
       box-shadow: 0 0 3px #2572e5;
+
       .logo {
-        display: block;
-        width: 192px;
-        height: 45px;
-        background: url(../assets/img/logo.png) no-repeat;
-        margin: 15px auto 40px auto;
+        color: #6b6b6b;
+        font-weight: bolder;
+        font-size: 35px;
+        text-align: center;
+        b {
+          color: #2b75e1;
+        }
       }
+
       input {
         display: block;
         margin: 20px auto 10px auto;
@@ -280,5 +286,6 @@
         }
       }
     }
+
   }
 </style>
