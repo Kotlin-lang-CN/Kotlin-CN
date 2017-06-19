@@ -5,8 +5,8 @@
         <a :href="urlRoot" class="menu-header">
           <i class="logo"></i><span><b>Kotlin</b> CHINA</span>
         </a>
-        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a>
-        </div>
+        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
+        <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
 
         <div class="menu-authen menu-right" v-if="!loginInfo.isLogin">
           <a v-on:click="register" href="javascript:void(0);">注册</a>
