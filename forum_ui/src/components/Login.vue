@@ -170,10 +170,10 @@
         })
       },
       hide() {
+        Cookie.remove('X-App-Github');
         if (this.showMode === 3 || this.showMode === 4) {
           setTimeout(() => window.location.href = '/', 300)
         }
-        Cookie.remove('X-App-GitHub');
         this.showMode = 0;
         const info = LoginMgr.info();
         if (this.loginAlready && info.isLogin) {
