@@ -26,8 +26,8 @@
           <li v-on:click="addImage"><i class="image"></i></li>
           <li v-on:click="addUl"><i class="un-order-list"></i></li>
           <li v-on:click="addOl"><i class="order-list"></i></li>
-          <li v-on:click="addUndo"><i class="undo"></i></li>
-          <li v-on:click="addRedo"><i class="redo"></i></li>
+          <!--<li v-on:click="addUndo"><i class="undo"></i></li>-->
+          <!--<li v-on:click="addRedo"><i class="redo"></i></li>-->
         </ul>
       </div>
     </nav>

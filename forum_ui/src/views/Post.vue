@@ -61,11 +61,16 @@
       this.getCategories();
       Event.on('login', () => this.renderEditUrl());
       Event.on('update', () => {
-        this.id = this.$root.params.id;
-        if (this.id) {
-          this.articleId = this.id;
-          this.getArticle();
-          this.getCategories();
+        if (this.$root.params.id) {
+          if (this.id !== this.$root.params.id) {
+            $('html, body').animate({scrollTop: 0}, 'slow');
+            this.id = this.$root.params.id;
+            if (this.id) {
+              this.articleId = this.id;
+              this.getArticle();
+              this.getCategories();
+            }
+          }
         }
       })
     },
