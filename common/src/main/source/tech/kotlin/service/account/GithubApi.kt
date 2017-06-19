@@ -8,8 +8,6 @@ import tech.kotlin.service.account.resp.GithubAuthResp
 import tech.kotlin.service.account.resp.GithubCheckTokenReq
 import tech.kotlin.service.account.resp.GithubCreateStateResp
 import tech.kotlin.service.TypeDef
-import tech.kotlin.service.account.req.GithubBindReq
-import tech.kotlin.service.domain.EmptyResp
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
