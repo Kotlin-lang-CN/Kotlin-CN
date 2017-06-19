@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="register" v-if="showMode === 2 || showMode === 4">
-        <p v-if="showMode === 4">使用GitHub账号首次登录需要完善以下基本信息</p>
+        <p v-if="showMode === 4">首次使用GitHub账号登录，需要完善以下基本信息</p>
         <input v-model="emailInput" type="text" name="user" placeholder="邮箱"/>
         <span v-if="error && error.key == 'register-email'" class="error">{{ error.value }}</span>
         <input v-model="nameInput" type="text" name="user" placeholder="用户名"/>
@@ -170,6 +170,9 @@
         })
       },
       hide() {
+        if (this.showMode === 3 || this.showMode === 4) {
+          setTimeout(() => window.location.href = '/', 300)
+        }
         Cookie.remove('X-App-GitHub');
         this.showMode = 0;
         const info = LoginMgr.info();
@@ -181,7 +184,7 @@
         this.emailInput = '';
         this.passwordInput = '';
         this.passwordRepeatInput = '';
-        this.error = false
+        this.error = false;
       }
     }
   }

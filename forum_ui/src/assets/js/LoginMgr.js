@@ -47,12 +47,12 @@ const LoginMgr = {
     return info.isAdminRole
   },
 
-  require: function (loginAlready) {
+  require: function (loginAlready, mode) {
     let info = this.info();
     if (info.isLogin) {
       loginAlready(info)
     } else {
-      Event.emit('request_login', loginAlready)
+      Event.emit(mode ? mode : 'request_login', loginAlready)
     }
   },
 

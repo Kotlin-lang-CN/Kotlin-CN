@@ -10,8 +10,8 @@
 
         <div class="menu-authen menu-right" v-if="!loginInfo.isLogin">
           <a v-on:click="register" href="javascript:void(0);">注册</a>
-          <a v-on:click="login" href="javascript:void(0);">登录</a>
           <a v-on:click="loginWithGithub" href="javascript:void(0);">GitHub登录</a>
+          <a v-on:click="login" href="javascript:void(0);">登录</a>
         </div>
         <div class="menu-user menu-right" v-if="loginInfo.isLogin">
           <div class="btn">
@@ -30,6 +30,10 @@
         </div>
       </div>
     </div>
+    <div v-if="isLoading" class="github-auth-loading">
+      <h4>获取第三方登录信息...</h4>
+      <vue-loading type="spin" color="#d9544e" :size="{ width: '50px', height: '50px' }"></vue-loading>
+    </div>
   </div>
 </template>
 
@@ -40,6 +44,7 @@
   import Avatar from "./Avatar.vue";
   import Net from '../assets/js/Net.js';
   import Cookie from 'js-cookie';
+  import vueLoading from 'vue-loading-template'
 
   function getParam(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)')
@@ -48,7 +53,8 @@
 
   export default {
     components: {
-      "app-avatar": Avatar
+      "app-avatar": Avatar,
+      'vue-loading': vueLoading
     },
     data: function () {
       return {
@@ -60,7 +66,8 @@
         urlLogin: Config.UI.login,
         loginInfo: LoginMgr.info(),
         moduleShow: true,
-        top: true
+        top: true,
+        isLoading: false,
       }
     },
     created: function () {
@@ -69,6 +76,7 @@
       const code = getParam('code');
       const state = getParam('state');
       if (code && state && code !== null && state !== null) {
+        this.isLoading = true;
         this.handleGithubAuth(code, state)
       }
     },
@@ -96,7 +104,8 @@
           window.console.log(resp);
           if (resp.need_create_account) {
             Cookie.set('X-App-Github', resp.github_token);
-            LoginMgr.require(/*login already*/() => window.location.href = '/')
+            this.isLoading = false;
+            LoginMgr.require(/*login already*/() => window.location.href = '/', "request_register")
           } else {
             LoginMgr.login({
               username: resp.username,
@@ -118,6 +127,12 @@
     },
   }
 </script>
+
+<style scoped>
+  .github-auth-loading {
+    margin-left: calc(50% - 200px);
+  }
+</style>
 
 <style scoped lang="less">
   .header {
@@ -165,7 +180,7 @@
             margin-top: 2px;
             margin-right: 4px;
           }
-          b{
+          b {
             color: #2b75e1;
           }
         }
@@ -247,16 +262,16 @@
             line-height: 38px;
             text-align: center;
           }
-          > a:nth-child(2) {
+          > a:nth-child(3) {
             border: 1px #2572e5 solid;
             border-radius: 2px;
             color: #2572e5;
           }
-          > a:nth-child(2):hover {
+          > a:nth-child(3):hover {
             color: #4599f7;
             background-color: #f8fbff;
           }
-          > a:nth-child(2):active {
+          > a:nth-child(3):active {
             color: #2572e5;
             background-color: #ecf4ff;
           }
@@ -268,6 +283,18 @@
         }
 
       }
+    }
+    .github-auth-loading {
+      z-index: 3;
+      position: absolute;
+      width: 400px;
+      margin-top: 200px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: white;
+      border: 1px #f1f1f1 solid;
+      box-shadow: 0 0 3px #2572e5;
+      text-align: center;
     }
   }
 </style>
