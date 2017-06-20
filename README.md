@@ -12,6 +12,8 @@
 
 社区版: [https://www.kotliner.cn](https://www.kotliner.cn)
 
+中文站: [https://www.kotlincn.net/](https://www.kotlincn.net/)
+
 ## For developer
 
 - [x] 快速搭建 Kotlin-CN 开发环境 [here](https://kotlin-cn.org/post/6282035089362092032)

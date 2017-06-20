@@ -1,18 +1,14 @@
 package tech.kotlin
 
+import spark.Spark
 import spark.Spark.*
 import tech.kotlin.common.rpc.Serv
+import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.rpc.registrator.PropRegistrator
 import tech.kotlin.common.serialize.Json
-import tech.kotlin.common.utils.Props
-import tech.kotlin.common.utils.dict
-import tech.kotlin.common.utils.gate
-import tech.kotlin.common.utils.int
+import tech.kotlin.common.utils.*
 import tech.kotlin.controller.*
-import tech.kotlin.service.Articles
-import tech.kotlin.service.Replies
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.Texts
+import tech.kotlin.service.*
 import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
@@ -30,24 +26,26 @@ val properties = Props.loads("project.properties")
 fun main(vararg args: String) {
     Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
-    initRpcCgi()
-    initHttpCgi()
+    initRpcCgi(if (args.isNotEmpty()) args[0] else "")
+    initHttpCgi(if (args.size >= 2) args[1] else "")
 }
 
-fun initRpcCgi() {
-    Serv.init(PropRegistrator(properties))
+fun initRpcCgi(publishHost: String) {
+    Serv.init(EtcdRegistrator(properties))
     Serv.register(ArticleApi::class, Articles)
     Serv.register(ReplyApi::class, Replies)
     Serv.register(TextApi::class, Texts)
-    Serv.publish(
-            address = InetSocketAddress("0.0.0.0", properties int "deploy.service.${ServDef.ARTICLE}.rpc"),
-            serviceName = ServDef.ARTICLE,
-            executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
-    )
+    if (!publishHost.isNullOrBlank()) {
+        val host = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[0] }
+        val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[1].toInt() }
+        Serv.publish(address = InetSocketAddress(host, port), serviceName = ServDef.ARTICLE,
+                executorService = Executors.newFixedThreadPool(20))
+    }
 }
 
-fun initHttpCgi() {
-    port(properties int "deploy.service.${ServDef.ARTICLE}.cgi")
+fun initHttpCgi(cgiPort: String) {
+    if (cgiPort.isNullOrBlank()) return
+    port(cgiPort.toInt())
     init()
     path("/api") {
         path("/article") {
