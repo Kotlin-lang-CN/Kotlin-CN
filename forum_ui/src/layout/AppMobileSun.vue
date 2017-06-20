@@ -10,11 +10,16 @@
         <slot></slot>
       </div>
     </div>
+    <app-login></app-login>
   </div>
 </template>
 
 <script>
+  import Login from '../componentsMobile/Login.vue';
   export default {
+    components: {
+      'app-login': Login
+    },
     methods: {
       back(){
         history.back();
@@ -49,7 +54,6 @@
     font-weight: normal;
     color: #333;
   }
-
   .app-root {
     > nav {
       border-bottom: 1px #f1f1f1 solid;

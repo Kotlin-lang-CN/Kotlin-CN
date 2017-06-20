@@ -6,16 +6,16 @@ package tech.kotlin.common.rpc;
  *********************************************************************/
 public interface ProtoCode {
 
-    int UNKNOWN = 0;
+    int UNKNOWN = -1;
 
-    int TIMEOUT = -1;
+    int TIMEOUT = -2;
 
-    int SOCKET_BUSY = -2;
+    int SOCKET_BUSY = -3;
 
-    int NOT_FOUND = -3;
+    int NOT_FOUND = -4;
 
-    int PING = -4;
+    int PING = -5;
 
-    int PONG = -5;
+    int PONG = -6;
 
 }

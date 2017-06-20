@@ -47,12 +47,12 @@ const LoginMgr = {
     return info.isAdminRole
   },
 
-  require: function (loginAlready) {
+  require: function (loginAlready, mode) {
     let info = this.info();
     if (info.isLogin) {
       loginAlready(info)
     } else {
-      Event.emit('request_login', loginAlready)
+      Event.emit(mode ? mode : 'request_login', loginAlready)
     }
   },
 
@@ -63,6 +63,7 @@ const LoginMgr = {
     Cookie.set('X-App-UID', data.uid);
     Cookie.set('X-App-Token', data.token);
     Cookie.set('X-App-Role', data.role);
+    Cookie.remove('X-App-Github');
     const info = this.info();
     Event.emit('login', info);
   },
@@ -73,6 +74,7 @@ const LoginMgr = {
     Cookie.remove('X-App-UID');
     Cookie.remove('X-App-Name');
     Cookie.remove('X-App-Role');
+    Cookie.remove('X-App-Github');
     this.info();
     Event.emit('login', false);
   }

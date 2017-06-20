@@ -1,9 +1,7 @@
 package tech.kotlin.common.utils
 
-import com.fasterxml.jackson.core.type.TypeReference
-import tech.kotlin.common.serialize.Json
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import tech.kotlin.common.os.Abort
+import tech.kotlin.service.Err
 import java.util.*
 
 /*********************************************************************
@@ -20,47 +18,9 @@ object Props {
         return result
     }
 
-    inline fun <reified T : Any> loadJson(file: String): T {
-        BufferedReader(InputStreamReader(javaClass.classLoader.getResourceAsStream(file.trimStart('/')))).use { input ->
-            val sb = StringBuilder()
-            var result: T
-            java.io.ByteArrayOutputStream().use {
-                do {
-                    val line = input.readLine()
-                    if (line == null) {
-                        result = Json.loads<T>(sb.toString())
-                        break
-                    } else {
-                        sb.append(line)
-                    }
-                } while (true)
-                return result
-            }
-        }
-    }
-
-    fun <T : Any> loadJson(file: String, type: TypeReference<T>): T {
-        BufferedReader(InputStreamReader(javaClass.classLoader.getResourceAsStream(file.trimStart('/')))).use { input ->
-            val sb = StringBuilder()
-            var result: T
-            java.io.ByteArrayOutputStream().use {
-                do {
-                    val line = input.readLine()
-                    if (line == null) {
-                        result = Json.loads(sb.toString(), type)
-                        break
-                    } else {
-                        sb.append(line)
-                    }
-                } while (true)
-                return result
-            }
-        }
-    }
-
 }
 
-infix fun Properties.str(field: String): String = getProperty(field)
+infix fun Properties.str(field: String): String = getProperty(field) ?: abort(Err.SYSTEM, "no such prop field $field")
 
 infix fun Properties.long(field: String) = getProperty(field).toLong()
 

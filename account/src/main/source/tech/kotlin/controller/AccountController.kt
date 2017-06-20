@@ -52,6 +52,7 @@ object AccountController {
             it["email"] = loginResp.userInfo.email
             it["is_email_validate"] = loginResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
             it["role"] = loginResp.account.role
+            it["logo"] = loginResp.userInfo.logo
         }
     }
 
@@ -103,7 +104,7 @@ object AccountController {
     val activateEmail = Route { req, _ ->
         val token = URLDecoder.decode(req.queryParams("token"), "UTF-8")
         val resp = emailApi.checkToken(EmailCheckTokenReq().apply { this.token = token })
-        userApi.activateEmail(ActivateEmailReq().apply { this.uid = resp.uid ;this.email = resp.email})
+        userApi.activateEmail(ActivateEmailReq().apply { this.uid = resp.uid;this.email = resp.email })
         return@Route ok()
     }
 
@@ -127,6 +128,7 @@ object AccountController {
             it["state"] = account.state
             it["role"] = account.role
             it["create_time"] = account.createTime
+            it["logo"] = info.logo
         }
     }
 

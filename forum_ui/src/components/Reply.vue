@@ -8,7 +8,9 @@
           <div>
             <span>{{ value.user.username }}</span>
             <span>{{ value.meta.create_time | moment}}</span>
-            <small v-if="showDelete(value)" v-on:click="deleteArticle(value)">删除</small>
+            <small v-if="showDelete(value) && value.meta.state == 0" v-on:click="deleteArticle(value)" class="delete">
+              删除
+            </small>
             <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="right" v-if="isAdmin">
               <option v-for="option in options" v-bind:value="option.value">
                 {{ option.text }}
@@ -126,12 +128,15 @@
     }
 
     ul {
-      border-top: 1px #e1e1e1 solid;
-      border-left: 1px #e1e1e1 solid;
-      border-right: 1px #e1e1e1 solid;
+      border: 1px #e1e1e1 solid;
       background-color: #fcfcfe;
       padding: 0;
       margin: 0;
+
+      li:nth-last-child(1) {
+        border-bottom: 0;
+      }
+
       li {
         border-bottom: 1px #f1f1f1 solid;
         padding: 16px 20px;
@@ -161,6 +166,14 @@
       width: 100%;
       color: #6ba0f1;
       font-size: 16px;
+    }
+
+    li:hover .delete {
+      display: inline-block;
+    }
+    .delete {
+      color: red;
+      display: none;
     }
   }
 </style>

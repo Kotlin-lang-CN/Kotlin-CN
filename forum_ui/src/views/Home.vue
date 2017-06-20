@@ -114,7 +114,7 @@
 
 <style scoped lang="less">
   .home-root {
-    max-width: 1120px;
+    width: 1120px;
     margin: auto;
   }
 

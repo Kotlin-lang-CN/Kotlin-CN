@@ -10,7 +10,7 @@ class ArticleResp {
     @JsonProperty("article")
     var articleId: Long = 0
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "内容信息")
+    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT64, description = "内容信息")
     @JsonProperty("content")
     var contentId: Long = 0
 

@@ -45,7 +45,7 @@ const Config = {
   OAuth: {
     github: {
       cgi: 'http://github.com/login/oauth/authorize',
-      clientId: 'ed1760e81a41e5553b0d',
+      clientId: '4515da98f829c9feb99f',
       scope: 'user',
     }
   },

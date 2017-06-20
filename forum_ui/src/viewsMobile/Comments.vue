@@ -9,7 +9,7 @@
             <div>
               <span>{{ value.user.username }}</span>
               <span>{{ value.meta.create_time | moment}}</span>
-              <small v-if="showDelete(value)" v-on:click="deleteArticle(value)">删除</small>
+              <small v-if="showDelete(value) && value.meta.state == 0" v-on:click="deleteArticle(value)">删除</small>
               <select v-on:change="updateState(value.meta)" v-model="value.meta.state" class="right" v-if="isAdmin">
                 <option v-for="option in options" v-bind:value="option.value">
                   {{ option.text }}
@@ -162,7 +162,4 @@
       padding: 0 10px;
     }
   }
-
-
-
 </style>

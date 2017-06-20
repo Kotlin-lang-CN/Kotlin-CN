@@ -55,7 +55,12 @@ object TypeDef {
         const val CREATE_STATE = 80000
         const val CREATE_SESSION = 80001
         const val CHECK_TOKEN = 80002
-        const val BIND_ACCOUNT = 80003
+    }
+
+    object Flower {
+        const val STAR = 90000
+        const val UNSTAR = 90001
+        const val COUNT_STAR = 90002
     }
 
 }

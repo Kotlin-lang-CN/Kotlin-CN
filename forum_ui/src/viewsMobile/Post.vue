@@ -10,7 +10,7 @@
               {{ categories[topic.article.category - 1]}}
             </span>
             <a :href="editUrl" v-if="editUrl !== ''" class="edit">编辑</a>
-            <i class="fine"></i>
+            <i v-if="topic.is_fine" class="fine"></i>
           </section>
           <section class="title">{{ topic.article.title }}</section>
           <section class="tag-lay">
@@ -18,13 +18,12 @@
           </section>
           <section class="right">发布于 {{ topic.article.create_time | moment}}</section>
         </header>
-
         <section>
           <display-panels :content="content"></display-panels>
         </section>
       </article>
 
-      <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论</a>
+      <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论{{ topic.replies }}</a>
     </div>
   </app-layout>
 </template>
@@ -127,7 +126,7 @@
     margin: 0 auto 10px auto;
     article {
       max-width: 840px;
-      padding: 0 16px;
+      padding: 0 16px 80px 16px;
       header {
         border-bottom: 1px #e4e4e4 solid;
         padding-top: 15px;
@@ -158,6 +157,8 @@
           height: 30px;
           background: url(../assets/img/fine.png) no-repeat;
           float: right;
+          margin-top: 4px;
+          background-size: 50% 50%;
         }
         .title {
           color: #333;

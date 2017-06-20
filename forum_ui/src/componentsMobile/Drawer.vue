@@ -3,12 +3,13 @@
     <div class="cont">
       <div class="user">
         <app-avatar :avatar="loginInfo.username" :size="'middle'"></app-avatar>
-        <span class="name">{{ loginInfo.username }}</span>
+        <span class="name" v-if="loginInfo.isLogin">{{ loginInfo.username }}</span>
+        <span class="name" v-if="!loginInfo.isLogin">未登录</span>
       </div>
       <ul>
         <li><a :href="urlHome" class="sel">首页</a></li>
         <li><a href="http://www.kotliner.cn/">社区</a></li>
-        <li><a :href="urlEdit">发布新话题</a></li>
+        <!--<li><a :href="urlEdit">发布新话题</a></li> -->
       </ul>
       <div class="foot">
         <div v-on:click="register" v-if="!loginInfo.isLogin" class="register">注册</div>
@@ -32,8 +33,7 @@
       return {
         urlHome: Config.UI.root,
         urlEdit: Config.UI.edit,
-        loginInfo: LoginMgr.info(),
-        msg: 'TODO:Manager'
+        loginInfo: LoginMgr.info()
       }
     },
     methods: {
@@ -53,11 +53,13 @@
   .cont {
     .user {
       position: absolute;
-      top: 80px;
+      top: 66px;
+      left: 0;
+      margin-left: 58px;
       .name {
-        color: white;
-        line-height: 40px;
-        font-size: 26px;
+        line-height: 44px;
+        font-size: .28rem;
+        color: #999;
         display: inline-block;
         margin-left: 12px;
       }
@@ -69,14 +71,13 @@
       right: 0;
       list-style-type: none;
       a {
+        line-height: 60px;
+        height: 60px;
+        padding-left: 50px;
         display: block;
-        padding: 20px;
-        color: #c7c7c7;
+        color: white;
         text-decoration: none;
         border-left: 8px transparent solid;
-      }
-      a:hover {
-        color: white;
       }
       a.sel {
         border-left: 8px #2b75e1 solid;
@@ -85,28 +86,30 @@
 
     }
     .foot {
-      border-top: 1px white solid;
-      color: #c7c7c7;
+      border-top: 1px #58647a solid;
+      color: white;
       position: absolute;
-      line-height: 60px;
       left: 0;
       right: 0;
       bottom: 0;
       display: flex;
       text-align: center;
+      font-size: .3rem;
 
       .register, .login {
         display: inline-block;
         width: 50%;
       }
       .login {
-        border-left: 1px white solid;
+        border-left: 1px #58647a solid;
       }
       .logout {
         width: 100%;
       }
-      div:hover {
-        color: white;
+      div{
+        height: 50px;
+        line-height: 50px;
+        margin:5px 0;
       }
     }
   }
