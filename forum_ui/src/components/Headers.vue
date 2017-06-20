@@ -165,11 +165,13 @@
         }
         a.menu-header {
           display: inline-block;
-          margin-top: 30px;
+          margin-top: 26px;
           padding-bottom: 14px;
           color: #6b6b6b;
           font-weight: bolder;
           font-size: 20px;
+          line-height: 38px;
+          height: 38px;
           .logo {
             display: inline-block;
             width: 20px;
@@ -177,7 +179,7 @@
             background: url(../assets/img/logo_k.png) no-repeat;
             background-size: 100% 100%;
             vertical-align: top;
-            margin-top: 2px;
+            margin-top: 4px;
             margin-right: 4px;
           }
           b {

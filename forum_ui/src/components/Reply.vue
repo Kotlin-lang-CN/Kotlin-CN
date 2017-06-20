@@ -128,12 +128,15 @@
     }
 
     ul {
-      border-top: 1px #e1e1e1 solid;
-      border-left: 1px #e1e1e1 solid;
-      border-right: 1px #e1e1e1 solid;
+      border: 1px #e1e1e1 solid;
       background-color: #fcfcfe;
       padding: 0;
       margin: 0;
+
+      li:nth-last-child(1) {
+        border-bottom: 0;
+      }
+
       li {
         border-bottom: 1px #f1f1f1 solid;
         padding: 16px 20px;
