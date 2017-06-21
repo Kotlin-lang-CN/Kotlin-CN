@@ -8,10 +8,23 @@
         <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
 
-        <div class="menu-authen menu-right" v-if="!loginInfo.isLogin">
-          <a v-on:click="register" href="javascript:void(0);">注册</a>
-          <a v-on:click="loginWithGithub" href="javascript:void(0);">GitHub登录</a>
-          <a v-on:click="login" href="javascript:void(0);">登录</a>
+        <div class="menu-user menu-right" v-if="!loginInfo.isLogin">
+          <div class="btn">
+            <span><button v-on:click="register">注册</button></span>
+          </div>
+          <div class="btn">
+            <span>
+              <span>登录</span>
+            </span>
+            <ul>
+              <li>
+                <button v-on:click="loginWithGithub">GitHub登录</button>
+              </li>
+              <li>
+                <button v-on:click="login">账号登录</button>
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="menu-user menu-right" v-if="loginInfo.isLogin">
           <div class="btn">
@@ -152,7 +165,6 @@
         > div {
           display: inline-block;
         }
-
         .menu-main {
           height: 38px;
           line-height: 38px;
@@ -217,6 +229,10 @@
             i {
               margin-top: 24px;
             }
+            button {
+              height: 66px;
+              color: #333;
+            }
           }
           .btn > span:hover {
             background-color: #f9f9f9;
@@ -254,28 +270,30 @@
               color: #2572e5;
             }
           }
-        }
-        .menu-authen {
-          > a {
-            margin: 24px 0;
-            display: inline-block;
-            width: 96px;
-            height: 38px;
-            line-height: 38px;
-            text-align: center;
+          .btn ul {
+            display: none;
           }
-          > a:nth-child(3) {
-            border: 1px #2572e5 solid;
-            border-radius: 2px;
-            color: #2572e5;
-          }
-          > a:nth-child(3):hover {
-            color: #4599f7;
-            background-color: #f8fbff;
-          }
-          > a:nth-child(3):active {
-            color: #2572e5;
-            background-color: #ecf4ff;
+          .btn:hover ul {
+            position: absolute;
+            background-color: white;
+            right: -1px;
+            width: 182px;
+            height: 124px;
+            display: block;
+            box-shadow: 0 0 10px #ccc;
+
+            button {
+              color: #333;
+              line-height: 62px;
+              height: 62px;
+              width: 100%;
+              padding: 0;
+              margin: 0;
+            }
+            button:hover{
+              background-color: #f8fbff;
+              color: #2572e5;
+            }
           }
         }
         .menu-right {
@@ -283,7 +301,6 @@
           font-size: 16px;
           position: relative;
         }
-
       }
     }
     .github-auth-loading {
