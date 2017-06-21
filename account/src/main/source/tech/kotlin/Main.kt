@@ -38,10 +38,11 @@ fun initRpcCgi(publishHost: String) {
     Serv.register(SessionApi::class, Sessions)
     Serv.register(UserApi::class, Users)
     if (!publishHost.isNullOrBlank()) {
-        val host = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[0] }
-        val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[1].toInt() }
-        Serv.publish(address = InetSocketAddress(host, port), serviceName = ServDef.ACCOUNT,
-                executorService = Executors.newFixedThreadPool(20))
+        val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.toInt() }
+        Serv.publish(
+                broadcastIp = properties str "deploy.broadcast.host", port = port,
+                serviceName = ServDef.ACCOUNT, executorService = Executors.newFixedThreadPool(20)
+        )
     }
 }
 

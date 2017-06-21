@@ -20,4 +20,4 @@ web/test/unit/coverage
 log/
 account/src/main/resources/project.properties
 article/src/main/resources/project.properties
-
+default.etcd
