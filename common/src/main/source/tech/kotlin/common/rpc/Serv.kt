@@ -14,6 +14,7 @@ import tech.kotlin.common.tcp.TcpHandler
 import tech.kotlin.common.tcp.TcpPackage
 import tech.kotlin.service.domain.EmptyResp
 import java.net.Inet4Address
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -43,8 +44,8 @@ object Serv : HandlerThread("Serv") {
     private val services = ConcurrentHashMap<Class<*>, Any>()
 
     fun init(registrator: ServiceRegistrator = object : ServiceRegistrator {
+        override fun publishService(serviceName: String, address: String, port: Int) = Unit
         override fun getService(serviceName: String): InetSocketAddress = TODO("not implments")
-        override fun publishService(serviceName: String, address: InetSocketAddress) = Unit
     }) {
         this.registrator = registrator
         start()
@@ -64,15 +65,17 @@ object Serv : HandlerThread("Serv") {
     }
 
     fun publish(broadcastIp: String, port: Int, serviceName: String, executorService: ExecutorService) {
+        Log.i("publish start $broadcastIp, $port, $serviceName")
         val serviceIp = NetworkInterface.getNetworkInterfaces().toList().first {
             it.interfaceAddresses.toList().find {
                 it?.broadcast?.hostAddress == broadcastIp
             } != null
-        }.inetAddresses.toList().first() { it is Inet4Address }.hostName
-        Log.i("publish service $serviceName @ $serviceIp:$port")
+        }.inetAddresses.toList().first {
+            it is Inet4Address && !it.isLoopbackAddress
+        }.hostAddress
 
         this.executorService = executorService
-        this.registrator.publishService(serviceName, InetSocketAddress(serviceIp, port))
+        this.registrator.publishService(serviceName, serviceIp, port)
         this.ioThread.listen(InetSocketAddress(serviceIp, port))
     }
 

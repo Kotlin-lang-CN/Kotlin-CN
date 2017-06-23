@@ -1,10 +1,9 @@
 package tech.kotlin
 
-import spark.Spark
 import spark.Spark.*
+import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
-import tech.kotlin.common.rpc.registrator.PropRegistrator
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.controller.*
@@ -14,7 +13,6 @@ import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
 import tech.kotlin.utils.Mysql
 import tech.kotlin.utils.Redis
-import java.net.InetSocketAddress
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -35,17 +33,16 @@ fun initRpcCgi(publishHost: String) {
     Serv.register(ArticleApi::class, Articles)
     Serv.register(ReplyApi::class, Replies)
     Serv.register(TextApi::class, Texts)
-    if (!publishHost.isNullOrBlank()) {
-        val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.toInt() }
-        Serv.publish(
-                broadcastIp = properties str "deploy.broadcast.host", port = port,
-                serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
-        )
-    }
+    val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.toInt() }
+    Serv.publish(
+            broadcastIp = properties str "deploy.broadcast.host", port = port,
+            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
+    )
 }
 
 fun initHttpCgi(cgiPort: String) {
     if (cgiPort.isNullOrBlank()) return
+    Log.i("init cgi port @ $cgiPort")
     port(cgiPort.toInt())
     init()
     path("/api") {

@@ -22,6 +22,6 @@ public interface ServiceRegistrator {
      * 发布服务
      * @param serviceName 服务名
      */
-    void publishService(@Nonnull String serviceName, @NotNull InetSocketAddress address) throws Exception;
+    void publishService(@Nonnull String serviceName, @NotNull String address, int port) throws Exception;
 
 }

@@ -1,6 +1,6 @@
 const CGI = {
-  account: "//localhost:8081/api",
-  article: "//localhost:8083/api"
+  account: "//debug.kotlin-cn.org/api",
+  article: "//debug.kotlin-cn.org/api"
 };
 
 const Config = {

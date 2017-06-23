@@ -15,7 +15,7 @@ function generateHeaders() {
   let contentType = 'application/x-www-form-urlencoded';
   let system = navigator.platform;
   let info = navigator.userAgent.toLowerCase().match(/(msie|firefox|chrome|opera|version).*?([\d.]+)/);
-  let vendor = info[1].replace(/version/, "'safari") + info[2];
+  let vendor = (info && info.length >= 3) ? info[1].replace(/version/, "'safari") + info[2] : "null";
   let token = Cookie.get("X-App-Token");
   return {
     'X-App-Device': deviceId,
