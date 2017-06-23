@@ -1,9 +1,0 @@
-rsync -azP \
---exclude=.git \
---exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
-. root@kotlin-cn.org:Kotlin-CN
-
-rsync -azP \
---exclude=.git \
---exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
-. root@debug.kotlin-cn.org:Kotlin-CN

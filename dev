@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+cp project.properties account/src/main/resources
+cp project.properties article/src/main/resources
+
+echo "++ recompile projects ++"
+./gradlew account:jar --daemon && ./gradlew article:jar --daemon
+
+rsync -azP \
+--include=account/build/libs/ \
+--include=article/build/libs/ \
+--include=env/ \
+--exclude=.git \
+--exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
+. root@debug.kotlin-cn.org:Kotlin-CN
+
+ssh root@debug.kotlin-cn.org 'sh /root/Kotlin-CN/env/restart.sh'
+ssh root@debug.kotlin-cn.org 'pkill npm'
+ssh root@debug.kotlin-cn.org 'cd Kotlin-CN/forum_ui &&  zsh -s cnpm install && zsh -s npm run dev'

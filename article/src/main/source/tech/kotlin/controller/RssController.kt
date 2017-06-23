@@ -119,10 +119,10 @@ object RssController {
                                 textContent = df.format(it.createTime - localeDivide)
                             })
                             appendChild(createElement("link").apply {
-                                textContent = "$frontendHost/topic/${it.id}"
+                                textContent = "$frontendHost/post/${it.id}"
                             })
                             appendChild(createElement("guid").apply {
-                                textContent = "$frontendHost/topic/${it.id}"
+                                textContent = "$frontendHost/post/${it.id}"
                             })
                         })
                     }
