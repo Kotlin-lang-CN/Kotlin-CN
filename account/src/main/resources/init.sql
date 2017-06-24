@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS account (
   COMMENT '创建时间'
 )
   COMMENT '账号',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;
 
 CREATE TABLE IF NOT EXISTS user_info (
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS user_info (
   INDEX email_index(email(128))
 )
   COMMENT '用户基本信息',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;
 
 CREATE TABLE IF NOT EXISTS github_user_info (
@@ -60,5 +60,5 @@ CREATE TABLE IF NOT EXISTS github_user_info (
   INDEX github_id (id)
 )
   COMMENT 'github用户',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;

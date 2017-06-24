@@ -7,16 +7,15 @@ echo "++ recompile projects ++"
 ./gradlew account:jar --daemon && ./gradlew article:jar --daemon
 
 rsync -azP \
---include=account/build/libs/ \
---include=article/build/libs/ \
 --include=env/ \
 --exclude=.git \
 --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
 . root@kotlin-cn.org:Kotlin-CN
 
+rsync -azP account/build/libs/ root@kotlin-cn.org:Kotlin-CN/account/build/libs/
+rsync -azP article/build/libs/ root@kotlin-cn.org:Kotlin-CN/article/build/libs/
+
 rsync -azP \
---include=account/build/libs/ \
---include=article/build/libs/ \
 --include=env/ \
 --exclude=.git \
 --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
