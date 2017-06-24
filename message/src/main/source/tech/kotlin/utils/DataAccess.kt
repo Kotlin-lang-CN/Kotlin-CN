@@ -105,6 +105,13 @@ object Redis {
     }
 }
 
+object Http : HttpClient(SslContextFactory()) {
+    init {
+        isFollowRedirects = false
+        start()
+    }
+}
+
 //为 Mybatis ORM 添加自定义的日志
 operator fun <T : Any> SqlSession.get(kClass: KClass<T>): T {
     val clazz = kClass.java

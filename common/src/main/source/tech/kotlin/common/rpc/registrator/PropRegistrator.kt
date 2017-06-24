@@ -11,10 +11,9 @@ import java.util.*
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
 class PropRegistrator(val properties: Properties) : ServiceRegistrator {
-
-    override fun publishService(serviceName: String, address: InetSocketAddress) {
+    override fun publishService(serviceName: String, address: String, port: Int) {
         val configPort = properties int "deploy.service.$serviceName.rpc"
-        if (address.port != configPort)
+        if (port != configPort)
             abort(Err.SYSTEM, "service $serviceName should be published at port $configPort")
     }
 

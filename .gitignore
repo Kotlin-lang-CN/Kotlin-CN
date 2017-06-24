@@ -17,7 +17,8 @@ web/npm-debug.log*
 web/yarn-debug.log*
 web/yarn-error.log*
 web/test/unit/coverage
-log/
+/log
 account/src/main/resources/project.properties
 article/src/main/resources/project.properties
-
+default.etcd
+/env

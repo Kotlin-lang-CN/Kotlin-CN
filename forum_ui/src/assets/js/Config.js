@@ -1,6 +1,6 @@
 const CGI = {
-  account: "//localhost:8081/api",
-  article: "//localhost:8083/api"
+  account: "https://debug.kotlin-cn.org/api",
+  article: "https://debug.kotlin-cn.org/api"
 };
 
 const Config = {
@@ -54,7 +54,7 @@ const Config = {
     account: '/account',
     edit: '/edit',
     post: '/post',
-    comments:'/comments'
+    comments: '/comments'
   }
 };
 export default Config;

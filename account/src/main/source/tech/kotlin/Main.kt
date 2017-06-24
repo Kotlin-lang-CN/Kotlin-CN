@@ -1,6 +1,7 @@
 package tech.kotlin
 
 import spark.Spark.*
+import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.rpc.registrator.PropRegistrator
@@ -30,23 +31,23 @@ fun main(vararg args: String) {
     initHttpCgi(if (args.size >= 2) args[1] else "")
 }
 
-fun initRpcCgi(publishHost: String) {
+fun initRpcCgi(publishPort: String) {
     Serv.init(EtcdRegistrator(properties))
     Serv.register(AccountApi::class, Accounts)
     Serv.register(EmailApi::class, Emails)
     Serv.register(GithubApi::class, Githubs)
     Serv.register(SessionApi::class, Sessions)
     Serv.register(UserApi::class, Users)
-    if (!publishHost.isNullOrBlank()) {
-        val host = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[0] }
-        val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.split(":")[1].toInt() }
-        Serv.publish(address = InetSocketAddress(host, port), serviceName = ServDef.ACCOUNT,
-                executorService = Executors.newFixedThreadPool(20))
-    }
+    val port = publishPort.tryExec(Err.SYSTEM, "illegal publish host $publishPort") { it.toInt() }
+    Serv.publish(
+            broadcastIp = properties str "deploy.broadcast.host", port = port,
+            serviceName = ServDef.ACCOUNT, executorService = Executors.newFixedThreadPool(20)
+    )
 }
 
 fun initHttpCgi(cgiPort: String) {
     if (cgiPort.isNullOrBlank()) return
+    Log.i("init cgi port @ $cgiPort")
     port(cgiPort.toInt())
     init()
     path("/api") {

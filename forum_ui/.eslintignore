@@ -1,2 +1,2 @@
-build/*.js
+build_tools/*.js
 config/*.js
