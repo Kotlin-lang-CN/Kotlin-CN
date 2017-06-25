@@ -69,12 +69,14 @@
       z-index: 2;
 
       .icon-back {
+        background: url(../assets/img/back-icon.png) no-repeat center;
+        background-size: 50% 50%;
         vertical-align: top;
-        margin-top: 15px;
+        margin-top: 17px;
+        margin-right: 4px;
         display: inline-block;
-        width: 30px;
-        height: 30px;
-        border: 1px #ccc solid;
+        width: 15px;
+        height: 27px;
       }
     }
   }
