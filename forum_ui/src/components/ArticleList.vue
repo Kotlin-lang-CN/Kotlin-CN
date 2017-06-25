@@ -173,7 +173,7 @@
           }
           .tag {
             display: inline-block;
-            font-size: 16px;
+            font-size: 14px;
             color: #999;
           }
           .category {

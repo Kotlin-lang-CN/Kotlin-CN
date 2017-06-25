@@ -7,7 +7,7 @@
           <span v-if="topic && categories.length >= topic.article.category" class="category">
             {{ categories[topic.article.category - 1]}}
           </span>{{ topic.article.title }}
-            <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> {{ tag }} </small>
+            <small class="tag" v-for="tag in topic.article.tags.split(/;/)"> #{{ tag }} </small>
           </div>
           <div>
             <label
@@ -144,6 +144,18 @@
             font-size: 16px;
             vertical-align: top;
             margin-top: 5px;
+          }
+
+          .tag {
+            font-size: 11px;
+            display: inline-block;
+            background-color: #c9dcf5;
+            color: #333;
+            padding:1px 2px;
+            vertical-align: top;
+            margin-top: 6px;
+            line-height: 20px;
+            margin-right: 8px;
           }
         }
         > div:nth-child(2) {

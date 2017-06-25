@@ -125,6 +125,7 @@
     font-weight: bolder;
     height: 120px;
     margin-bottom: 30px;
+    cursor: pointer;
   }
 
   .content {
