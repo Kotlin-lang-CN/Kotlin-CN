@@ -205,13 +205,13 @@
     font-size: .28rem;
 
     .icon-com {
+      background: url(../assets/img/comment-icon.png) no-repeat center;
+      background-size: 50% 50%;
       display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 1px #ccc solid;
-      margin-top: 10px;
+      width: 36px;
+      height: 34px;
+      margin-top: 7px;
       vertical-align: top;
-      margin-right: 4px;
     }
   }
 </style>

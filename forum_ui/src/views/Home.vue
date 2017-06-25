@@ -11,8 +11,8 @@
       <div class="content">
         <div class="post">
           <div class="sub-nav">
-            <button v-on:click="getLatest" v-bind:class="{'select': select===0, 'normal': select!==0}">最新发布</button>
-            <button v-on:click="selectFine" v-bind:class="{'select': select===1, 'normal': select!==1 }">精品</button>
+            <button v-on:click="selectFine" v-bind:class="{'select': select===0, 'normal': select!==0 }">精品</button>
+            <button v-on:click="selectLatest" v-bind:class="{'select': select===1, 'normal': select!==1}">最新发布</button>
             <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
                     v-bind:class="{
               'select': categories.length >= select - 1 && categories[select -2]===category,
@@ -67,18 +67,20 @@
         this.link = resp.link;
       });
       this.getCategories();
-      setTimeout(() => {
-        this.getLatest()
-      }, 200)
+      setTimeout(() => this.selectFine(), 200)
     },
     methods: {
+      selectFine(){
+        this.select = 0;
+        this.articleListUrl = Config.URL.article.fine;
+      },
+      selectLatest() {
+        this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
+        this.select = 1;
+      },
       selectCategory(id){
         this.articleListUrl = Config.URL.article.category.format(id);
         this.select = id + 1;
-      },
-      selectFine(){
-        this.select = 1;
-        this.articleListUrl = Config.URL.article.fine;
       },
       getCategories(){
         if (!window.data) window.data = {};
@@ -90,10 +92,6 @@
             this.categories = resp.category;
           });
         }
-      },
-      getLatest() {
-        this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
-        this.select = 0;
       },
       homeLink() {
         if (this.link !== '') window.location.href = this.link

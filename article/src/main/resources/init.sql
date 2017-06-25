@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS article (
   INDEX category_index(category)
 )
   COMMENT '文章',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;
 
 CREATE TABLE IF NOT EXISTS reply (
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS reply (
   COMMENT '关联评论id'
 )
   COMMENT '用户评论',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;
 
 CREATE TABLE IF NOT EXISTS text_content (
@@ -59,5 +59,5 @@ CREATE TABLE IF NOT EXISTS text_content (
   INDEX serialize_index(serialize_id(128))
 )
   COMMENT '文本内容',
-  DEFAULT CHARSET utf8,
+  DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;

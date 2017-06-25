@@ -120,14 +120,14 @@ object Githubs : GithubApi {
         return GithubUser().apply {
             this.accessToken = token
             this.id = info.id
-            this.name = info.name
-            this.email = info.name
-            this.avatar = info.avatar
+            this.name = info.name ?: ""
+            this.email = info.name ?: ""
+            this.avatar = info.avatar ?: ""
             this.login = info.login
-            this.blog = info.blog
-            this.location = info.location
+            this.blog = info.blog ?: ""
+            this.location = info.location ?: ""
             this.followerCount = info.followers
-            this.company = info.company
+            this.company = info.company ?: ""
         }
     }
 
@@ -136,21 +136,15 @@ object Githubs : GithubApi {
     }
 
     class GithubUserResp {
-        @JsonProperty("login") var login = ""
+        @JsonProperty("login") var login: String = ""
         @JsonProperty("id") var id = 0L
-        @JsonProperty("avatar_url") var avatar = ""
-        @JsonProperty("url") var url = ""
-        @JsonProperty("html_url") var html = ""
-        @JsonProperty("name") var name = ""
-        @JsonProperty("company") var company = ""
-        @JsonProperty("blog") var blog = ""
-        @JsonProperty("location") var location = ""
-        @JsonProperty("email") var email = ""
-        @JsonProperty("bio") var bio = ""
-        @JsonProperty("public_repos") var publicRepos = ""
+        @JsonProperty("avatar_url") var avatar: String? = ""
+        @JsonProperty("name") var name: String? = ""
+        @JsonProperty("company") var company: String? = ""
+        @JsonProperty("blog") var blog: String? = ""
+        @JsonProperty("location") var location: String? = ""
+        @JsonProperty("email") var email: String? = ""
         @JsonProperty("followers") var followers = 0
-        @JsonProperty("following") var following = 0
-        @JsonProperty("created_at") var createTime = ""
     }
 }
 
