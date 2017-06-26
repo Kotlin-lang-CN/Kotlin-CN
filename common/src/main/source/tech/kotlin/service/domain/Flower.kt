@@ -14,9 +14,9 @@ class Flower {
     @JsonProperty("id")
     var id: Long = 0
 
-    @Protobuf(order = 2, required = true, fieldType = FieldType.UINT64, description = "点赞对象id")
+    @Protobuf(order = 2, required = true, fieldType = FieldType.STRING, description = "点赞对象id")
     @JsonProperty("flower_pool_id")
-    var target: Long = 0
+    var flowerPoolId: String = ""
 
     @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "点赞人")
     @JsonProperty("owner")
@@ -26,9 +26,4 @@ class Flower {
     @JsonProperty("create_time")
     var createTime: Long = 0
 
-    object Type {
-        const val ARTICLE = 0
-        const val REPLY = 1
-        const val USER = 2
-    }
 }

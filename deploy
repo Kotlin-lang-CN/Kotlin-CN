@@ -26,11 +26,15 @@ echo "++ recompile projects ++"
 
 if [ 'release' = ${mode} ]; then
 
+    cp restart /tmp/restart && cp env/restart restart
+
     rsync -azP \
     --include=env/ \
     --exclude=.git \
     --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
     . root@kotlin-cn.org:Kotlin-CN
+
+    cp /tmp/restart restart
 
     rsync -azP account/build/libs/ root@kotlin-cn.org:Kotlin-CN/account/build/libs/
     rsync -azP article/build/libs/ root@kotlin-cn.org:Kotlin-CN/article/build/libs/

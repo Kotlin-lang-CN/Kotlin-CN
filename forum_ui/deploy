@@ -1,10 +1,25 @@
 #!/usr/bin/env bash
 
-cp src/assets/js/Config.js /tmp/Config.js
-cp ../env/Config.js src/assets/js/Config.js
-npm run build
-cp /tmp/Config.js src/assets/js/Config.js
+mode=$1
 
-rsync -azP \
-dist root@kotlin-cn.org:Kotlin-CN/forum_ui
+if [[ (${mode}) && ('release' = ${mode}) ]]; then
 
+  cp src/assets/js/Config.js /tmp/Config.js
+  cp ../env/Config.js src/assets/js/Config.js
+  cnpm install && npm run build
+  cp /tmp/Config.js src/assets/js/Config.js
+
+  rsync -azP dist root@kotlin-cn.org:Kotlin-CN/forum_ui
+
+elif [[ (${mode}) && ('dev' = ${mode}) ]]; then
+
+  cnpm install && npm run build
+  rsync -azP dist root@debug.kotlin-cn.org:Kotlin-CN/forum_ui
+
+else
+
+  echo 'Error: deploy mode should be one of `release` or `dev`'
+  echo 'try `./deploy dev` or `./deploy release` instead'
+  exit -1
+
+fi

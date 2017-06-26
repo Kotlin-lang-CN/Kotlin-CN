@@ -11,7 +11,6 @@ import tech.kotlin.service.Err
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
 val property by lazy { Props.loads("project.properties") }
-val crossSiteEnable by lazy { property bool "deploy.frontend.cross.site" }
 
 fun ok(init: (HashMap<String, Any>) -> Unit = {}): String {
     val map = HashMap<String, Any>().apply { this["code"] = 0; this["msg"] = "" }
@@ -39,13 +38,6 @@ fun Route.gate(desc: String, log: Boolean = true): Route {
             ))}")
         }
         var result: String
-        if (crossSiteEnable) {
-            response.header("Access-Control-Allow-Origin", "*")
-            response.header("Access-Control-Allow-Credentials", "true")
-            response.header("Access-Control-Allow-Headers",
-                    "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")
-            response.header("Access-Control-Allow-Methods", "GET, POST")
-        }
         try {
             result = this.handle(request, response) as String
             if (log) Log.d("Response", "$desc($requestId): $result")

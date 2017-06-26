@@ -77,8 +77,7 @@ object UserInfoDao {
         }
 
         fun drop(uid: Long) {
-            val key = key(uid)
-            Redis write { Json.reflect<UserInfo> { name, _ -> it.hdel(key, name) } }
+            Redis write { it.del(key(uid)) }
         }
     }
 

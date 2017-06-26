@@ -147,13 +147,13 @@
           }
 
           .tag {
-            font-size: 11px;
+            font-size: 10px;
             display: inline-block;
             background-color: #c9dcf5;
             color: #333;
-            padding:1px 2px;
+            padding:0 2px;
             vertical-align: top;
-            margin-top: 6px;
+            margin-top: 8px;
             line-height: 20px;
             margin-right: 8px;
           }

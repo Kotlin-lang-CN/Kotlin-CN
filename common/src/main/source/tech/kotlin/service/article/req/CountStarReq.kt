@@ -4,10 +4,14 @@ import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class FlowerReq {
+/*********************************************************************
+ * Created by chpengzh@foxmail.com
+ * Copyright (c) http://chpengzh.com - All Rights Reserved
+ *********************************************************************/
+class CountStarReq {
 
     @Protobuf(order = 1, required = true, fieldType = FieldType.STRING)
     @JsonProperty("star_pool")
-    var starPool: List<String> = ArrayList()
+    var poolIds: List<String> = ArrayList()
 
 }

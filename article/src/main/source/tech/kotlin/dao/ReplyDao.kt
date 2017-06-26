@@ -18,11 +18,15 @@ object ReplyDao {
         Mysql.register(ReplyMapper::class.java)
     }
 
-    fun getById(session: SqlSession, id: Long): Reply? {
-        val cached = ReplyCache.getById(id)
-        if (cached != null) return cached
+    fun getById(session: SqlSession, id: Long, cache: Boolean): Reply? {
+        if (cache) {
+            val cached = ReplyCache.getById(id)
+            if (cached != null) return cached
+        }
         val result = session[ReplyMapper::class].queryById(id)
-        if (result != null) ReplyCache.update(result)
+        if (result != null && cache) {
+            ReplyCache.update(result)
+        }
         return result
     }
 
@@ -51,13 +55,13 @@ object ReplyDao {
         }
     }
 
-    internal object ReplyCache {
+    private object ReplyCache {
 
         fun key(id: Long) = "reply:$id"
 
-        fun getById(uid: Long): Reply? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
-            return if (!userMap.isEmpty()) Json.rawConvert<Reply>(userMap) else null
+        fun getById(aid: Long): Reply? {
+            val replyMap = Redis read { it.hgetAll(key(aid)) }
+            return if (!replyMap.isEmpty()) Json.rawConvert<Reply>(replyMap) else null
         }
 
         fun update(reply: Reply) {
@@ -69,8 +73,7 @@ object ReplyDao {
         }
 
         fun invalid(aid: Long) {
-            val key = ReplyCache.key(aid)
-            Redis write { Json.reflect<Reply> { name, _ -> it.hdel(key, name) } }
+            Redis write { it.del(key(aid)) }
         }
     }
 

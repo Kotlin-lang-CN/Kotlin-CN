@@ -1,5 +1,6 @@
 package tech.kotlin.common.os
 
+import java.lang.management.ManagementFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +18,7 @@ object Log {
     const val ERROR = 0x1 shl 4
 
     const val LOG_LEVEL = VERBOSE or DEBUG or INFO or WARN or ERROR
+    private val pid by lazy { ManagementFactory.getRuntimeMXBean().name.split("@")[0].toInt() }
 
     //时间格式
     private val TIME_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.CHINA)
@@ -186,7 +188,8 @@ object Log {
 
         fun log(level: Int, tag: String?, line: String?) {
             if (tag.isNullOrBlank() || line.isNullOrBlank()) return
-            System.out.printf("%s %s/%s %s\n", TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, line)
+            System.out.printf("%s %s/%s %d %s\n",
+                    TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, pid, line)
         }
 
     }

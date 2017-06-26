@@ -36,14 +36,14 @@ object AccountDao {
         if (mayBeNull == null) {
             mapper.insert(account)
         } else {
-            Cache.drop(account.id)
+            Cache.invalid(account.id)
             mapper.update(account)
         }
     }
 
     fun update(session: SqlSession, uid: Long, args: HashMap<String, String>) {
         val mapper = session[AccountMapper::class]
-        Cache.drop(uid)
+        Cache.invalid(uid)
         mapper.updateWithArgs(args = args.apply { this["id"] = "$uid" })
     }
 
@@ -64,9 +64,8 @@ object AccountDao {
             }
         }
 
-        fun drop(uid: Long) {
-            val key = key(uid)
-            Redis write { Json.reflect<Account> { name, _ -> it.hdel(key, name) } }
+        fun invalid(uid: Long) {
+            Redis write { it.del(key(uid)) }
         }
     }
 

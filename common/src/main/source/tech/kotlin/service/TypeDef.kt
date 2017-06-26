@@ -61,6 +61,7 @@ object TypeDef {
         const val STAR = 90000
         const val UNSTAR = 90001
         const val COUNT_STAR = 90002
+        const val QUERY_STAR = 90003
     }
 
 }

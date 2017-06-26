@@ -34,7 +34,7 @@ object TextDao {
         mapper.insert(content)
     }
 
-    internal object Cache {
+    private object Cache {
 
         fun key(id: Long) = "text_content:$id"
 
@@ -50,7 +50,6 @@ object TextDao {
                 it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
-
     }
 
     interface TextMapper {

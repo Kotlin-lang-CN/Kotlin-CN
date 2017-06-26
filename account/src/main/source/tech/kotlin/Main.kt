@@ -72,11 +72,6 @@ fun initHttpCgi(cgiPort: String) {
         }
     }
     notFound { req, response ->
-        response.header("Access-Control-Allow-Origin", "*")
-        response.header("Access-Control-Allow-Credentials", "true")
-        response.header("Access-Control-Allow-Headers",
-                "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")
-        response.header("Access-Control-Allow-Methods", "GET, POST")
         if (req.requestMethod().toUpperCase() != "OPTIONS") {
             response.status(404)
             Json.dumps(dict { this["code"] = 404; this["msg"] = "not found" })

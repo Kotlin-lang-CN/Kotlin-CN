@@ -41,7 +41,9 @@ CREATE TABLE IF NOT EXISTS reply (
   content_id    BIGINT             NOT NULL
   COMMENT '评论内容',
   alias_id      BIGINT             NOT NULL DEFAULT 0
-  COMMENT '关联评论id'
+  COMMENT '关联评论id',
+  INDEX reply_pool_index(reply_pool_id(128)),
+  INDEX reply_owner_index(owner_uid)
 )
   COMMENT '用户评论',
   DEFAULT CHARSET utf8mb4,
@@ -59,5 +61,21 @@ CREATE TABLE IF NOT EXISTS text_content (
   INDEX serialize_index(serialize_id(128))
 )
   COMMENT '文本内容',
+  DEFAULT CHARSET utf8mb4,
+  ENGINE = Innodb;
+
+CREATE TABLE IF NOT EXISTS flower (
+  id             BIGINT PRIMARY KEY NOT NULL
+  COMMENT '点赞id',
+  flower_pool_id VARCHAR(128)       NOT NULL
+  COMMENT '点赞池id',
+  owner          BIGINT             NOT NULL
+  COMMENT '点赞人',
+  create_time    BIGINT             NOT NULL
+  COMMENT '点赞创建时间',
+  INDEX flower_pool_index(flower_pool_id(128)),
+  INDEX flower_owner_index(owner)
+)
+  COMMENT '点赞',
   DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;

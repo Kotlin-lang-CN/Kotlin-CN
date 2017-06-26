@@ -59,8 +59,7 @@ object GithubUserInfoDao {
         }
 
         fun drop(id: Long) {
-            val key = Cache.key(id)
-            Redis write { Json.reflect<GithubUser> { name, _ -> it.hdel(key, name) } }
+            Redis write { it.del(key(id)) }
         }
     }
 

@@ -16,7 +16,7 @@ import tech.kotlin.utils.Mysql
  *
  * 文本服务，用于提供文本的版本管理和内容风控
  *********************************************************************/
-object Texts : TextApi {
+object TextService : TextApi {
 
     //通过id批量查询文本对象
     override fun getById(req: QueryTextReq): QueryTextResp {
