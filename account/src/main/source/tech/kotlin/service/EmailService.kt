@@ -2,6 +2,7 @@ package tech.kotlin.service
 
 import tech.kotlin.common.os.Handler
 import tech.kotlin.common.os.Looper
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.utils.*
 import tech.kotlin.service.account.req.CreateEmailSessionReq
 import tech.kotlin.service.article.req.EmailCheckTokenReq
@@ -10,7 +11,6 @@ import tech.kotlin.service.account.resp.CreateEmailSessionResp
 import tech.kotlin.service.account.resp.EmailCheckTokenResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.account.EmailApi
-import tech.kotlin.utils.Redis
 import java.util.*
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
@@ -23,7 +23,7 @@ import javax.mail.internet.MimeMessage
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Emails : EmailApi {
+object EmailService : EmailApi {
 
     val handler = Handler(Looper.getMainLooper())
     val properties = Props.loads("project.properties")
@@ -37,15 +37,14 @@ object Emails : EmailApi {
     override fun createSession(req: CreateEmailSessionReq): CreateEmailSessionResp {
         val uuid = UUID.randomUUID()
         val token = "${IDs.encode(uuid.mostSignificantBits)}${IDs.encode(uuid.leastSignificantBits)}"
-        Redis.write {
-            it.hset("email_activate:$token", "uid", "${req.uid}")
-            it.hset("email_activate:$token", "email", req.email)
+        Redis {
+            it.hmset("email_activate:$token", mapOf("uid" to "${req.uid}", "email" to req.email))
         }
         return CreateEmailSessionResp().apply { this.token = token }
     }
 
     override fun checkToken(req: EmailCheckTokenReq): EmailCheckTokenResp {
-        val map = Redis.read { it.hgetAll("email_activate:${req.token}") }
+        val map = Redis { it.hgetAll("email_activate:${req.token}") }
         if (map["uid"].isNullOrBlank() || map["email"].isNullOrBlank())
             abort(Err.ILLEGAL_EMAIL_ACTIVATE_CODE)
         val uid = map["uid"]!!.toLong()

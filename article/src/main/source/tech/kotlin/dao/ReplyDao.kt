@@ -2,10 +2,10 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.service.domain.Reply
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
@@ -60,20 +60,22 @@ object ReplyDao {
         fun key(id: Long) = "reply:$id"
 
         fun getById(aid: Long): Reply? {
-            val replyMap = Redis read { it.hgetAll(key(aid)) }
+            val replyMap = Redis { it.hgetAll(key(aid)) }
             return if (!replyMap.isEmpty()) Json.rawConvert<Reply>(replyMap) else null
         }
 
         fun update(reply: Reply) {
             val key = ReplyCache.key(reply.id)
-            Redis write {
-                Json.reflect(reply) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(reply) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
 
         fun invalid(aid: Long) {
-            Redis write { it.del(key(aid)) }
+            Redis { it.del(key(aid)) }
         }
     }
 

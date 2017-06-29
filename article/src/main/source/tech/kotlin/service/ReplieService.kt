@@ -15,7 +15,7 @@ import tech.kotlin.service.article.resp.QueryReplyByArticleResp
 import tech.kotlin.service.article.resp.QueryReplyByIdResp
 import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
 import tech.kotlin.service.domain.EmptyResp
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 
 /*********************************************************************

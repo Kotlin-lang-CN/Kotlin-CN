@@ -2,11 +2,11 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.service.domain.Article
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
-import tech.kotlin.utils.get
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -57,20 +57,22 @@ object ArticleDao {
         fun key(id: Long) = "article:$id"
 
         fun getById(aid: Long): Article? {
-            val userMap = Redis read { it.hgetAll(key(aid)) }
+            val userMap = Redis { it.hgetAll(key(aid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<Article>(userMap) else null
         }
 
         fun update(article: Article) {
             val key = Cache.key(article.id)
-            Redis write {
-                Json.reflect(article) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(article) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
         fun invalid(aid: Long) {
-            Redis write { it.del(key(aid)) }
+            Redis { it.del(key(aid)) }
         }
     }
 

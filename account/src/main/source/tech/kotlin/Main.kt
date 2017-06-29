@@ -2,9 +2,9 @@ package tech.kotlin
 
 import spark.Spark.*
 import tech.kotlin.common.os.Log
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
-import tech.kotlin.common.rpc.registrator.PropRegistrator
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.controller.AccountController
@@ -12,9 +12,7 @@ import tech.kotlin.controller.AdminController
 import tech.kotlin.controller.GithubController
 import tech.kotlin.service.*
 import tech.kotlin.service.account.*
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
-import java.net.InetSocketAddress
+import tech.kotlin.common.mysql.Mysql
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -26,18 +24,18 @@ val properties = Props.loads("project.properties")
 fun main(vararg args: String) {
     Redis.init(properties)
     Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
-    Accounts.initAdmin()//初始化管理员账号
+    AccountService.initAdmin()//初始化管理员账号
     initRpcCgi(if (args.isNotEmpty()) args[0] else "")
     initHttpCgi(if (args.size >= 2) args[1] else "")
 }
 
 fun initRpcCgi(publishPort: String) {
     Serv.init(EtcdRegistrator(properties))
-    Serv.register(AccountApi::class, Accounts)
-    Serv.register(EmailApi::class, Emails)
-    Serv.register(GithubApi::class, Githubs)
-    Serv.register(SessionApi::class, Sessions)
-    Serv.register(UserApi::class, Users)
+    Serv.register(AccountApi::class, AccountService)
+    Serv.register(EmailApi::class, EmailService)
+    Serv.register(GithubApi::class, GithubService)
+    Serv.register(SessionApi::class, SessionService)
+    Serv.register(UserApi::class, UserService)
     val port = publishPort.tryExec(Err.SYSTEM, "illegal publish host $publishPort") { it.toInt() }
     Serv.publish(
             broadcastIp = properties str "deploy.broadcast.host", port = port,

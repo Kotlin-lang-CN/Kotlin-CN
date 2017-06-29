@@ -5,6 +5,7 @@ import org.apache.commons.lang.RandomStringUtils
 import org.eclipse.jetty.http.HttpMethod
 import tech.kotlin.common.algorithm.JWT
 import tech.kotlin.common.os.Log
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
@@ -21,16 +22,15 @@ import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.GithubSession
 import tech.kotlin.service.domain.GithubUser
 import tech.kotlin.service.domain.UserInfo
-import tech.kotlin.utils.Http
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.http.Http
+import tech.kotlin.common.mysql.Mysql
 import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Githubs : GithubApi {
+object GithubService : GithubApi {
 
     private val properties: Properties = Props.loads("project.properties")
     private val jwtToken: String = properties str "github.jwt.token"
@@ -45,7 +45,7 @@ object Githubs : GithubApi {
 
     override fun createState(req: GithubCreateStateReq): GithubCreateStateResp {
         val state = RandomStringUtils.randomAlphanumeric(32)
-        Redis.write {
+        Redis {
             val key = "github:state:${req.device.token}"
             it[key] = state
             it.expire(key, stateExpire / 1000)
@@ -54,7 +54,7 @@ object Githubs : GithubApi {
     }
 
     override fun createSession(req: GithubAuthReq): GithubAuthResp {
-        Redis.read {
+        Redis {
             val key = "github:state:${req.device.token}"
             if (it[key].isNullOrBlank()) abort(Err.GITHUB_AUTH_ERR, "无效的state")
         }

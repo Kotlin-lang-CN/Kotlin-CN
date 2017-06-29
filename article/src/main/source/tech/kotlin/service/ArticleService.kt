@@ -12,7 +12,7 @@ import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.TextApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.ArticleListResp
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

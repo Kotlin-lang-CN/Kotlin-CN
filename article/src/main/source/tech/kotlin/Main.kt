@@ -2,6 +2,7 @@ package tech.kotlin
 
 import spark.Spark.*
 import tech.kotlin.common.os.Log
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.serialize.Json
@@ -12,8 +13,7 @@ import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.FlowerApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
 import java.util.concurrent.Executors
 
 /*********************************************************************

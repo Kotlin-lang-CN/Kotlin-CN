@@ -2,11 +2,11 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.service.domain.Flower
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
-import tech.kotlin.utils.get
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -71,15 +71,15 @@ object FlowerDao {
             private fun key(flowerPoolId: String) = "flower:count:$flowerPoolId"
 
             operator fun set(flowerPoolId: String, count: Int) {
-                Redis write { it[key(flowerPoolId)] = "$count" }
+                Redis { it[key(flowerPoolId)] = "$count" }
             }
 
             operator fun get(flowerPoolId: String): Int {
-                return Redis read { it[key(flowerPoolId)]?.toInt() ?: -1 }
+                return Redis { it[key(flowerPoolId)]?.toInt() ?: -1 }
             }
 
             fun invalid(flowerPoolId: String) {
-                Redis write { it.del(key(flowerPoolId)) }
+                Redis { it.del(key(flowerPoolId)) }
             }
         }
 
@@ -89,19 +89,21 @@ object FlowerDao {
 
             operator fun set(flowerPoolId: String, owner: Long, flower: Flower) {
                 val key = key(flowerPoolId, owner)
-                Redis write {
-                    Json.reflect(flower) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+                Redis {
+                    val map = HashMap<String, String>()
+                    Json.reflect(flower) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                    it.hmset(key, map)
                     it.expire(key, 24 * 60 * 60)//cache for 24 hours
                 }
             }
 
             operator fun get(flowerPoolId: String, owner: Long): Flower? {
-                val flowerMap = Redis read { it.hgetAll(key(flowerPoolId, owner)) }
+                val flowerMap = Redis { it.hgetAll(key(flowerPoolId, owner)) }
                 return if (!flowerMap.isEmpty()) Json.rawConvert<Flower>(flowerMap) else null
             }
 
             fun invalid(flowerPoolId: String, owner: Long) {
-                Redis write { it.del(key(flowerPoolId, owner)) }
+                Redis { it.del(key(flowerPoolId, owner)) }
             }
         }
     }

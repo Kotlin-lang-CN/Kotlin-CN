@@ -32,11 +32,11 @@
       </div>
     </nav>
     <div class="main">
-      <div class="inside" @keydown.9="tabFn" v-scroll="editScroll">
+      <div class="inside" @keydown.9="tabFn">
         <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
         <textarea name="" class="editor" v-model="input"></textarea>
       </div>
-      <div class="outside" v-scroll="previewScroll">
+      <div class="outside">
         <article-meta :category="category" :title="title" :tags="tags"></article-meta>
         <display-panels :content="input"></display-panels>
       </div>
@@ -54,7 +54,6 @@
   import Vue from 'vue';
   import marked from 'marked';
 
-  import scroll from 'vue-scroll';
   import range from '../../static/js/rangeFn.js';
 
   import InputTag from 'vue-input-tag';
@@ -63,7 +62,6 @@
   import ArticleMetaDialog from '../components/ArticleMetaDialog.vue';
   import Login from '../components/Login.vue';
 
-  Vue.use(scroll);
   function insertContent(val, that) {
     let textareaDom = document.querySelector('.editor');
     let value = textareaDom.value;
@@ -95,8 +93,6 @@
         fullPageStatus: false,
         navStatus: true,
         icoStatus: true,
-        maxEditScrollHeight: 0,
-        maxPreviewScrollHeight: 0
       }
     },
     components: {
@@ -239,18 +235,6 @@
       addUndo: function () {
 
       },
-      previewScroll: function (e, position) {
-        if (this.maxEditScrollHeight !== 0) {
-          let topPercent = position.scrollTop / this.maxPreviewScrollHeight;
-          document.querySelector('.inside').scrollTop = this.maxEditScrollHeight * topPercent;
-        }
-      },
-      editScroll: function (e, position) {
-        if (this.maxPreviewScrollHeight !== 0) {
-          let topPercent = position.scrollTop / this.maxEditScrollHeight;
-          document.querySelector('.outside').scrollTop = this.maxPreviewScrollHeight * topPercent;
-        }
-      },
       getArticle(){
         Net.get({
           url: Config.URL.article.detail.format(this.articleId),
@@ -327,16 +311,6 @@
         }
       }
     },
-    watch: {
-      input: function () {
-        let data = {};
-        this.$emit('childevent', data);
-        let maxEditScrollHeight = document.querySelector('.inside').scrollHeight - document.querySelector('.inside').clientHeight;
-        let maxPreviewScrollHeight = document.querySelector('.outside').scrollHeight - document.querySelector('.outside').clientHeight;
-        this.maxEditScrollHeight = maxEditScrollHeight;
-        this.maxPreviewScrollHeight = maxPreviewScrollHeight;
-      }
-    }
   }
 </script>
 

@@ -9,7 +9,7 @@ import tech.kotlin.service.article.resp.CountStarResp
 import tech.kotlin.service.article.resp.QueryStarResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.domain.Flower
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

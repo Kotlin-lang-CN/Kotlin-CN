@@ -47,6 +47,7 @@ elif [ 'dev' = ${mode} ]; then
     --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
     . root@debug.kotlin-cn.org:Kotlin-CN
 
+
     rsync -azP account/build/libs/ root@debug.kotlin-cn.org:Kotlin-CN/account/build/libs/
     rsync -azP article/build/libs/ root@debug.kotlin-cn.org:Kotlin-CN/article/build/libs/
 

@@ -12,13 +12,13 @@ import tech.kotlin.dao.AccountDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.account.req.ActivateEmailReq
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Users : UserApi {
+object UserService : UserApi {
 
     //通过id批量查询用户
     override fun queryById(req: QueryUserReq): QueryUserResp {

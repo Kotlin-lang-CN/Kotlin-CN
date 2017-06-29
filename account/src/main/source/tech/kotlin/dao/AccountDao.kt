@@ -2,11 +2,11 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.service.domain.Account
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -52,20 +52,21 @@ object AccountDao {
         fun key(uid: Long) = "account:$uid"
 
         fun getById(uid: Long): Account? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
+            val userMap = Redis { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<Account>(userMap) else null
         }
 
         fun update(account: Account) {
             val key = key(account.id)
-            Redis write {
-                Json.reflect(account) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
-                it.expire(key, 2 * 60 * 60)//cache for 2 hours
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(account) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
             }
         }
 
         fun invalid(uid: Long) {
-            Redis write { it.del(key(uid)) }
+            Redis { it.del(key(uid)) }
         }
     }
 

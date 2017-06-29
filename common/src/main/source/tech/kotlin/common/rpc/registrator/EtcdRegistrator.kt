@@ -41,7 +41,7 @@ class EtcdRegistrator(val properties: Properties) : ServiceRegistrator {
         object : Runnable {
             override fun run() {
                 try {
-                    client.set("/service/$serviceName/$uuid", "$hostName:$port")
+                    client.set("/service/$serviceName/$uuid", "$hostName:$port", ttl / 1000)
                 } catch (error: Throwable) {
                     Log.e(error)
                 } finally {

@@ -8,7 +8,7 @@ import tech.kotlin.service.article.resp.QueryTextResp
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.dao.TextDao
 import tech.kotlin.service.article.TextApi
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
