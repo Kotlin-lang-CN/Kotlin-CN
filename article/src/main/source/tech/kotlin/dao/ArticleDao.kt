@@ -2,11 +2,11 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
-import tech.kotlin.service.domain.Article
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
+import tech.kotlin.service.domain.Article
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -18,12 +18,12 @@ object ArticleDao {
         Mysql.register(ArticleMapper::class.java)
     }
 
-    fun getById(session: SqlSession, id: Long, useCache: Boolean = false, updateCache: Boolean = false): Article? {
-        if (useCache) {
+    fun getById(session: SqlSession, id: Long, cache: Boolean): Article? {
+        if (cache) {
             val cached = Cache.getById(id)
             if (cached != null) return cached
             val result = session[ArticleMapper::class].queryById(id)
-            if (result != null && updateCache) Cache.update(result)
+            if (result != null && cache) Cache.update(result)
             return result
         } else {
             return session[ArticleMapper::class].queryById(id)
@@ -41,37 +41,38 @@ object ArticleDao {
         if (mapper.queryById(article.id) == null) {
             mapper.insert(article)
         } else {
-            Cache.drop(article.id)
+            Cache.invalid(article.id)
             mapper.update(article)
         }
     }
 
     fun update(session: SqlSession, id: Long, args: HashMap<String, Any>) {
         val mapper = session[ArticleMapper::class]
-        Cache.drop(id)
+        Cache.invalid(id)
         mapper.updateByArgs(args.apply { this["id"] = id })
     }
 
-    internal object Cache {
+    private object Cache {
 
         fun key(id: Long) = "article:$id"
 
         fun getById(aid: Long): Article? {
-            val userMap = Redis read { it.hgetAll(key(aid)) }
+            val userMap = Redis { it.hgetAll(key(aid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<Article>(userMap) else null
         }
 
         fun update(article: Article) {
             val key = Cache.key(article.id)
-            Redis write {
-                Json.reflect(article) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(article) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
-        fun drop(aid: Long) {
-            val key = Cache.key(aid)
-            Redis write { Json.reflect<Article> { name, _ -> it.hdel(key, name) } }
+        fun invalid(aid: Long) {
+            Redis { it.del(key(aid)) }
         }
     }
 

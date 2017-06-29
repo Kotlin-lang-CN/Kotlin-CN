@@ -2,10 +2,10 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.service.domain.UserInfo
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
@@ -64,21 +64,22 @@ object UserInfoDao {
         fun key(uid: Long) = "user_info:$uid"
 
         fun getById(uid: Long): UserInfo? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
+            val userMap = Redis { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<UserInfo>(userMap) else null
         }
 
         fun update(userInfo: UserInfo) {
             val key = key(userInfo.uid)
-            Redis write {
-                Json.reflect(userInfo) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(userInfo) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
         fun drop(uid: Long) {
-            val key = key(uid)
-            Redis write { Json.reflect<UserInfo> { name, _ -> it.hdel(key, name) } }
+            Redis { it.del(key(uid)) }
         }
     }
 

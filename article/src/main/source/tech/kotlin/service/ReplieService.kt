@@ -15,14 +15,14 @@ import tech.kotlin.service.article.resp.QueryReplyByArticleResp
 import tech.kotlin.service.article.resp.QueryReplyByIdResp
 import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
 import tech.kotlin.service.domain.EmptyResp
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Replies : ReplyApi {
+object ReplieService : ReplyApi {
 
     val textApi by Serv.bind(TextApi::class)
 
@@ -45,10 +45,13 @@ object Replies : ReplyApi {
         }
         Mysql.write {
             if (reply.aliasId != 0L) {
-                val alias = ReplyDao.getById(it, req.aliasId) ?: abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-                if (alias.replyPoolId != "article:${req.articleId}") abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+                val alias = ReplyDao.getById(it, req.aliasId, cache = false) ?:
+                        abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+
+                if (alias.replyPoolId != "article:${req.articleId}")
+                    abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
             }
-            ArticleDao.getById(it, req.articleId, useCache = true, updateCache = true) ?: abort(Err.ARTICLE_NOT_EXISTS)
+            ArticleDao.getById(it, req.articleId, false) ?: abort(Err.ARTICLE_NOT_EXISTS)
             ReplyDao.create(it, reply)
         }
         return CreateReplyResp().apply {
@@ -60,7 +63,7 @@ object Replies : ReplyApi {
     //改变回复状态
     override fun changeState(req: ChangeReplyStateReq): EmptyResp {
         Mysql.write {
-            ReplyDao.getById(it, req.replyId) ?: abort(Err.REPLY_NOT_EXISTS)
+            ReplyDao.getById(it, req.replyId, cache = false) ?: abort(Err.REPLY_NOT_EXISTS)
             ReplyDao.update(it, req.replyId, args = hashMapOf("state" to "${req.state}"))
         }
         return EmptyResp()
@@ -71,7 +74,7 @@ object Replies : ReplyApi {
         val result = HashMap<Long, Reply>()
         Mysql.read { session ->
             req.id.forEach {
-                val reply = ReplyDao.getById(session, it) ?: return@forEach
+                val reply = ReplyDao.getById(session, it, cache = true) ?: return@forEach
                 result[it] = reply
             }
         }

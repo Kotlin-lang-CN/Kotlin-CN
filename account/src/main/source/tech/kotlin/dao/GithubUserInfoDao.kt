@@ -2,10 +2,10 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.service.domain.GithubUser
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
@@ -46,21 +46,22 @@ object GithubUserInfoDao {
         fun key(id: Long) = "github_user_info:$id"
 
         fun getById(id: Long): GithubUser? {
-            val userMap = Redis read { it.hgetAll(key(id)) }
+            val userMap = Redis { it.hgetAll(key(id)) }
             return if (!userMap.isEmpty()) Json.rawConvert<GithubUser>(userMap) else null
         }
 
         fun update(githubUser: GithubUser) {
             val key = Cache.key(githubUser.id)
-            Redis write {
-                Json.reflect(githubUser) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(githubUser) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 2 * 60 * 60)//cache for 2 hours
             }
         }
 
         fun drop(id: Long) {
-            val key = Cache.key(id)
-            Redis write { Json.reflect<GithubUser> { name, _ -> it.hdel(key, name) } }
+            Redis { it.del(key(id)) }
         }
     }
 

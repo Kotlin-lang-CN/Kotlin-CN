@@ -61,6 +61,13 @@ object TypeDef {
         const val STAR = 90000
         const val UNSTAR = 90001
         const val COUNT_STAR = 90002
+        const val QUERY_STAR = 90003
     }
 
+    object Message {
+        const val BROAD_CAST = 100001
+        const val LIST_CAST = 100002
+        const val GET_BY_USER = 100003
+        const val CHANGE_STATE = 100004
+    }
 }

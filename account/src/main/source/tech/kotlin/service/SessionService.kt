@@ -1,6 +1,7 @@
 package tech.kotlin.service
 
 import tech.kotlin.common.algorithm.JWT
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
@@ -11,14 +12,14 @@ import tech.kotlin.service.account.resp.CheckTokenResp
 import tech.kotlin.service.account.resp.CreateSessionResp
 import tech.kotlin.service.domain.AccountSession
 import tech.kotlin.service.account.SessionApi
-import tech.kotlin.utils.*
+import tech.kotlin.common.mysql.*
 import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Sessions : SessionApi {
+object SessionService : SessionApi {
 
     private val properties: Properties = Props.loads("project.properties")
     private val jwtToken: String = properties str "account.jwt.token"
@@ -41,7 +42,7 @@ object Sessions : SessionApi {
         account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
         //save session in redis
-        Redis write {
+        Redis {
             it.set(key(content.id), Json.dumps(content))
             val expire = (jwtExpire / 1000).toInt()
             it.expire(key(content.id), expire)
@@ -60,7 +61,7 @@ object Sessions : SessionApi {
             content = JWT.loads<AccountSession>(key = jwtToken, jwt = req.token, expire = jwtExpire)
             tryExec(Err.TOKEN_FAIL) {
                 assert(content.device.isEquals(req.device))
-                val result = Json.loads<AccountSession>(Redis read { it.get(key(content.id)) })
+                val result = Json.loads<AccountSession>(Redis { it.get(key(content.id)) })
                 assert(content.isEqual(result))
                 return@tryExec result
             }

@@ -30,8 +30,6 @@ dependencies {
     compile 'mysql:mysql-connector-java:6.0.6'
     compile 'org.mybatis:mybatis:3.4.4'
     compile 'com.github.pagehelper:pagehelper:5.0.1'
-    //redis
-    compile 'redis.clients:jedis:2.9.0'
     //email
     compile 'javax.mail:mail:1.4.7'
 

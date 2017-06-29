@@ -2,6 +2,7 @@ package tech.kotlin
 
 import spark.Spark.*
 import tech.kotlin.common.os.Log
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.serialize.Json
@@ -9,10 +10,10 @@ import tech.kotlin.common.utils.*
 import tech.kotlin.controller.*
 import tech.kotlin.service.*
 import tech.kotlin.service.article.ArticleApi
+import tech.kotlin.service.article.FlowerApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -30,9 +31,10 @@ fun main(vararg args: String) {
 
 fun initRpcCgi(publishHost: String) {
     Serv.init(EtcdRegistrator(properties))
-    Serv.register(ArticleApi::class, Articles)
-    Serv.register(ReplyApi::class, Replies)
-    Serv.register(TextApi::class, Texts)
+    Serv.register(ArticleApi::class, ArticleService)
+    Serv.register(ReplyApi::class, ReplieService)
+    Serv.register(TextApi::class, TextService)
+    Serv.register(FlowerApi::class, FlowerService)
     val port = publishHost.tryExec(Err.SYSTEM, "illegal publish host $publishHost") { it.toInt() }
     Serv.publish(
             broadcastIp = properties str "deploy.broadcast.host", port = port,
@@ -63,9 +65,16 @@ fun initHttpCgi(cgiPort: String) {
             get("/reply/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
         }
 
-        path("/rss") {
-            get("/fine", RssController.fine)
-            get("/latest", RssController.latest)
+        path("/flower") {
+            post("/article/:id/star", FlowerController.starArticle.gate("点赞文章"))
+            post("/article/:id/unstar", FlowerController.unstarArticle.gate("取消点赞文章"))
+            get("/article/:id/star", FlowerController.queryArticle.gate("获取对文章的点赞状态"))
+            get("/article/star/count", FlowerController.countArticle.gate("获取文章点赞数量"))
+
+            post("/reply/:id/star", FlowerController.starReply.gate("点赞评论"))
+            post("/reply/:id/unstar", FlowerController.unstarReply.gate("取消点赞评论"))
+            get("/reply/:id/star", FlowerController.queryReply.gate("获取对评论的点赞状态"))
+            get("/reply/star/count", FlowerController.countReply.gate("获取评论点赞数量"))
         }
 
         path("/misc") {
@@ -74,13 +83,13 @@ fun initHttpCgi(cgiPort: String) {
             get("/home/link", MiscController.getHomeLink.gate("首页链接"))
             post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
         }
+
+        path("/rss") {
+            get("/fine", RssController.fine)
+            get("/latest", RssController.latest)
+        }
     }
     notFound { req, response ->
-        response.header("Access-Control-Allow-Origin", "*")
-        response.header("Access-Control-Allow-Credentials", "true")
-        response.header("Access-Control-Allow-Headers",
-                "X-App-Device, X-App-Token, X-App-Platform, X-App-System, X-App-UID, X-App-Vendor")
-        response.header("Access-Control-Allow-Methods", "GET, POST")
         if (req.requestMethod().toUpperCase() != "OPTIONS") {
             response.status(404)
             Json.dumps(dict { this["code"] = 404; this["msg"] = "not found" })

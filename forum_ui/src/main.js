@@ -52,7 +52,7 @@ Object.keys(routes).forEach(route => {
   page(route, (ctx) => {
       app.$root.params = ctx.params;
       app.ViewComponent = Component;
-      Event.emit('update', '');
+      Event.emit('route-update', '');
     }
   )
 });

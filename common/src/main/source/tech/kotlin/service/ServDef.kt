@@ -10,4 +10,6 @@ object ServDef {
 
     const val ARTICLE = "article"
 
+    const val MESSAGE = "message"
+
 }

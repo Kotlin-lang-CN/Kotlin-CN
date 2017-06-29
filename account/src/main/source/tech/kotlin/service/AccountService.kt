@@ -1,6 +1,7 @@
 package tech.kotlin.service
 
 import tech.kotlin.common.algorithm.MD5
+import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
@@ -12,7 +13,6 @@ import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.service.account.resp.CreateAccountResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.account.resp.LoginResp
-import tech.kotlin.utils.Mysql
 import tech.kotlin.service.account.AccountApi
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.*
@@ -23,7 +23,7 @@ import kotlin.properties.Delegates
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Accounts : AccountApi {
+object AccountService : AccountApi {
 
     private val properties: Properties = Props.loads("project.properties")
     private val passwordSalt: String = properties str "account.pwd.salt"

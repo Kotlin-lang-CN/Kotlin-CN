@@ -5,7 +5,7 @@
         <a :href="urlRoot" class="menu-header">
           <i class="logo"></i><span><b>Kotlin</b> CHINA</span>
         </a>
-        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
+        <div class="menu-main"><a href="//www.kotliner.cn" title="社区">社区</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
 
         <div class="menu-user menu-right" v-if="!loginInfo.isLogin">
@@ -290,7 +290,7 @@
               padding: 0;
               margin: 0;
             }
-            button:hover{
+            button:hover {
               background-color: #f8fbff;
               color: #2572e5;
             }

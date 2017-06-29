@@ -5,10 +5,10 @@ import org.apache.ibatis.annotations.Result
 import org.apache.ibatis.annotations.Results
 import org.apache.ibatis.annotations.Select
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.service.domain.TextContent
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
@@ -34,23 +34,24 @@ object TextDao {
         mapper.insert(content)
     }
 
-    internal object Cache {
+    private object Cache {
 
         fun key(id: Long) = "text_content:$id"
 
         fun getById(uid: Long): TextContent? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
+            val userMap = Redis { it.hgetAll(key(uid)) }
             return if (!userMap.isEmpty()) Json.rawConvert<TextContent>(userMap) else null
         }
 
         fun update(content: TextContent) {
             val key = Cache.key(content.id)
-            Redis write {
-                Json.reflect(content) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(content) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
-
     }
 
     interface TextMapper {

@@ -1,10 +1,23 @@
-package tech.kotlin.service
+package tech.kotlin.controller
 
-import spark.Spark
+import spark.Route
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-fun main(args: Array<String>) {
+object MessageController {
+
+    val unread = Route { req, _ ->
+
+    }
+
+    val markRead = Route { req, _ ->
+
+    }
+
+    val markReadAll = Route { req, _ ->
+
+    }
+
 }

@@ -44,7 +44,8 @@ abstract class Consumer {
                 return@newProxyInstance method.invoke(proxy, *args)
 
             val requestId = UUID.randomUUID().mostSignificantBits
-            val serviceId = method.getAnnotation(RpcInterface::class.java).value
+            val annotation = method.getAnnotation(RpcInterface::class.java)
+            val serviceId = annotation.value
             val transaction = Transaction(requestId = requestId, type = serviceId, returnType = method.returnType)
             lock.withLock {
                 try {
@@ -56,7 +57,7 @@ abstract class Consumer {
                     throw error
                 }
             }
-            transaction.latch.await(5, TimeUnit.SECONDS)
+            transaction.latch.await(annotation.timeout, annotation.timeoutUnit)
             val error = transaction.error
             val result = transaction.result
             try {

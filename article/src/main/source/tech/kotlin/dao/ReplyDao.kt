@@ -2,10 +2,10 @@ package tech.kotlin.dao
 
 import org.apache.ibatis.annotations.*
 import org.apache.ibatis.session.SqlSession
+import tech.kotlin.common.redis.Redis
 import tech.kotlin.service.domain.Reply
-import tech.kotlin.utils.Mysql
-import tech.kotlin.utils.get
-import tech.kotlin.utils.Redis
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.mysql.get
 import tech.kotlin.common.serialize.Json
 
 /*********************************************************************
@@ -18,11 +18,15 @@ object ReplyDao {
         Mysql.register(ReplyMapper::class.java)
     }
 
-    fun getById(session: SqlSession, id: Long): Reply? {
-        val cached = ReplyCache.getById(id)
-        if (cached != null) return cached
+    fun getById(session: SqlSession, id: Long, cache: Boolean): Reply? {
+        if (cache) {
+            val cached = ReplyCache.getById(id)
+            if (cached != null) return cached
+        }
         val result = session[ReplyMapper::class].queryById(id)
-        if (result != null) ReplyCache.update(result)
+        if (result != null && cache) {
+            ReplyCache.update(result)
+        }
         return result
     }
 
@@ -51,26 +55,27 @@ object ReplyDao {
         }
     }
 
-    internal object ReplyCache {
+    private object ReplyCache {
 
         fun key(id: Long) = "reply:$id"
 
-        fun getById(uid: Long): Reply? {
-            val userMap = Redis read { it.hgetAll(key(uid)) }
-            return if (!userMap.isEmpty()) Json.rawConvert<Reply>(userMap) else null
+        fun getById(aid: Long): Reply? {
+            val replyMap = Redis { it.hgetAll(key(aid)) }
+            return if (!replyMap.isEmpty()) Json.rawConvert<Reply>(replyMap) else null
         }
 
         fun update(reply: Reply) {
             val key = ReplyCache.key(reply.id)
-            Redis write {
-                Json.reflect(reply) { obj, name, field -> it.hset(key, name, "${field.get(obj)}") }
+            Redis {
+                val map = HashMap<String, String>()
+                Json.reflect(reply) { obj, name, field -> map[name] = "${field.get(obj)}" }
+                it.hmset(key, map)
                 it.expire(key, 24 * 60 * 60)//cache for 24 hours
             }
         }
 
         fun invalid(aid: Long) {
-            val key = ReplyCache.key(aid)
-            Redis write { Json.reflect<Reply> { name, _ -> it.hdel(key, name) } }
+            Redis { it.del(key(aid)) }
         }
     }
 

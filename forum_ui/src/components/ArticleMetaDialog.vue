@@ -1,14 +1,15 @@
 <template>
-  <div class="dialog" v-if="showMode !== ''">
-    <div class="bg" v-on:click="showMode = ''"></div>
+  <div class="dialog" v-if="show">
+    <div class="bg" v-on:click="show = false"></div>
     <div class="cont">
-      <input v-model="titleInput" type="text" placeholder="请输入文章标题"/>
-      <select v-model="categoryInput">
-        <option v-for="category in categories" :value="category">{{ category }}</option>
+      <input v-model="dialog.meta.title" type="text" placeholder="请输入文章标题"/>
+      <!--suppress HtmlFormInputWithoutLabel -->
+      <select v-model="dialog.meta.category">
+        <!--suppress CommaExpressionJS -->
+        <option v-for="(category, offset) in dialog.meta.categories" v-bind:value="offset + 1">{{ category }}</option>
       </select>
-      <input-tag :tags="tagInput"></input-tag>
-      <button v-on:click="save" v-if="showMode === 'edit'">OK</button>
-      <button v-on:click="post" v-if="showMode === 'post'">发布</button>
+      <input-tag :tags="tag"></input-tag>
+      <button v-on:click="execute">{{ dialog.confirm.text }}</button>
     </div>
   </div>
 </template>
@@ -19,100 +20,54 @@
   import Config from "../assets/js/Config.js";
 
   export default {
+    components: {'input-tag': InputTag},
     data: function () {
       return {
-        showMode: '',
-        titleInput: '',
-        categoryInput: '',
-        tagInput: [],
-        categories: []
+        show: false,
+        tag: [],
+        dialog: {
+          meta: {
+            title: '',
+            category: 1,
+            tags: [],
+            categories: [],
+          },
+          confirm: {text: '', action: undefined}
+        }
       }
-    },
-    props: {
-      category: '',
-      title: '',
-      tags: ''
-    },
-    components: {
-      'input-tag': InputTag
     },
     created(){
-      Event.on("article-meta-edit", (mode) => {
-        this.showMode = mode;
+      Event.on('edit-meta', (args) => {
+        window.console.log(args);
+        this.dialog.meta = args.meta;
+        this.dialog.confirm = args.confirm;
+        this.tag = [];
+        if (args.meta.tags !== undefined) {
+          args.meta.tags.split(';').forEach((t) => {
+            if (t.length > 0) this.tag.push(t)
+          });
+        }
+        this.show = true
       });
-      this.getCategories();
-    },
-    mounted(){
-      this.titleInput = this.title;
-      this.categoryInput = this.category;
-      if (this.tags !== undefined) {
-        this.tagInput = [];
-        this.tags.split(';').forEach((t) => {
-          if (t.length > 0) {
-            this.tagInput.push(t);
-          }
-        });
-      }
     },
     methods: {
-      save(){
-        Event.emit('article-meta-update', {
-          'category': this.categoryInput,
-          'title': this.titleInput,
-          'tags': this.getTags()
-        });
-        this.showMode = '';
-      },
-      post(){
-        let tags = this.getTags();
-        if (tags.trim().length === 0 || this.titleInput.length === 0) {
-          layer.msg("信息不全");
-          return;
-        }
-        this.showMode = '';
-        Event.emit('article-meta-update', {
-          'category': this.categoryInput,
-          'title': this.titleInput,
-          'tags': this.getTags()
-        });
-        Event.emit('article-meta-post', '');
-      },
       getTags(){
-        let tags = '';
-        this.tagInput.forEach((t) => {
-          tags += t;
-          tags += ';'
+        let result = '';
+        this.tag.forEach((t) => {
+          result += t;
+          result += ';';
         });
-        return tags.substr(0, tags.length - 1);
+        return result.substr(0, result.length - 1);
       },
-      getCategories() {
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.category;
-            this.categories = resp.category;
-          });
+      execute(){
+        if (this.dialog.confirm.action) {
+          this.dialog.confirm.action({
+            title: this.dialog.meta.title,
+            category: this.dialog.meta.category,
+            tag: this.getTags()
+          })
         }
-      }
-    },
-    watch: {
-      title(){
-        this.titleInput = this.title;
-      },
-      category(){
-        this.categoryInput = this.category;
-      },
-      tags(){
-        if (this.tags !== undefined) {
-          this.tagInput = [];
-          this.tags.split(';').forEach((t) => {
-            if (t.length > 0) {
-              this.tagInput.push(t);
-            }
-          });
-        }
+        this.show = false;
       }
     }
   }
@@ -183,13 +138,13 @@
         -webkit-box-shadow: 0 0 0 1000px #fff inset;
       }
 
-      .vue-input-tag-wrapper{
+      .vue-input-tag-wrapper {
         margin: 20px 0 30px 0;
         padding: 8px 16px;
         line-height: 30px;
       }
 
-      button{
+      button {
         cursor: pointer;
         margin-bottom: 30px;
         width: 100%;

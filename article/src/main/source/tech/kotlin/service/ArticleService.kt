@@ -12,13 +12,13 @@ import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.TextApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.ArticleListResp
-import tech.kotlin.utils.Mysql
+import tech.kotlin.common.mysql.Mysql
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object Articles : ArticleApi {
+object ArticleService : ArticleApi {
 
     val textApi by Serv.bind(TextApi::class)
 
@@ -56,10 +56,10 @@ object Articles : ArticleApi {
     //更新文章元数据
     override fun updateMeta(req: UpdateArticleReq): ArticleResp {
         val article = Mysql.write {
-            ArticleDao.getById(it, req.id) ?: abort(Err.ARTICLE_NOT_EXISTS)
+            ArticleDao.getById(it, req.id, false) ?: abort(Err.ARTICLE_NOT_EXISTS)
             val args = HashMap<String, Any>().apply { putAll(req.args) }
             ArticleDao.update(it, req.id, args)
-            return@write ArticleDao.getById(it, req.id) ?: abort(Err.ARTICLE_NOT_EXISTS)
+            return@write ArticleDao.getById(it, req.id, false) ?: abort(Err.ARTICLE_NOT_EXISTS)
         }
         return ArticleResp().apply {
             this.articleId = articleId
@@ -90,7 +90,7 @@ object Articles : ArticleApi {
         val result = HashMap<Long, Article>()
         Mysql.read { session ->
             req.ids.forEach { id ->
-                val article = ArticleDao.getById(session, id, useCache = true, updateCache = true)
+                val article = ArticleDao.getById(session, id, true)
                 if (article != null) result[id] = article
             }
         }

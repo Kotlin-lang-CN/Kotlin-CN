@@ -162,20 +162,22 @@
         }
         .title {
           color: #333;
-          font-size: .34rem;
+          font-size: .38rem;
           line-height: 30px;
-          margin-bottom: 6px;
+          margin-bottom: 0;
         }
         .tag-lay {
           padding: 6px 0;
         }
         .tag {
+          font-size: 12px;
           display: inline-block;
           background-color: #c9dcf5;
           color: #333;
-          padding: 5px;
+          padding:0 2px;
+          vertical-align: top;
+          margin-top: 0;
           line-height: 20px;
-          margin-bottom: 10px;
           margin-right: 8px;
         }
         .right {
