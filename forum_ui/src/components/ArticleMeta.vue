@@ -50,7 +50,7 @@
     position: relative;
     color: #666;
     border-bottom: 1px #e4e4e4 solid;
-    padding: 70px 0 30px 0;
+    padding: 30px 0 30px 0;
     margin-bottom: 16px;
     font-size: 24px;
 
@@ -58,7 +58,7 @@
       color: #333;
       font-weight: bolder;
       display: inline-block;
-      font-size: 32px;
+      font-size: 30px;
     }
     .category {
       display: inline-block;
@@ -69,7 +69,7 @@
       padding: 0 7px;
       font-size: 16px;
       vertical-align: top;
-      margin-top: 15px;
+      margin-top: 12px;
     }
     .tag {
       font-size: 10px;
@@ -89,7 +89,7 @@
     i {
       position: absolute;
       right: 0;
-      top: 60px;
+      top: 40px;
       width: 36px;
       height: 36px;
       cursor: pointer;

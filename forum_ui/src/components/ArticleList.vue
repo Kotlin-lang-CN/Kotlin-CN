@@ -82,9 +82,7 @@
           url: url,
           condition: {'offset': offset, 'limit': limit}
         }, (data) => {
-          if (offset === 0) {
-            this.articles = [];
-          }
+          if (offset === 0) this.articles = [];
           this.hasMore = data.articles.length >= limit;
           this.articles = this.articles.concat(data.articles);
           this.offset = data.next_offset;
