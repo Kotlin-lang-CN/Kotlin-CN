@@ -1,18 +1,13 @@
 <template>
   <app-layout>
     <div class="home-root">
-      <div class="banner" v-on:click="homeLink">KOTLIN CHINA 上线了！
-        <small v-if="isAdmin" v-on:click="editLink">编辑</small>
-      </div>
-      <div v-if="isAdmin && editURL">
-        <input type="text" v-model="urlInput"/>
-        <button v-on:click="applyEdit">确认</button>
-      </div>
+      <home-link-title></home-link-title>
       <div class="content">
         <div class="post">
           <div class="sub-nav">
             <button v-on:click="selectFine" v-bind:class="{'select': select===0, 'normal': select!==0 }">精品</button>
             <button v-on:click="selectLatest" v-bind:class="{'select': select===1, 'normal': select!==1}">最新发布</button>
+            <!--suppress CommaExpressionJS -->
             <button v-for="(category, id) in categories" v-on:click="selectCategory(id + 1)"
                     v-bind:class="{
               'select': categories.length >= select - 1 && categories[select -2]===category,
@@ -31,6 +26,7 @@
 </template>
 
 <script>
+  import HomeLinkTitle from '../components/HomeLinkTitle.vue';
   import Config from "../assets/js/Config.js";
   import Net from "../assets/js/Net.js";
   import ArticleList from '../components/ArticleList.vue';
@@ -41,38 +37,29 @@
   import Util from '../assets/js/Util.js';
 
   export default {
-    data() {
-      return {
-        uiEdit: Config.UI.edit,
-        select: 'fine',
-        articleListUrl: '',
-        link: '',
-        editURL: false,
-        urlInput: '',
-        isAdmin: LoginMgr.isAdmin(),
-        categories: [],
-      }
-    },
     components: {
-      AppLayout,
+      'home-link-title': HomeLinkTitle,
+      'app-layout': AppLayout,
       'article-list': ArticleList,
       'side-bar': SideBar
     },
-    mounted(){
-      this.articleListUrl = Config.URL.article.fine;
+    data() {
+      return {
+        select: 0,
+        articleListUrl: '',
+        categories: [],
+      }
     },
-    created() {
-      Net.get({url: Config.URL.misc.homeLink}, (resp) => {
-        this.urlInput = resp.link;
-        this.link = resp.link;
+    mounted() {
+      Net.get({url: Config.URL.article.categoryType}, (resp) => {
+        this.categories = resp.category;
+        this.selectFine()
       });
-      this.getCategories();
-      setTimeout(() => this.selectFine(), 200)
     },
     methods: {
       selectFine(){
-        this.select = 0;
         this.articleListUrl = Config.URL.article.fine;
+        this.select = 0;
       },
       selectLatest() {
         this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
@@ -82,30 +69,6 @@
         this.articleListUrl = Config.URL.article.category.format(id);
         this.select = id + 1;
       },
-      getCategories(){
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.category;
-            this.categories = resp.category;
-          });
-        }
-      },
-      homeLink() {
-        if (this.link !== '') window.location.href = this.link
-      },
-      editLink() {
-        this.link = '';
-        this.editURL = !this.editURL;
-      },
-      applyEdit() {
-        Net.post({url: Config.URL.misc.homeLink, condition: {link: this.urlInput}}, () => {
-          this.link = this.urlInput;
-          this.editURL = !this.editURL;
-        })
-      }
     }
   }
 </script>
@@ -115,32 +78,16 @@
     width: 1120px;
     margin: auto;
   }
-
-  .banner {
-    background: #73abfb;
-    text-align: center;
-    line-height: 120px;
-    color: white;
-    font-size: 25px;
-    font-weight: bolder;
-    height: 120px;
-    margin-bottom: 30px;
-    cursor: pointer;
-  }
-
   .content {
     display: flex;
     box-sizing: border-box;
-
     .sub-title {
       text-align: left;
       padding: 24px 16px;
       font-size: 24px;
     }
-
     .post {
       width: 75%;
-
       .sub-nav {
         text-align: left;
         > button {
@@ -178,6 +125,5 @@
         padding: 16px;
       }
     }
-
   }
 </style>

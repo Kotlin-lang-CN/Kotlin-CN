@@ -45,6 +45,7 @@
     <app-login></app-login>
   </div>
 </template>
+
 <script>
   import Config from "../assets/js/Config.js";
   import LoginMgr from "../assets/js/LoginMgr.js";
