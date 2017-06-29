@@ -20,6 +20,7 @@
   import Login from '../assets/js/LoginMgr'
   import Net from '../assets/js/Net'
   import Config from '../assets/js/Config'
+  import Event from '../assets/js/Event'
 
   export default {
     data() {

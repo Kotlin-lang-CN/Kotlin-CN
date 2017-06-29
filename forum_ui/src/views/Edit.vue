@@ -6,15 +6,13 @@
         <div class="right">
           <div class="btn"><span>更多<i class="choice-icon"></i></span>
             <div class="sub-menu">
-              <section v-on:click="postCancel">放弃编辑</section>
-              <section v-on:click="postDelete">删除文章</section>
+              <section v-on:click="cancelEdit">放弃编辑</section>
+              <section v-on:click="deleteArticle">删除文章</section>
             </div>
           </div>
-          <button class="post" v-on:click="preparePostArticle" v-if="updateMode">确认修改</button>
-          <button class="post" v-on:click="preparePostArticle" v-if="!updateMode">发布新话题</button>
+          <button class="post" v-on:click="publish"> {{ updateMode ? '确认修改' : '确认发布' }}</button>
         </div>
       </div>
-
       <div class="edit-operation">
         <ul>
           <li v-on:click="addStrong"><i class="strong"></i></li>
@@ -33,16 +31,18 @@
     </nav>
     <div class="main">
       <div class="inside" @keydown.9="tabFn">
-        <article-meta :category="category" :title="title" :tags="tags" :editable="true"></article-meta>
+        <article-meta :editable="true" :meta.sync="meta">
+        </article-meta>
         <textarea name="" class="editor" v-model="input"></textarea>
       </div>
       <div class="outside">
-        <article-meta :category="category" :title="title" :tags="tags"></article-meta>
+        <article-meta :meta.sync="meta">
+        </article-meta>
         <display-panels :content="input"></display-panels>
       </div>
     </div>
-    <article-meta-dialog :category="category" :title="title" :tags="tags"></article-meta-dialog>
-    <app-login></app-login>
+    <article-meta-dialog></article-meta-dialog>
+    <common-dialog></common-dialog>
   </div>
 </template>
 
@@ -61,7 +61,8 @@
   import DisplayPanels from '../components/DisplayPanels.vue';
   import ArticleMeta from '../components/ArticleMeta.vue';
   import ArticleMetaDialog from '../components/ArticleMetaDialog.vue';
-  import Login from '../components/Login.vue';
+  import Dialog from '../components/Dialog.vue'
+  import Login from '../assets/js/LoginMgr'
 
   function insertContent(val, that) {
     let textareaDom = document.querySelector('.editor');
@@ -77,111 +78,118 @@
     }
     that.input = document.querySelector('.editor').value;
   }
-  export default {
-    data() {
-      return {
-        articleId: '',
-        category: '',
-        title: 'title',
-        tags: '',
-        updateMode: false,
-        author: LoginMgr.username,
-        input: '',
-        categories: [],
 
-        editStatus: true,
-        previewStatus: true,
-        fullPageStatus: false,
-        navStatus: true,
-        icoStatus: true,
-      }
-    },
+  export default {
     components: {
-      ArticleMeta,
-      'input-tag': InputTag,
+      'common-dialog': Dialog,
       'article-meta': ArticleMeta,
+      'input-tag': InputTag,
       'article-meta-dialog': ArticleMetaDialog,
-      'app-login': Login,
       'display-panels': DisplayPanels
     },
-    created: function () {
-      this.articleId = this.$root.params.id;
-      if (this.articleId !== undefined && this.articleId !== '') {
-        this.updateMode = true;
-        this.getArticle();
+    data() {
+      const articleId = this.$root.params.id;
+      return {
+        id: articleId,
+        updateMode: articleId && articleId !== '',
+        meta: {
+          categories: [],
+          category: 1,
+          title: '',
+          tags: '',
+        },
+        input: '',
       }
-      Event.on('article-meta-update', (obj) => {
-        this.category = obj.category;
-        this.title = obj.title;
-        this.tags = obj.tags;
-      });
-      Event.on('article-meta-post', () => {
-        this.postArticle();
-      });
-      this.getCategories();
+    },
+    created: function () {
+      new Promise((next) => {
+        Net.get({url: Config.URL.article.categoryType}, (resp) => {
+          this.meta.categories = resp.category;
+          if (this.updateMode) next()
+        })
+      }).then(() => {
+        Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {
+          this.meta.title = resp.article.title;
+          this.meta.tags = resp.article.tags;
+          this.input = resp.content.content;
+        }, (resp) => {
+          if (resp.code === 34) window.location.href = "/404"
+        });
+      })
     },
     methods: {
-      tabFn: function (evt) {
-        insertContent("    ", this);
-        if (evt.preventDefault) {
-          evt.preventDefault();
-        } else {
-          evt.returnValue = false;
+      /*basic control*/
+      cancelEdit() {
+        Event.emit('alert', {
+          title: '放弃修改',
+          text: '确认放弃对【' + this.title + '】的修改?',
+          allow_dismiss: true,
+          confirm: {
+            text: '确定', action: () => window.location.href = "/"
+          },
+          cancel: {text: '取消', action: () => false},
+        });
+
+      },
+      deleteArticle(){
+        if (this.id === undefined || this.id === '')
+          return;
+
+        Event.emit('alert', {
+          title: '撤销发布',
+          text: '确认撤销发布【' + this.title + '】?',
+          allow_dismiss: true,
+          confirm: {
+            text: '确定', action: () =>
+              Net.post({url: Config.URL.article.delete.format(this.id),}, () => window.location.href = "/")
+          },
+          cancel: {text: '取消', action: () => false},
+        })
+      },
+      publish(){
+        if (this.input.trim().length < 30) {
+          layer.msg('文章内容不得少于30字');
+          return;
         }
+        new Promise((next) => {
+          if (this.meta.title.trim() === '') {
+            Event.emit('edit-meta', {
+              meta: this.meta,
+              confirm: {
+                text: '发布',
+                action: (meta) => {
+                  window.console.log(meta);
+                  this.meta.category = meta.category;
+                  this.meta.title = meta.title;
+                  this.meta.tags = meta.tag;
+                  next()
+                }
+              }
+            })
+          } else {
+            next()
+          }
+        }).then(() => {
+          Net.post({
+            url: this.updateMode ? Config.URL.article.update.format(this.id) : Config.URL.article.post,
+            condition: {
+              title: this.meta.title,
+              category: this.meta.category,
+              content: this.input,
+              tags: this.meta.tags,
+              author: Login.info().uid
+            }
+          }, (resp) => {
+            if (resp.id) this.id = resp.id;
+            layer.msg(this.updateMode ? '修改成功' : '发布成功');
+            setTimeout(() => {
+              window.location.href = '/post/' + this.id
+            }, 500)
+          });
+        });
       },
-      addImage: function (evt) {
-        insertContent("![Vue](https://cn.vuejs.org/images/logo.png)", this);
-      },
-      addHTitle: function (index) {
-        let tmp = '';
-        switch (index) {
-          case 1:
-            tmp = '# ';
-            break;
-          case 2:
-            tmp = '## ';
-            break;
-          case 3:
-            tmp = '### ';
-            break;
-          case 4:
-            tmp = '#### ';
-            break;
-          case 5:
-            tmp = '##### ';
-            break;
-          case 6:
-            tmp = '###### ';
-            break;
-          default:
-            break;
-        }
-        insertContent(tmp, this);
-      },
-      addCode: function () {
-        let textareaDom = document.querySelector('.editor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('```\n\n```', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 5);
-        } else {
-          range.setCaretPosition(textareaDom, point + 4);
-        }
-      },
-      addStrikethrough: function () {
-        let textareaDom = document.querySelector('.editor');
-        let value = textareaDom.value;
-        let point = range.getCursortPosition(textareaDom);
-        let lastChart = value.substring(point - 1, point);
-        insertContent('~~~~', this);
-        if (lastChart !== '\n' && value !== '') {
-          range.setCaretPosition(textareaDom, point + 3);
-        } else {
-          range.setCaretPosition(textareaDom, point + 2);
-        }
-      },
+
+      /*markdown input control*/
       addStrong: function () {
         let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
@@ -209,9 +217,6 @@
       addLine: function () {
         insertContent('\n----\n', this);
       },
-      addLink: function () {
-        insertContent("[Vue](https://cn.vuejs.org/images/logo.png)", this);
-      },
       addQuote: function () {
         let textareaDom = document.querySelector('.editor');
         let value = textareaDom.value;
@@ -224,93 +229,84 @@
           range.setCaretPosition(textareaDom, point + 2);
         }
       },
+      addCode: function () {
+        let textareaDom = document.querySelector('.editor');
+        let value = textareaDom.value;
+        let point = range.getCursortPosition(textareaDom);
+        let lastChart = value.substring(point - 1, point);
+        insertContent('```\n\n```', this);
+        if (lastChart !== '\n' && value !== '') {
+          range.setCaretPosition(textareaDom, point + 5);
+        } else {
+          range.setCaretPosition(textareaDom, point + 4);
+        }
+      },
+      addLink: function () {
+        insertContent("[Vue](https://cn.vuejs.org/images/logo.png)", this);
+      },
+      addImage: function () {
+        insertContent("![Vue](https://cn.vuejs.org/images/logo.png)", this);
+      },
       addUl: function () {
         insertContent('* ', this);
       },
       addOl: function () {
         insertContent('1. ', this);
       },
-      addRedo: function () {
 
-      },
-      addUndo: function () {
-
-      },
-      getArticle(){
-        Net.get({
-          url: Config.URL.article.detail.format(this.articleId),
-          condition: {}
-        }, (data) => {
-          this.title = data.article.title;
-          this.tags = data.article.tags;
-          this.input = data.content.content;
-          this.getCategories(data.article.category - 1);
-        }, (resp) => {
-          if (resp.code === 34) window.location.href = "/404"
-        });
-      },
-      postCancel(){
-        history.back();
-      },
-      postDelete(){
-        if (this.articleId === undefined)return;
-        Net.post({
-          url: Config.URL.article.delete.format(this.articleId),
-        }, (resp) => {
-          if (resp.code === 0) {
-            window.location.href = "/";
-          }
-        })
-      },
-      preparePostArticle(){
-        Event.emit('article-meta-edit', 'post');
-      },
-      postArticle(){
-        if (this.input.trim().length < 30) {
-          layer.msg('文章文字不少于三十字');
-          return;
-        }
-        let url = Config.URL.article.post;
-        if (this.updateMode) {
-          url = Config.URL.article.update.format(this.articleId);
-        }
-        let targetCategory = 0;
-        for (let i = 0; i < this.categories.length; i++) {
-          if (this.category === this.categories[i]) {
-            targetCategory = i + 1;
-          }
-        }
-        LoginMgr.require(() => {
-          Net.post({
-            url: url,
-            condition: {
-              title: this.title,
-              category: targetCategory,
-              content: this.input,
-              tags: this.tags,
-              author: LoginMgr.info().uid
-            }
-          }, (data) => {
-            layer.msg('发布成功');
-            this.articleId = data.id;
-            history.back();
-          });
-        });
-      },
-      getCategories(index) {
-        if (index === undefined) index = 0;
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-          this.category = this.categories[index];
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.category;
-            this.categories = resp.category;
-            this.category = this.categories[index];
-          });
-        }
-      }
+      /*unused method*/
+      //addRedo: function () {
+      //
+      //},
+      //addUndo: function () {
+      //
+      //},
+      //tabFn: function (evt) {
+      //  insertContent("    ", this);
+      //  if (evt.preventDefault) {
+      //    evt.preventDefault();
+      //  } else {
+      //    evt.returnValue = false;
+      //  }
+      //},
+      //addHTitle: function (index) {
+      //  let tmp = '';
+      //  switch (index) {
+      //    case 1:
+      //      tmp = '# ';
+      //      break;
+      //    case 2:
+      //      tmp = '## ';
+      //      break;
+      //    case 3:
+      //      tmp = '### ';
+      //      break;
+      //    case 4:
+      //      tmp = '#### ';
+      //      break;
+      //    case 5:
+      //      tmp = '##### ';
+      //      break;
+      //    case 6:
+      //      tmp = '###### ';
+      //      break;
+      //    default:
+      //      break;
+      //  }
+      //  insertContent(tmp, this);
+      //},
+      //addStrikeThrough: function () {
+      //  let textareaDom = document.querySelector('.editor');
+      //  let value = textareaDom.value;
+      //  let point = range.getCursortPosition(textareaDom);
+      //  let lastChart = value.substring(point - 1, point);
+      //  insertContent('~~~~', this);
+      //  if (lastChart !== '\n' && value !== '') {
+      //    range.setCaretPosition(textareaDom, point + 3);
+      //  } else {
+      //    range.setCaretPosition(textareaDom, point + 2);
+      //  }
+      //},
     },
   }
 </script>

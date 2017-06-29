@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="content">
-      <div class="list" v-for="value in articles">
+      <div class="list" v-for="value in articles" v-on:click="forward(value.meta.id)">
         <section>
           <div class="footnote">
             最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
@@ -10,22 +10,21 @@
             <app-avatar :avatar="value.author.username"></app-avatar>
             <div class="wrap">
               <div class="title">
-                <span v-on:click="toArticle(value.meta.id)" class="focus">{{ value.meta.title }}</span>
-
+                <span class="focus">{{ value.meta.title }}</span>
                 <div class="extra">
-                  <select v-on:change="updateState(value.meta)" v-model="value.meta.state" v-if="isAdmin">
+                  <!--suppress HtmlFormInputWithoutLabel -->
+                  <select v-model="value.meta.state" v-on:change="updateState(value.meta)"
+                          v-on:click.stop="" v-if="me.isAdminRole">
                     <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
                   </select>
-                  <small v-if="showDelete(value)" class="delete" v-on:click="deleteArticle(value)">删除</small>
-                  <small v-on:click="toArticle(value.meta.id)" class="reply-count">{{ value.replies }}</small>
+                  <small v-if="showDelete(value)" class="delete" v-on:click.stop="deleteArticle(value)">删除</small>
+                  <small class="reply-count">{{ value.replies }}</small>
                   <i v-if="value.is_fine" class="fine"></i>
                 </div>
-
               </div>
               <span v-if="categories.length >= value.meta.category"
                     class="category"> {{ categories[value.meta.category - 1] }}</span>
-              <span class="tag focus" v-on:click="toArticle(value.meta.id)"
-                    v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
+              <span class="tag focus" v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
             </span>
               <div class="footnote right">
                 {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
@@ -52,9 +51,8 @@
     },
     data() {
       return {
-        isAdmin: LoginMgr.isAdmin(),
+        me: LoginMgr,
         loading: false,
-        urlTopic: Config.UI.post + '/',
         articles: [],
         offset: 0,
         hasMore: false,
@@ -71,14 +69,14 @@
       requestUrl: ''
     },
     created() {
-      this.getCategories();
-      Event.on('login', () => this.isAdmin = LoginMgr.isAdmin());
+      Net.get({url: Config.URL.article.categoryType}, (resp) => {
+        this.categories = resp.category;
+        this.get(this.requestUrl, 0)
+      });
     },
     methods: {
       get(url, offset){
-        if (url.trim().length === 0)
-          return;
-
+        if (url.trim().length === 0) return;
         const limit = 20;
         Net.get({
           url: url,
@@ -92,8 +90,8 @@
           this.offset = data.next_offset;
         })
       },
-      toArticle(id) {
-        window.location.href = this.urlTopic + id
+      forward(id){
+        window.location.href = Config.UI.post + '/' + id
       },
       updateState(article) {
         Net.post({
@@ -107,23 +105,23 @@
           this.get(this.requestUrl, 0)
         })
       },
-      getCategories(){
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.categories;
-            this.categories = resp.category;
-          });
-        }
-      },
       showDelete(article) {
-        let info = LoginMgr.info();
-        return !info.isAdminRole && info.isLogin && info.uid === article.author.uid
+        return !this.me.isAdminRole && this.me.isLogin && this.me.uid === article.author.uid
       },
       deleteArticle(article){
-        Net.post({url: Config.URL.article.delete.format(article.meta.id)}, () => this.articles.remove(article))
+        new Promise((next) => {
+          Event.emit('alert', {
+            title: '删除文章',
+            text: '确认删除【' + article.meta.title + '】?',
+            allow_dismiss: true,
+            confirm: {text: '确定', action: () => next()},
+            cancel: {text: '取消', action: () => false},
+          })
+        }).then(() => {
+          Net.post({url: Config.URL.article.delete.format(article.meta.id)}, () => {
+            this.articles.remove(article)
+          })
+        });
       }
     },
     watch: {
@@ -142,13 +140,15 @@
     .list:nth-child(1) {
       border-top: 0;
     }
-    .list section:hover .flex .delete{
+    .list section:hover .flex .delete {
       display: inline-block;
     }
 
     .list {
       border-top: 1px #f1f1f1 solid;
       display: block;
+      cursor: pointer;
+
       section {
         padding: 12px 0 30px 0;
         text-align: left;
@@ -203,9 +203,6 @@
             margin-top: 3px;
             margin-left: 12px;
             background: url(../assets/img/fine.png) no-repeat;
-          }
-          .focus {
-            cursor: pointer;
           }
           .extra {
             position: absolute;

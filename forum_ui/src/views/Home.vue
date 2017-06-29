@@ -22,6 +22,7 @@
         </div>
       </div>
     </div>
+    <common-dialog></common-dialog>
   </app-layout>
 </template>
 
@@ -35,13 +36,15 @@
   import AppLayout from '../layout/AppWeb.vue';
   import Event from '../assets/js/Event.js';
   import Util from '../assets/js/Util.js';
+  import Dialog from '../components/Dialog.vue';
 
   export default {
     components: {
       'home-link-title': HomeLinkTitle,
       'app-layout': AppLayout,
       'article-list': ArticleList,
-      'side-bar': SideBar
+      'side-bar': SideBar,
+      'common-dialog': Dialog
     },
     data() {
       return {
@@ -78,6 +81,7 @@
     width: 1120px;
     margin: auto;
   }
+
   .content {
     display: flex;
     box-sizing: border-box;
