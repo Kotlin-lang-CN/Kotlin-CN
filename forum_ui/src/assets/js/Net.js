@@ -30,7 +30,8 @@ function generateHeaders() {
 class Net {
   ajax(request, success, fail) {
     let errHandler = function (error) {
-      Event.emit('error', error.msg ? error.msg + '(' + error.code + ')' : error);
+      const msg = (error.code < 0 ? '系统错误' : error.msg) + '(错误码 ' + error.code + ')';
+      Event.emit('error', error.msg ? msg : error);
       console.log(error);
       if (fail) fail(error)
     };

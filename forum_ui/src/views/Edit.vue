@@ -115,7 +115,8 @@
         }, (resp) => {
           if (resp.code === 34) window.location.href = "/404"
         });
-      })
+      });
+      Event.on("error", (err) => layer.msg(err));
     },
     methods: {
       /*basic control*/

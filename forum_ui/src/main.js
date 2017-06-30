@@ -34,9 +34,7 @@ Array.prototype.remove = function (val) {
 
 const app = new Vue({
   el: '#app',
-  data: {
-    ViewComponent: {render: h => h('div', 'loading...')}
-  },
+  data: {ViewComponent: {render: h => h('div', 'loading...')}},
   render (h) {
     return h(this.ViewComponent)
   }

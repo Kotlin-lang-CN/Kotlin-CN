@@ -22,7 +22,6 @@
           <display-panels :content="content"></display-panels>
         </section>
       </article>
-
       <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论{{ topic.replies }}</a>
     </div>
   </app-layout>
