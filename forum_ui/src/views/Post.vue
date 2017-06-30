@@ -72,9 +72,9 @@
           this.categories = resp.category;
           Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
             this.article = resp;
-            $('html, body').animate({scrollTop: 0}, 'fast');
             setTimeout(() => {
               const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
+              this.seekAnchor();
               $("title").html(metaTitle);
               $('.article-social').share({
                 title: metaTitle + ' 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区',
@@ -87,6 +87,18 @@
           });
         });
       },
+      seekAnchor() {
+        const url = window.location.href, idx = url.indexOf("#");
+        const anchor = idx !== -1 ? url.substring(idx + 1) : undefined;
+        if (!anchor) {
+          $('html, body').animate({scrollTop: 0}, 'fast');
+        } else {
+          const posNormal = $('[name="' + anchor + '"]').position();
+          const posDecode = $('[name="' + Util.anchorHash(anchor) + '"]').position();
+          const pos = posNormal ? posNormal : posDecode;
+          $('html, body').animate({scrollTop: pos ? pos.top : 0}, 'fast');
+        }
+      }
     },
     computed: {
       showEdit() {

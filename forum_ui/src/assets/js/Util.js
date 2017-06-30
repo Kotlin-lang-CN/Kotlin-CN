@@ -1,3 +1,27 @@
+const I64BIT_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-'.split('');
+
+function hash(input) {
+  let hash = 5381;
+  let i = input.length - 1;
+
+  if (typeof input === 'string') {
+    for (; i > -1; i--)
+      hash += (hash << 5) + input.charCodeAt(i);
+  }
+  else {
+    for (; i > -1; i--)
+      hash += (hash << 5) + input[i];
+  }
+  let value = hash & 0x7FFFFFFF;
+  let retValue = '';
+  do {
+    retValue += I64BIT_TABLE[value & 0x3F];
+  }
+  while (value >>= 6);
+
+  return retValue;
+}
+
 const Util = {
 
   isValidEmail(s) {
@@ -19,8 +43,12 @@ const Util = {
     return ua.match(/(Android)[\s\/]+([\d\.]+)/) !== null
       || ua.match(/(iPad|iPhone|iPod)\s+OS\s([\d_\.]+)/) !== null
       || ua.match(/(Windows\s+Phone)\s([\d\.]+)/) !== null;
-  }
+  },
 
+  //generate anchor from title text
+  anchorHash(text) {
+    return hash(text.replace('#', '_'))
+  }
 };
 if (!String.prototype.format) {
   String.prototype.format = function () {
