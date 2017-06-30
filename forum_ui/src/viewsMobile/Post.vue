@@ -66,7 +66,7 @@
       this.getArticle();
       this.getCategories();
       Event.on('login', () => this.renderEditUrl());
-      Event.on('update', () => {
+      Event.on('route-update', () => {
         this.id = this.$root.params.id;
         if (this.id) {
           this.articleId = this.id;
