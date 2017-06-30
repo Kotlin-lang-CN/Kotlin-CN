@@ -18,6 +18,10 @@
         <app-reply :articleId="id"></app-reply>
       </article>
     </div>
+    <div class="side">
+      <article-side :id="id"></article-side>
+      <div class="article-social"></div>
+    </div>
   </app-layout>
 </template>
 
@@ -32,13 +36,15 @@
   import Reply from '../components/Reply.vue';
   import AppLayout from '../layout/AppWeb.vue';
   import ArticleMeta from '../components/ArticleMeta.vue';
+  import ArticleSideBar from '../components/ArticleSideBar.vue';
 
   export default {
     components: {
       'article-meta': ArticleMeta,
       'app-layout': AppLayout,
       'app-reply': Reply,
-      'display-panels': DisplayPanels
+      'display-panels': DisplayPanels,
+      'article-side': ArticleSideBar,
     },
     data () {
       return {
@@ -66,15 +72,21 @@
           this.categories = resp.category;
           Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
             this.article = resp;
-            this.scrollToTop();
+            $('html, body').animate({scrollTop: 0}, 'fast');
+            setTimeout(() => {
+              const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
+              $("title").html(metaTitle);
+              $('.article-social').share({
+                title: metaTitle + ' 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区',
+                description: resp.content.content.substr(0, 30) + '...',
+                sites: ['qq', 'weibo', 'wechat']
+              })
+            }, 200)
           }, (resp) => {
             if (resp.code === 34) window.location.href = "/404"
           });
         });
       },
-      scrollToTop() {
-        $('html, body').animate({scrollTop: 0}, 'fast');
-      }
     },
     computed: {
       showEdit() {
@@ -89,6 +101,7 @@
     },
   }
 </script>
+
 <style scoped lang="less">
   div.topic {
     text-align: left;

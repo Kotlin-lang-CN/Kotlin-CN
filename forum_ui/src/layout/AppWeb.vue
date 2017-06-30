@@ -12,6 +12,7 @@
     </div>
 
     <app-login></app-login>
+    <common-dialog></common-dialog>
   </div>
 </template>
 
@@ -21,6 +22,7 @@
   import Footer from '../components/Footers.vue';
   import Login from '../components/Login.vue';
   import Drawer from '../componentsMobile/Drawer.vue';
+  import Dialog from '../components/Dialog.vue';
 
   export default {
     name: 'app',
@@ -28,18 +30,14 @@
       'app-header': Header,
       'app-foot': Footer,
       'app-login': Login,
-      'app-drawer': Drawer
+      'app-drawer': Drawer,
+      'common-dialog': Dialog
     },
     data(){
-      return {
-        isTop: true
-      }
+      return {isTop: true}
     },
     mounted() {
-      Event.on("error", (err) => {
-        layer.msg(err)
-      });
-
+      Event.on("error", (err) => layer.msg(err));
       this.page = this.$refs.page;
       this.page.addEventListener('scroll', () => {
         if (this.page.scrollTop === 0) {
@@ -71,7 +69,7 @@
     padding: 0 16px;
     color: #2c3e50;
   }
-  
+
   a {
     text-decoration: none;
     font-weight: normal;

@@ -41,6 +41,11 @@ const Config = {
       dashboard: CGI.article + '/misc/dashboard',//网站公告栏
       homeLink: CGI.article + '/misc/home/link',//首页广告栏链接
     },
+    flower: {
+      starArticle: CGI.article + '/flower/article/{0}/star',
+      unstarArticle: CGI.article + '/flower/article/{0}/unstar',
+      countArticle: CGI.article + '/flower/article/star/count'
+    }
   },
   OAuth: {
     github: {
