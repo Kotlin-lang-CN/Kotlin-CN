@@ -2,9 +2,8 @@
   <div class="header" v-show="moduleShow">
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
-        <a :href="urlRoot" class="menu-header">
-          <i class="logo"></i><span><b>Kotlin</b> CHINA</span>
-        </a>
+        <a href="/" class="menu-header"><i class="logo"></i><span><b>Kotlin</b> CHINA</span></a>
+        <div class="menu-main"><a href="/" title="问答版">问答版</a></div>
         <div class="menu-main"><a href="//www.kotliner.cn" title="社区">社区</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
 
@@ -13,9 +12,7 @@
             <span><button v-on:click="register">注册</button></span>
           </div>
           <div class="btn">
-            <span>
-              <span>登录</span>
-            </span>
+            <span>登录</span>
             <ul>
               <li>
                 <button v-on:click="loginWithGithub">GitHub登录</button>

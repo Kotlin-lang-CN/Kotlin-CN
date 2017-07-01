@@ -3,8 +3,8 @@
     <div class="part">共 {{flowers}} 个赞</div>
     <div class="button" v-if="!me.isLogin || !star_state" v-on:click="star">赞</div>
     <div class="button" v-if="me.isLogin && !!star_state" v-on:click="unstar">取消赞</div>
-    <div class="button" v-on:click="scrollToTop">回到顶部</div>
-    <div class="button" v-on:click="scrollToButton">去评论</div>
+    <span class="button" v-on:click="scrollToTop">回到顶部</span>
+    <span class="button" v-on:click="scrollToButton">去评论</span>
   </div>
 </template>
 

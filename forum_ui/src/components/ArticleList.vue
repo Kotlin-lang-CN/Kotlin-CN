@@ -24,7 +24,8 @@
               </div>
               <span v-if="categories.length >= value.meta.category"
                     class="category"> {{ categories[value.meta.category - 1] }}</span>
-              <span class="tag focus" v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
+              <span class="tag focus" v-if="value.meta.tags && value.meta.tags.length >0"
+                    v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
             </span>
               <div class="footnote right">
                 {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}

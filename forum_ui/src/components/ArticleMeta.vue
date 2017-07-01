@@ -2,9 +2,11 @@
   <div class="meta">
     <div class="title">
       <span class="category">
-        {{ meta.categories.length > meta.category ? meta.categories[meta.category - 1] : ''}}
+        {{ meta.categories.length >= meta.category ? meta.categories[meta.category - 1] : ''}}
       </span>{{ meta.title }}
-      <small class="tag" v-for="tag in meta.tags.split(/;/)"> #{{ tag }} </small>
+      <small class="tag" v-if="meta.tags && meta.tags.length > 0" v-for="tag in meta.tags.split(/;/)">
+        #{{ tag }}
+      </small>
     </div>
     <i v-if="editable" v-on:click="modify"></i>
   </div>

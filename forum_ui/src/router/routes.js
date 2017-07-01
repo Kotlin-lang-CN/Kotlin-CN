@@ -3,7 +3,7 @@ export default {
   '/edit': './views/Edit',
   '/post/:id': './views/Post',
   '/edit/:id': './views/Edit',
-  // '/wiki/:id': './views/Wiki',
+  '/wiki/:id': './views/Wiki',
   '/comments/:id': './viewsMobile/Comments',
 
   '/m/': './viewsMobile/Home',

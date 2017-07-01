@@ -1,26 +1,10 @@
 <template>
-  <app-layout>
-    <div class="topic">
-      <article>
-        <header>
-          <article-meta :meta.sync="metaData"></article-meta>
-          <div>
-            <label v-if="article.article.create_time !== article.article.last_edit_time">
-              最近更新于{{ article.article.last_edit_time | moment}}，
-            </label>
-            <span>{{ article.author.username }}</span> 发布于 {{ article.article.create_time | moment}}
-            <a :href="'/edit/' + id" v-if="showEdit" class="edit">编辑</a>
-          </div>
-        </header>
-        <section>
-          <display-panels :content="article.content.content"></display-panels>
-        </section>
-        <app-reply :articleId="id"></app-reply>
-      </article>
+  <app-layout class="main-container">
+    <div class="toc">
+      <display-panels :content="article.content.content"></display-panels>
     </div>
-    <div class="side">
-      <article-side :id="id" class="flower"></article-side>
-      <div class="article-social"></div>
+    <div class="article">
+      <display-panels :content="article.content.content"></display-panels>
     </div>
   </app-layout>
 </template>
@@ -50,11 +34,10 @@
       return {
         id: this.$root.params.id,
         article: {
-          article: {title: '', tags: '', category: 1},
+          article: {title: ''},
           content: {content: ''},
           author: {uid: ''}
         },
-        categories: [],
         reply: [],
         toReplyContent: '',
       }
@@ -76,18 +59,13 @@
               const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
               this.seekAnchor();
               $("title").html(metaTitle);
-              $('.article-social').share({
-                title: metaTitle + ' 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区',
-                description: resp.content.content.substr(0, 30) + '...',
-                sites: ['qq', 'weibo', 'wechat']
-              })
             }, 200)
           }, (resp) => {
             if (resp.code === 34) window.location.href = "/404"
           });
         });
       },
-      seekAnchor() {
+      seekAnchor() {//找到锚点并跳转
         const url = window.location.href, idx = url.indexOf("#");
         const anchor = idx !== -1 ? url.substring(idx + 1) : undefined;
         if (!anchor) {
@@ -104,55 +82,11 @@
       showEdit() {
         return this.article && LoginMgr.isLogin && LoginMgr.uid === this.article.author.uid
           || LoginMgr.isAdminRole
-      },
-      metaData() {
-        const result = this.article.article;
-        result.categories = this.categories;
-        return result
       }
     },
   }
 </script>
 
 <style scoped lang="less">
-  div.topic {
-    text-align: left;
-    margin: 0 auto 10px auto;
-    max-width: 1120px;
-    article {
-      max-width: 840px;
-      header {
-        border-top: 1px #e4e4e4 solid;
-        border-bottom: 1px #e4e4e4 solid;
-        padding-top: 10px;
-        padding-bottom: 24px;
-        margin-bottom: 20px;
-        font-size: 12px;
-        color: #999;
-        span {
-          color: #2572e5;
-          display: inline-block;
-          margin-right: 4px;
-          margin-left: 4px;
-        }
-        .edit {
-          padding: 0 20px;
-          color: red;
-          display: inline-block;
-        }
-      }
-    }
-  }
 
-  div.side {
-    position: fixed;
-    margin-left: 70%;
-    top: 17%
-  }
-
-  @media screen and (max-width: 480px) {
-    #app > div.topic {
-      margin: 30px 16px 10px 16px;
-    }
-  }
 </style>
