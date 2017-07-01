@@ -1,6 +1,7 @@
 export default {
   '/': './views/Home',
   '/edit': './views/Edit',
+  '/wiki': './views/Wiki',
   '/post/:id': './views/Post',
   '/edit/:id': './views/Edit',
   '/wiki/:id': './views/Wiki',

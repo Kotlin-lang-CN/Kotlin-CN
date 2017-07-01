@@ -1,10 +1,12 @@
 <template>
-  <app-layout class="main-container">
-    <div class="toc">
-      <display-panels :content="article.content.content"></display-panels>
-    </div>
-    <div class="article">
-      <display-panels :content="article.content.content"></display-panels>
+  <app-layout>
+    <div class="wiki-root">
+      <section class="toc">
+        <display-panels :content="toc.content.content"></display-panels>
+      </section>
+      <section class="content">
+        <display-panels :content="article.content.content"></display-panels>
+      </section>
     </div>
   </app-layout>
 </template>
@@ -33,6 +35,11 @@
     data () {
       return {
         id: this.$root.params.id,
+        toc: {
+          article: {title: ''},
+          content: {content: ''},
+          author: {uid: ''}
+        },
         article: {
           article: {title: ''},
           content: {content: ''},
@@ -53,16 +60,30 @@
       init(){
         Net.get({url: Config.URL.article.categoryType}, (resp) => {//categories 信息
           this.categories = resp.category;
-          Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
-            this.article = resp;
-            setTimeout(() => {
-              const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
-              this.seekAnchor();
-              $("title").html(metaTitle);
-            }, 200)
-          }, (resp) => {
-            if (resp.code === 34) window.location.href = "/404"
-          });
+          this.asyncToc();
+          this.asyncContent();
+        });
+      },
+      asyncToc(){
+        Net.get({url: Config.URL.article.detail.format(Config.Wiki.toc)}, (resp) => {
+          this.toc = resp;
+        }, (resp) => {
+          if (resp.code === 34) window.location.href = "/404"
+        });
+      },
+      asyncContent(){
+        if (!this.id) {
+          this.id = Config.Wiki.readme;
+        }
+        Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//文章信息
+          this.article = resp;
+          setTimeout(() => {
+            const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
+            this.seekAnchor();
+            $("title").html(metaTitle);
+          }, 200)
+        }, (resp) => {
+          if (resp.code === 34) window.location.href = "/404"
         });
       },
       seekAnchor() {//找到锚点并跳转
@@ -88,5 +109,17 @@
 </script>
 
 <style scoped lang="less">
+  .wiki-root {
+    width: 1120px;
+    margin: auto;
+    display: flex;
+    .toc {
+      width: 28%;
+      margin-right: 2%;
+    }
+    .content {
+      width: 70%;
+    }
+  }
 
 </style>

@@ -130,7 +130,6 @@
           },
           cancel: {text: '取消', action: () => false},
         });
-
       },
       deleteArticle(){
         if (this.id === undefined || this.id === '')

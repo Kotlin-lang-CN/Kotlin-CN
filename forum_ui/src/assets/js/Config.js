@@ -59,7 +59,12 @@ const Config = {
     account: '/account',
     edit: '/edit',
     post: '/post',
-    comments: '/comments'
+    comments: '/comments',
+    wiki: '/wiki'
+  },
+  Wiki: {
+    toc: '6286835601377169408',
+    readme: '6286837068716675072'
   }
 };
 export default Config;
