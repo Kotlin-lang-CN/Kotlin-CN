@@ -8,8 +8,10 @@
       <div class="app">
         <slot></slot>
       </div>
-      <app-foot></app-foot>
     </div>
+    <footer id="root-footer">
+      <app-foot></app-foot>
+    </footer>
 
     <app-login></app-login>
     <common-dialog></common-dialog>
@@ -38,39 +40,43 @@
     },
     mounted() {
       Event.on("error", (err) => layer.msg(err));
-      this.$refs.page.addEventListener('scroll', () => {
-        debugger;
-        if (this.page.scrollTop === 0) {
-          this.isTop = true;
-          Event.emit('page-scroll', this.isTop);
-          debugger;
-        } else {
-          if (this.isTop) {
-            this.isTop = false;
-            Event.emit('page-scroll', this.isTop);
-            debugger;
-          }
-        }
-      }, false);
     }
   }
 </script>
 
-
 <style lang="less" scoped>
+  .app-root {
+    position: relative;
+  }
+
   #root-header {
-    position: fixed;
     z-index: 2;
-    top: 0;
+    position: fixed;
     left: 0;
     right: 0;
+    top: 0;
   }
 
   #page-content {
-    position: relative;
+    z-index: 1;
+    position: fixed;
     top: 86px;
+    bottom: 160px;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
   }
+
+  #root-footer {
+    z-index: 2;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
 </style>
+
 <!--global style-->
 <style>
   body {

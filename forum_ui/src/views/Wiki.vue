@@ -20,7 +20,7 @@
 
   import DisplayPanels from '../components/DisplayPanels.vue';
   import Reply from '../components/Reply.vue';
-  import AppLayout from '../layout/AppWeb.vue';
+  import AppLayout from '../layout/AppWebFixContent.vue';
   import ArticleMeta from '../components/ArticleMeta.vue';
   import ArticleSideBar from '../components/ArticleSideBar.vue';
 
@@ -110,16 +110,30 @@
 
 <style scoped lang="less">
   .wiki-root {
+    position: absolute;
     width: 1120px;
+    padding: 0 16px;
     margin: auto;
     display: flex;
+    height: 100%;
+    left: 0;
+    right: 0;
+    overflow: hidden;
     .toc {
       width: 28%;
       margin-right: 2%;
+      overflow-y: scroll;
     }
     .content {
       width: 70%;
+      overflow-y: scroll;
     }
   }
-
+  @media screen and (max-width: 1152px) {
+    .wiki-root{
+      left: inherit;
+      right: inherit;
+      padding: 0;
+    }
+  }
 </style>

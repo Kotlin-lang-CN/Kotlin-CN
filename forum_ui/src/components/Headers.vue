@@ -3,8 +3,8 @@
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
         <a href="/" class="menu-header"><i class="logo"></i><span><b>Kotlin</b> CHINA</span></a>
-        <div class="menu-main"><a :href="urlWiki" title="wiki">Wiki</a></div>
-        <div class="menu-main"><a href="/" title="问答版">问答版</a></div>
+        <div class="menu-main"><a :href="urlWiki" title="wiki" v-bind:class="{'sel':current === 'wiki'}">Wiki</a></div>
+        <div class="menu-main"><a href="/" title="问答版" v-bind:class="{'sel':current === 'home'}">问答版</a></div>
         <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
 
@@ -80,6 +80,7 @@
         moduleShow: true,
         top: true,
         isLoading: false,
+        current: 'home'
       }
     },
     created: function () {
@@ -91,6 +92,8 @@
         this.isLoading = true;
         this.handleGithubAuth(code, state)
       }
+      const url = window.location.href, idx = url.indexOf(Config.UI.wiki);
+      this.current = idx > 0 ? 'wiki' : 'home';
     },
     methods: {
       login() {
@@ -174,6 +177,9 @@
           vertical-align: top;
           font-size: 18px;
         }
+        .sel {
+          color: #2b75e1;
+        }
         a.menu-header {
           display: inline-block;
           margin-top: 26px;
@@ -194,7 +200,7 @@
             margin-right: 4px;
           }
           b {
-            color: #2b75e1;
+            color: #;
           }
         }
         .menu-user {
