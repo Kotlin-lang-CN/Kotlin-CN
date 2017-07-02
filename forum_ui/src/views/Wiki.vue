@@ -80,9 +80,9 @@
           this.article = resp;
           const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
           setTimeout(() => {
-            this.seekAnchor();
             $("title").html(metaTitle);
-          }, 200)
+            this.seekAnchor();
+          }, 1000)
         }, (resp) => {
           if (resp.code === 34) window.location.href = "/404"
         });
@@ -124,10 +124,15 @@
       width: 28%;
       margin-right: 2%;
       overflow-y: scroll;
+      padding-right: 20px;
+    }
+    .toc::-webkit-scrollbar {
+      display: none
     }
     .content {
       width: 70%;
       overflow-y: scroll;
+      padding-right: 30px;
     }
   }
 

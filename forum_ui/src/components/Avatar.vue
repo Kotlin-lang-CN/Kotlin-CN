@@ -1,11 +1,11 @@
 <template>
-  <img class="avatar" v-if="logo && logo.trim().length>0" :src="logo"/>
-  <i class="avatar" v-else="" :style="color"
+  <i class="avatar" :style="color"
      v-bind:class="{
       'middle' : avatarSize==='middle',
       'small' : avatarSize === 'small',
       'big' : avatarSize === 'big'
     }">{{text}}</i>
+  <!--<img class="avatar" v-else="" :src="logo"/>-->
 </template>
 <script>
   export default {
@@ -45,7 +45,7 @@
     watch: {
       username: function (newValue) {
         this.update(newValue);
-      }
+      },
     }
   }
 </script>
