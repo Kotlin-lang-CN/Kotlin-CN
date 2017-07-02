@@ -77,13 +77,6 @@ fun initHttpCgi(cgiPort: String) {
             get("/reply/star/count", FlowerController.countReply.gate("获取评论点赞数量"))
         }
 
-        path("/misc") {
-            get("/dashboard", MiscController.getDashboard.gate("网站公告栏"))
-            post("/dashboard", MiscController.setDashboard.gate("设置网站公告"))
-            get("/home/link", MiscController.getHomeLink.gate("首页链接"))
-            post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
-        }
-
         path("/rss") {
             get("/fine", RssController.fine)
             get("/latest", RssController.latest)

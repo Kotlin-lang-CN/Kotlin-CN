@@ -7,7 +7,7 @@
             最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
           </div>
           <div class="flex">
-            <app-avatar :avatar="value.author.username"></app-avatar>
+            <app-avatar :username="value.author.username"></app-avatar>
             <div class="wrap">
               <div class="title">
                 <span class="focus">{{ value.meta.title }}</span>

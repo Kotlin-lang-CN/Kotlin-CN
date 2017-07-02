@@ -13,6 +13,7 @@
 
     <app-login></app-login>
     <common-dialog></common-dialog>
+    <name-card></name-card>
   </div>
 </template>
 
@@ -23,6 +24,7 @@
   import Login from '../components/Login.vue';
   import Drawer from '../componentsMobile/Drawer.vue';
   import Dialog from '../components/Dialog.vue';
+  import NameCard from '../components/NameCard.vue';
 
   export default {
     name: 'app',
@@ -31,7 +33,8 @@
       'app-foot': Footer,
       'app-login': Login,
       'app-drawer': Drawer,
-      'common-dialog': Dialog
+      'common-dialog': Dialog,
+      'name-card': NameCard
     },
     data(){
       return {isTop: true}

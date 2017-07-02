@@ -3,12 +3,11 @@
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
         <a href="/" class="menu-header"><i class="logo"></i><span><b>Kotlin</b> CHINA</span></a>
-        <div class="menu-main"><a :href="urlWiki" title="wiki" v-bind:class="{'sel':current === 'wiki'}">Wiki</a></div>
         <div class="menu-main"><a href="/" title="问答版" v-bind:class="{'sel':current === 'home'}">问答版</a></div>
+        <div class="menu-main"><a :href="urlWiki" title="wiki" v-bind:class="{'sel':current === 'wiki'}">Wiki</a></div>
         <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
-
-        <div class="menu-user menu-right" v-if="!loginInfo.isLogin">
+        <div class="menu-user menu-right" v-if="!me.isLogin">
           <div class="btn">
             <span><button v-on:click="register">注册</button></span>
           </div>
@@ -24,14 +23,14 @@
             </ul>
           </div>
         </div>
-        <div class="menu-user menu-right" v-if="loginInfo.isLogin">
+        <div class="menu-user menu-right" v-if="me.isLogin">
           <div class="btn">
             <span><i class="add-icon"></i></span>
             <div class="sub-menu"><a :href="urlEdit">发布新话题</a></div>
           </div>
           <div class="btn">
             <span>
-              <app-avatar :avatar="loginInfo.username" :size="'small'"></app-avatar>
+              <app-avatar :logo="me.logo" :username="me.username" :size="'small'"></app-avatar>
               <i class="choice-icon"></i>
             </span>
             <div class="sub-menu">
@@ -76,7 +75,7 @@
         urlEdit: Config.UI.edit,
         urlWiki: Config.UI.wiki,
         urlLogin: Config.UI.login,
-        loginInfo: LoginMgr.info(),
+        me: LoginMgr.info(),
         moduleShow: true,
         top: true,
         isLoading: false,
@@ -198,9 +197,6 @@
             vertical-align: top;
             margin-top: 4px;
             margin-right: 4px;
-          }
-          b {
-            color: #;
           }
         }
         .menu-user {

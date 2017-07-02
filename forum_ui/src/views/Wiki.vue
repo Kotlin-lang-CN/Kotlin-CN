@@ -4,7 +4,7 @@
       <section class="toc">
         <display-panels :content="toc.content.content"></display-panels>
       </section>
-      <section class="content">
+      <section class="content" id="wiki-content">
         <display-panels :content="article.content.content"></display-panels>
       </section>
     </div>
@@ -52,8 +52,11 @@
     created(){
       this.init();
       Event.on('route-update', () => {
-        this.id = this.$root.params.id;
-        if (this.id) this.init()
+        const newId = this.$root.params.id ? this.$root.params.id : Config.Wiki.readme;
+        if (this.id !== newId) {
+          this.id = newId;
+          if (this.id) this.init()
+        }
       })
     },
     methods: {
@@ -72,13 +75,11 @@
         });
       },
       asyncContent(){
-        if (!this.id) {
-          this.id = Config.Wiki.readme;
-        }
+        if (!this.id) this.id = Config.Wiki.readme;
         Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//文章信息
           this.article = resp;
+          const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
           setTimeout(() => {
-            const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
             this.seekAnchor();
             $("title").html(metaTitle);
           }, 200)
@@ -87,15 +88,15 @@
         });
       },
       seekAnchor() {//找到锚点并跳转
-        const url = window.location.href, idx = url.indexOf("#");
+        const url = window.location.href, idx = url.lastIndexOf("#");
         const anchor = idx !== -1 ? url.substring(idx + 1) : undefined;
         if (!anchor) {
-          $('html, body').animate({scrollTop: 0}, 'fast');
+          $('#wiki-content').animate({scrollTop: 0}, 'fast');
         } else {
           const posNormal = $('[name="' + anchor + '"]').position();
           const posDecode = $('[name="' + Util.anchorHash(anchor) + '"]').position();
           const pos = posNormal ? posNormal : posDecode;
-          $('html, body').animate({scrollTop: pos ? pos.top : 0}, 'fast');
+          $('#wiki-content').animate({scrollTop: pos ? pos.top : 0}, 'fast');
         }
       }
     },
@@ -103,8 +104,8 @@
       showEdit() {
         return this.article && LoginMgr.isLogin && LoginMgr.uid === this.article.author.uid
           || LoginMgr.isAdminRole
-      }
-    },
+      },
+    }
   }
 </script>
 
@@ -129,8 +130,9 @@
       overflow-y: scroll;
     }
   }
+
   @media screen and (max-width: 1152px) {
-    .wiki-root{
+    .wiki-root {
       left: inherit;
       right: inherit;
       padding: 0;

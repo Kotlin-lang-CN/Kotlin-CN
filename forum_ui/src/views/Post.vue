@@ -12,7 +12,7 @@
             <a :href="'/edit/' + id" v-if="showEdit" class="edit">编辑</a>
           </div>
         </header>
-        <section>
+        <section id="article-post">
           <display-panels :content="article.content.content"></display-panels>
         </section>
         <app-reply :articleId="id"></app-reply>
@@ -62,8 +62,11 @@
     created(){
       this.init();
       Event.on('route-update', () => {
-        this.id = this.$root.params.id;
-        if (this.id) this.init()
+        const newId = this.$root.params.id;
+        if (this.id !== newId) {
+          this.id = newId;
+          if (this.id) this.init()
+        }
       })
     },
     methods: {

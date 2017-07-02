@@ -3,10 +3,11 @@
     <header>共收到{{ reply.length }}条评论</header>
     <ul>
       <li v-for="value in reply">
-        <app-avatar :avatar="value.user.username" :size="'middle'"></app-avatar>
+        <app-avatar :size="'middle'" :username.sync="value.user.username" :logo.sync="value.user.logo"
+                    v-on:click="showNameCard(value.user)"></app-avatar>
         <div class="cont">
           <div>
-            <span>{{ value.user.username }}</span>
+            <span v-on:click="showNameCard(value.user)">{{ value.user.username }}</span>
             <span>{{ value.meta.create_time | moment}}</span>
             <small v-if="showDelete(value) && value.meta.state == 0" v-on:click="deleteReply(value)" class="delete">
               删除
@@ -70,7 +71,7 @@
       this.getReply(0);
       Event.on('comment-change', () => this.getReply(0));
       Event.on('login', () => {
-        if (this.isAdmin) this.getReply(0);
+        if (this.isAdminRole) this.getReply(0);
       });
     },
     methods: {
@@ -90,6 +91,9 @@
       },
       loadMore(){
         this.getReply(this.offset);
+      },
+      showNameCard(user) {
+        //Event.emit('name-card', user)
       },
       updateState(reply) {
         Net.post({

@@ -9,7 +9,7 @@
         <slot></slot>
       </div>
     </div>
-    <footer id="root-footer">
+    <footer id="root-footer" v-if="footer">
       <app-foot></app-foot>
     </footer>
 
@@ -34,6 +34,9 @@
       'app-login': Login,
       'app-drawer': Drawer,
       'common-dialog': Dialog
+    },
+    props: {
+      'footer': true
     },
     data(){
       return {isTop: true}
@@ -61,7 +64,7 @@
     z-index: 1;
     position: fixed;
     top: 86px;
-    bottom: 160px;
+    bottom: 20px;
     left: 0;
     right: 0;
     overflow-y: auto;

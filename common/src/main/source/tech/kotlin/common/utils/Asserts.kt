@@ -3,7 +3,7 @@ package tech.kotlin.common.utils
 import tech.kotlin.common.os.Abort
 import tech.kotlin.service.Err
 
-/**
+/**s
  * Always throws [Abort] stating that operation will cause abort
  */
 fun abort(err: Err, msg: String = ""): Nothing {

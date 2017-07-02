@@ -111,6 +111,7 @@
         Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {
           this.meta.title = resp.article.title;
           this.meta.tags = resp.article.tags;
+          this.meta.category = resp.article.category;
           this.input = resp.content.content;
         }, (resp) => {
           if (resp.code === 34) window.location.href = "/404"
