@@ -1,8 +1,8 @@
-import Vue from 'vue'
 import page from 'page'
 import routes from './router/routes'
 import Event from './assets/js/Event.js'
 import moment from 'moment';
+import Vue from 'vue'
 
 Vue.config.productionTip = false;
 
@@ -34,9 +34,7 @@ Array.prototype.remove = function (val) {
 
 const app = new Vue({
   el: '#app',
-  data: {
-    ViewComponent: {render: h => h('div', 'loading...')}
-  },
+  data: {ViewComponent: {render: h => h('div', 'loading...')}},
   render (h) {
     return h(this.ViewComponent)
   }

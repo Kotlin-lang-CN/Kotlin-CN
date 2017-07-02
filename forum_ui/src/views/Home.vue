@@ -22,7 +22,6 @@
         </div>
       </div>
     </div>
-    <common-dialog></common-dialog>
   </app-layout>
 </template>
 
@@ -36,7 +35,6 @@
   import AppLayout from '../layout/AppWeb.vue';
   import Event from '../assets/js/Event.js';
   import Util from '../assets/js/Util.js';
-  import Dialog from '../components/Dialog.vue';
 
   export default {
     components: {
@@ -44,7 +42,6 @@
       'app-layout': AppLayout,
       'article-list': ArticleList,
       'side-bar': SideBar,
-      'common-dialog': Dialog
     },
     data() {
       return {

@@ -12,11 +12,15 @@
             <a :href="'/edit/' + id" v-if="showEdit" class="edit">编辑</a>
           </div>
         </header>
-        <section>
+        <section id="article-post">
           <display-panels :content="article.content.content"></display-panels>
         </section>
         <app-reply :articleId="id"></app-reply>
       </article>
+    </div>
+    <div class="side">
+      <article-side :id="id" class="flower"></article-side>
+      <div class="article-social"></div>
     </div>
   </app-layout>
 </template>
@@ -32,13 +36,15 @@
   import Reply from '../components/Reply.vue';
   import AppLayout from '../layout/AppWeb.vue';
   import ArticleMeta from '../components/ArticleMeta.vue';
+  import ArticleSideBar from '../components/ArticleSideBar.vue';
 
   export default {
     components: {
       'article-meta': ArticleMeta,
       'app-layout': AppLayout,
       'app-reply': Reply,
-      'display-panels': DisplayPanels
+      'display-panels': DisplayPanels,
+      'article-side': ArticleSideBar,
     },
     data () {
       return {
@@ -56,8 +62,11 @@
     created(){
       this.init();
       Event.on('route-update', () => {
-        this.id = this.$root.params.id;
-        if (this.id) this.init()
+        const newId = this.$root.params.id;
+        if (this.id !== newId) {
+          this.id = newId;
+          if (this.id) this.init()
+        }
       })
     },
     methods: {
@@ -66,14 +75,32 @@
           this.categories = resp.category;
           Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
             this.article = resp;
-            this.scrollToTop();
+            setTimeout(() => {
+              const metaTitle = '【Kotlin-CN】' + resp.article.title + ' by ' + resp.author.username;
+              this.seekAnchor();
+              $("title").html(metaTitle);
+              $('.article-social').share({
+                title: metaTitle + ' 我们致力于提供最好的Kotlin中文教程 共建最潮流的Kotlin中文社区',
+                description: resp.content.content.substr(0, 30) + '...',
+                sites: ['qq', 'weibo', 'wechat']
+              })
+            }, 200)
           }, (resp) => {
             if (resp.code === 34) window.location.href = "/404"
           });
         });
       },
-      scrollToTop() {
-        $('html, body').animate({scrollTop: 0}, 'fast');
+      seekAnchor() {
+        const url = window.location.href, idx = url.indexOf("#");
+        const anchor = idx !== -1 ? url.substring(idx + 1) : undefined;
+        if (!anchor) {
+          $('html, body').animate({scrollTop: 0}, 'fast');
+        } else {
+          const posNormal = $('[name="' + anchor + '"]').position();
+          const posDecode = $('[name="' + Util.anchorHash(anchor) + '"]').position();
+          const pos = posNormal ? posNormal : posDecode;
+          $('html, body').animate({scrollTop: pos ? pos.top : 0}, 'fast');
+        }
       }
     },
     computed: {
@@ -89,6 +116,7 @@
     },
   }
 </script>
+
 <style scoped lang="less">
   div.topic {
     text-align: left;
@@ -116,6 +144,28 @@
           display: inline-block;
         }
       }
+    }
+  }
+
+  div.side {
+    display: none;
+    width: 200px;
+    position: fixed;
+    margin-left: 70%;
+    top: 17%
+  }
+
+  @media screen and (min-width: 1200px) {
+    div.side {
+      display: inherit;
+      margin-left: 75%;
+    }
+  }
+
+  @media screen and (min-width: 1500px) {
+    div.side {
+      display: inherit;
+      margin-left: 70%;
     }
   }
 

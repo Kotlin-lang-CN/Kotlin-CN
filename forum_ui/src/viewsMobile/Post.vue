@@ -22,7 +22,6 @@
           <display-panels :content="content"></display-panels>
         </section>
       </article>
-
       <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论{{ topic.replies }}</a>
     </div>
   </app-layout>
@@ -66,7 +65,7 @@
       this.getArticle();
       this.getCategories();
       Event.on('login', () => this.renderEditUrl());
-      Event.on('update', () => {
+      Event.on('route-update', () => {
         this.id = this.$root.params.id;
         if (this.id) {
           this.articleId = this.id;

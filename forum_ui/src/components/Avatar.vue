@@ -1,7 +1,11 @@
 <template>
   <i class="avatar" :style="color"
-     v-bind:class=" {'middle' : avatarSize==='middle' ,'small' : avatarSize === 'small','big' : avatarSize === 'big'}">{{ text
-    }}</i>
+     v-bind:class="{
+      'middle' : avatarSize==='middle',
+      'small' : avatarSize === 'small',
+      'big' : avatarSize === 'big'
+    }">{{text}}</i>
+  <!--<img class="avatar" v-else="" :src="logo"/>-->
 </template>
 <script>
   export default {
@@ -14,14 +18,15 @@
       }
     },
     props: {
-      avatar: '',
+      logo: '',
+      username: '',
       size: ''
     },
     mounted(){
+      this.update(this.username);
       if (this.size === 'small' || this.size === 'middle') {
         this.avatarSize = this.size;
       }
-      this.update(this.avatar);
     },
     methods: {
       update(value){
@@ -29,8 +34,7 @@
           this.text = value.charAt(0).toUpperCase();
           this.color = "background-color:"
             + this.colors[value.charCodeAt(0) % this.colors.length];
-        }else{
-          //TODO 换成图标
+        } else {
           value = "匿名";
           this.text = value.charAt(0).toUpperCase();
           this.color = "background-color:"
@@ -39,9 +43,9 @@
       }
     },
     watch: {
-      avatar: function (newValue) {
+      username: function (newValue) {
         this.update(newValue);
-      }
+      },
     }
   }
 </script>

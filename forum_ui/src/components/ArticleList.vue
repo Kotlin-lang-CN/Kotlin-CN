@@ -7,7 +7,7 @@
             最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
           </div>
           <div class="flex">
-            <app-avatar :avatar="value.author.username"></app-avatar>
+            <app-avatar :username="value.author.username"></app-avatar>
             <div class="wrap">
               <div class="title">
                 <span class="focus">{{ value.meta.title }}</span>
@@ -24,7 +24,8 @@
               </div>
               <span v-if="categories.length >= value.meta.category"
                     class="category"> {{ categories[value.meta.category - 1] }}</span>
-              <span class="tag focus" v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
+              <span class="tag focus" v-if="value.meta.tags && value.meta.tags.length >0"
+                    v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
             </span>
               <div class="footnote right">
                 {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
