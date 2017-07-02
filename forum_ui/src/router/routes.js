@@ -12,4 +12,6 @@ export default {
   '/m/edit': './viewsMobile/Edit',
   '/m/edit/:id': './viewsMobile/Edit',
   '/m/comments/:id': './viewsMobile/Comments',
+  '/m/wiki': './views/Wiki',
+  '/m/wiki/:id': './views/Wiki',
 }

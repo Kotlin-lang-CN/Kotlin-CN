@@ -67,3 +67,12 @@
     }
   }
 </script>
+
+<style scoped lang="less">
+  .side-bar {
+    border: 1px #f1f1f1 solid;
+    border-radius: 10px;
+    padding-top: 10px;
+    background-color: white;
+  }
+</style>

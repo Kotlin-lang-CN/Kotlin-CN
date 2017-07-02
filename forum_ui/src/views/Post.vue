@@ -145,9 +145,25 @@
   }
 
   div.side {
+    display: none;
+    width: 200px;
     position: fixed;
     margin-left: 70%;
     top: 17%
+  }
+
+  @media screen and (min-width: 1200px) {
+    div.side {
+      display: inherit;
+      margin-left: 75%;
+    }
+  }
+
+  @media screen and (min-width: 1500px) {
+    div.side {
+      display: inherit;
+      margin-left: 70%;
+    }
   }
 
   @media screen and (max-width: 480px) {
