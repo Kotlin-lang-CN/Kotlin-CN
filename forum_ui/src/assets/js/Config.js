@@ -36,6 +36,7 @@ const Config = {
     },
     rss: {
       fine: CGI.article + "/rss/fine",//精品文章订阅
+      latest: CGI.article + '/rss/latest',//最新文章订阅
     },
     misc: {
       dashboard: CGI.article + '/misc/dashboard',//网站公告栏
@@ -63,8 +64,8 @@ const Config = {
     wiki: '/wiki'
   },
   Wiki: {
-    toc: '6286835601377169408',
-    readme: '6286837068716675072'
+    toc: '6287247888258359296',
+    readme: '6284215952900517888'
   }
 };
 export default Config;

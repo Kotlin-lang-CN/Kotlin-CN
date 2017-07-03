@@ -7,11 +7,13 @@ if [[ (${mode}) && ('release' = ${mode}) ]]; then
 
     cp env/project.properties account/src/main/resources
     cp env/project.properties article/src/main/resources
+    cp env/project.properties     misc/src/main/resources
 
 elif [[ (${mode}) && ('dev' = ${mode}) ]]; then
 
     cp project.properties account/src/main/resources
     cp project.properties article/src/main/resources
+    cp project.properties misc/src/main/resources
 
 else
 
@@ -22,7 +24,7 @@ else
 fi
 
 echo "++ recompile projects ++"
-./gradlew account:jar --daemon && ./gradlew article:jar --daemon
+./gradlew jar --daemon
 
 if [ 'release' = ${mode} ]; then
 
@@ -36,8 +38,9 @@ if [ 'release' = ${mode} ]; then
 
     cp /tmp/restart restart
 
-    rsync -azP account/build/libs/ root@kotlin-cn.org:Kotlin-CN/account/build/libs/
-    rsync -azP article/build/libs/ root@kotlin-cn.org:Kotlin-CN/article/build/libs/
+    rsync -azP account/build/libs/  root@kotlin-cn.org:Kotlin-CN/account/build/libs/
+    rsync -azP article/build/libs/  root@kotlin-cn.org:Kotlin-CN/article/build/libs/
+    rsync -azP misc/build/libs/     root@kotlin-cn.org:Kotlin-CN/misc/build/libs/
 
 elif [ 'dev' = ${mode} ]; then
 
@@ -47,8 +50,8 @@ elif [ 'dev' = ${mode} ]; then
     --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
     . root@debug.kotlin-cn.org:Kotlin-CN
 
-
-    rsync -azP account/build/libs/ root@debug.kotlin-cn.org:Kotlin-CN/account/build/libs/
-    rsync -azP article/build/libs/ root@debug.kotlin-cn.org:Kotlin-CN/article/build/libs/
+    rsync -azP account/build/libs/  root@debug.kotlin-cn.org:Kotlin-CN/account/build/libs/
+    rsync -azP article/build/libs/  root@debug.kotlin-cn.org:Kotlin-CN/article/build/libs/
+    rsync -azP misc/build/libs/     root@debug.kotlin-cn.org:Kotlin-CN/misc/build/libs/
 
 fi

@@ -66,8 +66,9 @@ object AccountService : AccountApi {
     //创建账号
     override fun create(req: CreateAccountReq): CreateAccountResp {
         val current = System.currentTimeMillis()
+        val newUID = IDs.next()
         val account = Account().apply {
-            id = IDs.next()
+            id = newUID
             password = encrypt(req.password)
             lastLogin = current
             state = Account.State.NORMAL
@@ -75,7 +76,7 @@ object AccountService : AccountApi {
             createTime = current
         }
         val userInfo = UserInfo().apply {
-            uid = account.id
+            uid = newUID
             username = req.username
             logo = ""
             email = req.email
@@ -114,10 +115,10 @@ object AccountService : AccountApi {
         //查询账号
         val account = Mysql.read {
             userInfo = UserInfoDao.getByName(it, req.loginName) ?: //查询缓存
-                    UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
-                    abort(Err.USER_NOT_EXISTS)
+                       UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
+                       abort(Err.USER_NOT_EXISTS)
             return@read AccountDao.getById(it, id = userInfo.uid, useCache = false, updateCache = true) ?:
-                    abort(Err.USER_NOT_EXISTS)
+                        abort(Err.USER_NOT_EXISTS)
         }
 
         //校验密码

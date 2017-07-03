@@ -152,7 +152,17 @@
     width: 200px;
     position: fixed;
     margin-left: 70%;
-    top: 17%
+    top: 20%;
+
+    border: 1px #f1f1f1 solid;
+    border-radius: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: white;
+
+    .article-social {
+      padding-top: 10px;
+    }
   }
 
   @media screen and (min-width: 1200px) {
@@ -174,4 +184,5 @@
       margin: 30px 16px 10px 16px;
     }
   }
+
 </style>

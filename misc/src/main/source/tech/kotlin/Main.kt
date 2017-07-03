@@ -18,7 +18,7 @@ val properties = Props.loads("project.properties")
 fun main(vararg args: String) {
     Redis.init(properties)
     Serv.init(EtcdRegistrator(properties))
-    initHttpCgi(if (args.size >= 2) args[1] else "")
+    initHttpCgi(args[0])
 }
 
 fun initHttpCgi(cgiPort: String) {
@@ -32,9 +32,6 @@ fun initHttpCgi(cgiPort: String) {
             post("/dashboard", MiscController.setDashboard.gate("设置网站公告"))
             get("/home/link", MiscController.getHomeLink.gate("首页链接"))
             post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
-        }
-        path("/file") {
-            get("/token", FileController.getLogaToken.gate("获取qiniu上传token"))
         }
     }
     notFound { req, response ->

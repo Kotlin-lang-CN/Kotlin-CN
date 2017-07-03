@@ -5,7 +5,6 @@
       'small' : avatarSize === 'small',
       'big' : avatarSize === 'big'
     }">{{text}}</i>
-  <!--<img class="avatar" v-else="" :src="logo"/>-->
 </template>
 <script>
   export default {
@@ -22,7 +21,8 @@
       username: '',
       size: ''
     },
-    mounted(){
+    created(){
+//      window.console.log(this);
       this.update(this.username);
       if (this.size === 'small' || this.size === 'middle') {
         this.avatarSize = this.size;

@@ -62,3 +62,25 @@ CREATE TABLE IF NOT EXISTS github_user_info (
   COMMENT 'github用户',
   DEFAULT CHARSET utf8mb4,
   ENGINE = Innodb;
+
+CREATE TABLE IF NOT EXISTS profile (
+  uid BIGINT PRIMARY KEY NOT NULL
+  COMMENT '用户id',
+  gender TINYINT DEFAULT 0
+  COMMENT '性别',
+  github TEXT
+  COMMENT 'github地址',
+  blog  TEXT
+  COMMENT '博客地址',
+  company TEXT
+  COMMENT '公司',
+  location TEXT
+  COMMENT '位置',
+  description TEXT
+  COMMENT '个人描述',
+  education TEXT
+  COMMENT '教育经历'
+)
+  COMMENT '用户资料',
+  DEFAULT CHARSET utf8mb4,
+  ENGINE = Innodb;
