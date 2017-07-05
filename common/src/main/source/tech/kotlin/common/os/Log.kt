@@ -17,7 +17,7 @@ object Log {
     const val WARN = 0x1 shl 3
     const val ERROR = 0x1 shl 4
 
-    const val LOG_LEVEL = VERBOSE or DEBUG or INFO or WARN or ERROR
+    var LOG_LEVEL = VERBOSE or DEBUG or INFO or WARN or ERROR
     private val pid by lazy { ManagementFactory.getRuntimeMXBean().name.split("@")[0].toInt() }
 
     //时间格式
@@ -189,7 +189,7 @@ object Log {
         fun log(level: Int, tag: String?, line: String?) {
             if (tag.isNullOrBlank() || line.isNullOrBlank()) return
             System.out.printf("%s %s/%s %d %s\n",
-                    TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, pid, line)
+                              TIME_FORMAT.format(System.currentTimeMillis()), getLevel(level), tag, pid, line)
         }
 
     }

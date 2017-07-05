@@ -2,19 +2,19 @@
 
 mode=$1
 
-if [[ (${mode}) && ('release' = ${mode}) ]]; then
+if [ 'release' = ${mode} ]; then
 
   cp src/assets/js/Config.js /tmp/Config.js
   cp ../env/Config.js src/assets/js/Config.js
   cnpm install && npm run build
   cp /tmp/Config.js src/assets/js/Config.js
 
-  rsync -azP dist root@kotlin-cn.org:Kotlin-CN/forum_ui
+  rsync -azP dist/ root@106.75.105.42:frontend/
 
-elif [[ (${mode}) && ('dev' = ${mode}) ]]; then
+elif [ 'dev' = ${mode} ]; then
 
   cnpm install && npm run build
-  rsync -azP dist root@debug.kotlin-cn.org:Kotlin-CN/forum_ui
+  rsync -azP dist/ root@debug.kotlin-cn.org:frontend/
 
 else
 

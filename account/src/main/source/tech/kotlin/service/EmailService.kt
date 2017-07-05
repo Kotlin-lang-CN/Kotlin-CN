@@ -26,11 +26,11 @@ import javax.mail.internet.MimeMessage
 object EmailService : EmailApi {
 
     val handler = Handler(Looper.getMainLooper())
-    val properties = Props.loads("project.properties")
     val authenticator: Authenticator by lazy {
         object : Authenticator() { // 构建授权信息，用于进行SMTP进行身份验证
             override fun getPasswordAuthentication() =
-                    PasswordAuthentication(properties str "mail.user", properties str "mail.password")
+                    PasswordAuthentication(Props str "mail.user",
+                                           Props str "mail.password")
         }
     }
 
@@ -66,8 +66,8 @@ object EmailService : EmailApi {
 
     override fun send(req: EmailReq): EmptyResp {
         val task = Runnable {
-            Transport.send(MimeMessage(Session.getInstance(properties, authenticator)).apply {
-                setFrom(InternetAddress(properties str "mail.user"))
+            Transport.send(MimeMessage(Session.getInstance(Props, authenticator)).apply {
+                setFrom(InternetAddress(Props str "mail.user"))
                 setRecipient(MimeMessage.RecipientType.TO, InternetAddress(req.to))
                 subject = req.subject
                 setContent(req.content, "text/html;charset=UTF-8")

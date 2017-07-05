@@ -21,9 +21,8 @@ import java.util.*
  *********************************************************************/
 object SessionService : SessionApi {
 
-    private val properties: Properties = Props.loads("project.properties")
-    private val jwtToken: String = properties str "account.jwt.token"
-    private val jwtExpire: Long = properties long "account.jwt.expire"
+    private val jwtToken: String = Props str "account.jwt.token"
+    private val jwtExpire: Long = Props long "account.jwt.expire"
 
     private fun key(uid: Long) = "session:$uid"
 

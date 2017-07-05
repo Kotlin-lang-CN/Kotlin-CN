@@ -2,56 +2,19 @@
 
 mode=$1
 
-
-if [[ (${mode}) && ('release' = ${mode}) ]]; then
-
-    cp env/project.properties account/src/main/resources
-    cp env/project.properties article/src/main/resources
-    cp env/project.properties     misc/src/main/resources
-
-elif [[ (${mode}) && ('dev' = ${mode}) ]]; then
-
-    cp project.properties account/src/main/resources
-    cp project.properties article/src/main/resources
-    cp project.properties misc/src/main/resources
-
-else
-
-    echo 'Error: deploy mode should be one of `release` or `dev`'
-    echo 'try `./deploy dev` or `./deploy release` instead'
-    exit -1
-
-fi
-
 echo "++ recompile projects ++"
 ./gradlew jar --daemon
 
-if [ 'release' = ${mode} ]; then
+if [ ${mode} = 'release' ]; then
 
-    cp restart /tmp/restart && cp env/restart restart
+    rsync -azP account/build/libs/  root@106.75.105.42:bin/
+    rsync -azP article/build/libs/  root@106.75.105.42:bin/
+    rsync -azP misc/build/libs/     root@106.75.105.42:bin/
 
-    rsync -azP \
-    --include=env/ \
-    --exclude=.git \
-    --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
-    . root@kotlin-cn.org:Kotlin-CN
+elif [ ${mode} = 'dev' ]; then
 
-    cp /tmp/restart restart
-
-    rsync -azP account/build/libs/  root@kotlin-cn.org:Kotlin-CN/account/build/libs/
-    rsync -azP article/build/libs/  root@kotlin-cn.org:Kotlin-CN/article/build/libs/
-    rsync -azP misc/build/libs/     root@kotlin-cn.org:Kotlin-CN/misc/build/libs/
-
-elif [ 'dev' = ${mode} ]; then
-
-    rsync -azP \
-    --include=env/ \
-    --exclude=.git \
-    --exclude-from="$(git -C . ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
-    . root@debug.kotlin-cn.org:Kotlin-CN
-
-    rsync -azP account/build/libs/  root@debug.kotlin-cn.org:Kotlin-CN/account/build/libs/
-    rsync -azP article/build/libs/  root@debug.kotlin-cn.org:Kotlin-CN/article/build/libs/
-    rsync -azP misc/build/libs/     root@debug.kotlin-cn.org:Kotlin-CN/misc/build/libs/
+    rsync -azP account/build/libs/  root@debug.kotlin-cn.org:bin/
+    rsync -azP article/build/libs/  root@debug.kotlin-cn.org:bin/
+    rsync -azP misc/build/libs/     root@debug.kotlin-cn.org:bin/
 
 fi

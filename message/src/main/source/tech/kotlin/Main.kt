@@ -18,20 +18,19 @@ import java.util.concurrent.Executors
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-val properties = Props.loads("project.properties")
 
 fun main(args: Array<String>) {
-    Redis.init(properties)
-    Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
+    Redis.init(Props)
+    Mysql.init(config = "mybatis.xml", properties = Props, sql = "init.sql")
     initRpcCgi(if (args.isNotEmpty()) args[0] else "")
     initHttpCgi(if (args.size >= 2) args[1] else "")
 }
 
 fun initRpcCgi(cgiPort: String) {
-    Serv.init(EtcdRegistrator(properties))
+    Serv.init(EtcdRegistrator(Props))
     val port = cgiPort.tryExec(Err.SYSTEM, "illegal publish host $cgiPort") { it.toInt() }
     Serv.publish(
-            broadcastIp = properties str "deploy.broadcast.host", port = port,
+            broadcastIp = Props str "deploy.broadcast.host", port = port,
             serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
     )
 }

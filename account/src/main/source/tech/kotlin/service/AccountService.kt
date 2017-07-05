@@ -16,7 +16,6 @@ import tech.kotlin.service.account.resp.LoginResp
 import tech.kotlin.service.account.AccountApi
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.*
-import java.util.*
 import kotlin.properties.Delegates
 
 /*********************************************************************
@@ -25,11 +24,10 @@ import kotlin.properties.Delegates
  *********************************************************************/
 object AccountService : AccountApi {
 
-    private val properties: Properties = Props.loads("project.properties")
-    private val passwordSalt: String = properties str "account.pwd.salt"
-    private val initAdminUserName: String = properties str "admin.init.username"
-    private val initAdminPassword: String = properties str "admin.init.password"
-    private val initAdminEmail: String = properties str "admin.init.email"
+    private val passwordSalt: String = Props str "account.pwd.salt"
+    private val initAdminUserName: String = Props str "admin.init.username"
+    private val initAdminPassword: String = Props str "admin.init.password"
+    private val initAdminEmail: String = Props str "admin.init.email"
     private fun encrypt(password: String) = MD5.hash("$password$passwordSalt")
 
     val sessionApi by Serv.bind(SessionApi::class)

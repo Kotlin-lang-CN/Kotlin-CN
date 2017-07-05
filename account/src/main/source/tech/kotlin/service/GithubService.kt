@@ -24,7 +24,6 @@ import tech.kotlin.service.domain.GithubUser
 import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.common.http.Http
 import tech.kotlin.common.mysql.Mysql
-import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -32,16 +31,15 @@ import java.util.*
  *********************************************************************/
 object GithubService : GithubApi {
 
-    private val properties: Properties = Props.loads("project.properties")
-    private val jwtToken: String = properties str "github.jwt.token"
-    private val jwtExpire: Long = properties long "github.jwt.expire"
-    private val stateExpire: Int = properties int "github.state.expire"
+    private val jwtToken: String = Props str "github.jwt.token"
+    private val jwtExpire: Long = Props long "github.jwt.expire"
+    private val stateExpire: Int = Props int "github.state.expire"
 
-    private val authHost: String = properties str "github.auth.host"
-    private val clientId: String = properties str "github.auth.client.id"
-    private val clientSecret: String = properties str "github.auth.client.secret"
-    private val userUrl: String = properties str "github.user.url"
-    private val frontendHost: String = properties str "deploy.frontend.host"
+    private val authHost: String = Props str "github.auth.host"
+    private val clientId: String = Props str "github.auth.client.id"
+    private val clientSecret: String = Props str "github.auth.client.secret"
+    private val userUrl: String = Props str "github.user.url"
+    private val frontendHost: String = Props str "deploy.frontend.host"
 
     override fun createState(req: GithubCreateStateReq): GithubCreateStateResp {
         val state = RandomStringUtils.randomAlphanumeric(32)
