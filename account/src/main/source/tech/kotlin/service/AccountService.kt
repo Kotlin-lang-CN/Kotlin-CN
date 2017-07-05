@@ -16,7 +16,6 @@ import tech.kotlin.service.account.resp.LoginResp
 import tech.kotlin.service.account.AccountApi
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.*
-import java.util.*
 import kotlin.properties.Delegates
 
 /*********************************************************************
@@ -25,11 +24,10 @@ import kotlin.properties.Delegates
  *********************************************************************/
 object AccountService : AccountApi {
 
-    private val properties: Properties = Props.loads("project.properties")
-    private val passwordSalt: String = properties str "account.pwd.salt"
-    private val initAdminUserName: String = properties str "admin.init.username"
-    private val initAdminPassword: String = properties str "admin.init.password"
-    private val initAdminEmail: String = properties str "admin.init.email"
+    private val passwordSalt: String = Props str "account.pwd.salt"
+    private val initAdminUserName: String = Props str "admin.init.username"
+    private val initAdminPassword: String = Props str "admin.init.password"
+    private val initAdminEmail: String = Props str "admin.init.email"
     private fun encrypt(password: String) = MD5.hash("$password$passwordSalt")
 
     val sessionApi by Serv.bind(SessionApi::class)
@@ -66,8 +64,9 @@ object AccountService : AccountApi {
     //创建账号
     override fun create(req: CreateAccountReq): CreateAccountResp {
         val current = System.currentTimeMillis()
+        val newUID = IDs.next()
         val account = Account().apply {
-            id = IDs.next()
+            id = newUID
             password = encrypt(req.password)
             lastLogin = current
             state = Account.State.NORMAL
@@ -75,7 +74,7 @@ object AccountService : AccountApi {
             createTime = current
         }
         val userInfo = UserInfo().apply {
-            uid = account.id
+            uid = newUID
             username = req.username
             logo = ""
             email = req.email
@@ -114,10 +113,10 @@ object AccountService : AccountApi {
         //查询账号
         val account = Mysql.read {
             userInfo = UserInfoDao.getByName(it, req.loginName) ?: //查询缓存
-                    UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
-                    abort(Err.USER_NOT_EXISTS)
+                       UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
+                       abort(Err.USER_NOT_EXISTS)
             return@read AccountDao.getById(it, id = userInfo.uid, useCache = false, updateCache = true) ?:
-                    abort(Err.USER_NOT_EXISTS)
+                        abort(Err.USER_NOT_EXISTS)
         }
 
         //校验密码

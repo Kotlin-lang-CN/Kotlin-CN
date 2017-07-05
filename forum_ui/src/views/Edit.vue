@@ -124,7 +124,7 @@
       cancelEdit() {
         Event.emit('alert', {
           title: '放弃修改',
-          text: '确认放弃对【' + this.title + '】的修改?',
+          text: '确认放弃对【' + this.meta.title + '】的修改?',
           allow_dismiss: true,
           confirm: {
             text: '确定', action: () => window.location.href = "/"
@@ -138,7 +138,7 @@
 
         Event.emit('alert', {
           title: '撤销发布',
-          text: '确认撤销发布【' + this.title + '】?',
+          text: '确认撤销发布【' + this.meta.title + '】?',
           allow_dismiss: true,
           confirm: {
             text: '确定', action: () =>

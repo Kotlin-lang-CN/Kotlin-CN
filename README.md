@@ -41,4 +41,4 @@ wiki专题: [https://discuss.kotliner.cn/wiki](https://discuss.kotliner.cn/wiki)
  
 想参与该项目开发，可以通过邮件联系我，或者在github上提issue。
  
-- Kotlin China 问答版服务端结构简述 [here](/post/6284216879862673408)
+- Kotlin China 问答版服务端结构简述 [here](https://discuss.kotliner.cn/post/6284216879862673408)

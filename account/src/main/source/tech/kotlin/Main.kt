@@ -1,53 +1,90 @@
 package tech.kotlin
 
+import com.beust.jcommander.JCommander
+import com.beust.jcommander.Parameter
+import spark.Spark
 import spark.Spark.*
+import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.serialize.Json
-import tech.kotlin.common.utils.*
+import tech.kotlin.common.utils.Props
+import tech.kotlin.common.utils.dict
+import tech.kotlin.common.utils.gate
+import tech.kotlin.common.utils.str
 import tech.kotlin.controller.AccountController
 import tech.kotlin.controller.AdminController
 import tech.kotlin.controller.GithubController
 import tech.kotlin.service.*
 import tech.kotlin.service.account.*
-import tech.kotlin.common.mysql.Mysql
 import java.util.concurrent.Executors
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-val properties = Props.loads("project.properties")
+object Launcher {
+    @Parameter(names = arrayOf("-c", "--config-file"),
+               required = false,
+               description = "指定配置文件")
+    var config: String = ""
 
-fun main(vararg args: String) {
-    Redis.init(properties)
-    Mysql.init(config = "mybatis.xml", properties = properties, sql = "init.sql")
-    AccountService.initAdmin()//初始化管理员账号
-    initRpcCgi(if (args.isNotEmpty()) args[0] else "")
-    initHttpCgi(if (args.size >= 2) args[1] else "")
+    @Parameter(names = arrayOf("-l", "--log-level"),
+               required = false,
+               description = "指定日志等级")
+    var log: Int = Log.LOG_LEVEL
+
+    @Parameter(names = arrayOf("-h", "--http-port"),
+               required = false,
+               description = "http服务端口号")
+    var http: Int = 8080
+
+    @Parameter(names = arrayOf("-p", "--publish"),
+               required = false,
+               description = "服务发布端口")
+    var publish: Int = 9000
 }
 
-fun initRpcCgi(publishPort: String) {
-    Serv.init(EtcdRegistrator(properties))
+fun main(vararg args: String) {
+    JCommander.newBuilder()
+            .addObject(Launcher)
+            .programName(ServDef.ACCOUNT)
+            .build()
+            .parse(*args)
+
+    Log.i("Launcher", Json.dumps(Launcher))
+
+    Log.LOG_LEVEL = Launcher.log
+    Props.init(Launcher.config)
+    Redis.init(Props)
+    Mysql.init(config = "mybatis.xml", properties = Props, sql = "init.sql")
+
+    initService()
+    initHttpServer()
+
+    AccountService.initAdmin()//初始化管理员账号
+}
+
+fun initService() {
+    Serv.init(EtcdRegistrator(Props))
+
     Serv.register(AccountApi::class, AccountService)
     Serv.register(EmailApi::class, EmailService)
     Serv.register(GithubApi::class, GithubService)
     Serv.register(SessionApi::class, SessionService)
     Serv.register(UserApi::class, UserService)
-    val port = publishPort.tryExec(Err.SYSTEM, "illegal publish host $publishPort") { it.toInt() }
-    Serv.publish(
-            broadcastIp = properties str "deploy.broadcast.host", port = port,
-            serviceName = ServDef.ACCOUNT, executorService = Executors.newFixedThreadPool(20)
-    )
+
+    Serv.publish(broadcastIp = Props str "deploy.broadcast.host",
+                 port = Launcher.publish,
+                 serviceName = ServDef.ACCOUNT,
+                 executorService = Executors.newFixedThreadPool(20))
 }
 
-fun initHttpCgi(cgiPort: String) {
-    if (cgiPort.isNullOrBlank()) return
-    Log.i("init cgi port @ $cgiPort")
-    port(cgiPort.toInt())
-    init()
+fun initHttpServer() {
+    Spark.port(Launcher.http)
+    Spark.init()
     path("/api") {
         path("/account") {
             post("/login", AccountController.login.gate("用户登录"))

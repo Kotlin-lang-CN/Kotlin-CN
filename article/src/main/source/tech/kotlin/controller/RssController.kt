@@ -28,8 +28,7 @@ import javax.xml.transform.stream.StreamResult
  *********************************************************************/
 object RssController {
 
-    val properties = Props.loads("project.properties")
-    val frontendHost = properties str "deploy.frontend.host"
+    val frontendHost = Props str "deploy.frontend.host"
 
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
     val articleApi by Serv.bind(ArticleApi::class)

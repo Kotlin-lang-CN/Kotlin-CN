@@ -121,7 +121,7 @@
     right: 0;
     overflow: hidden;
     .toc {
-      width: 28%;
+      width: 27%;
       margin-right: 2%;
       overflow-y: scroll;
       padding-right: 20px;
@@ -130,7 +130,7 @@
       display: none
     }
     .content {
-      width: 70%;
+      width: 73%;
       overflow-y: scroll;
       padding-right: 30px;
     }

@@ -20,7 +20,7 @@
     data: function () {
       return {
         moduleShow: true,
-        rssURL: Config.URL.rss.fine
+        rssURL: Config.URL.rss.latest
       }
     },
     created: function () {

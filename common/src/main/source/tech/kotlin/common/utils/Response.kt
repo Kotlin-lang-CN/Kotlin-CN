@@ -10,8 +10,6 @@ import tech.kotlin.service.Err
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-val property by lazy { Props.loads("project.properties") }
-
 fun ok(init: (HashMap<String, Any>) -> Unit = {}): String {
     val map = HashMap<String, Any>().apply { this["code"] = 0; this["msg"] = "" }
     init(map)

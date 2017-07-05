@@ -35,6 +35,8 @@ dependencies {
     compile 'com.sparkjava:spark-core:2.6.0'
     compile 'org.slf4j:slf4j-jdk14:1.7.25'
 
+    //command line control
+    compile 'com.beust:jcommander:1.72'
     //mysql
     compile 'mysql:mysql-connector-java:6.0.6'
     compile 'org.mybatis:mybatis:3.4.4'
