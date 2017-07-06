@@ -216,7 +216,7 @@
     .cont {
       position: absolute;
       width: 506px;
-      margin-top: 200px;
+      margin-top: 5%;
       padding: 40px;
       box-sizing: border-box;
       background: white;
@@ -235,6 +235,7 @@
 
       input {
         display: block;
+        box-sizing: border-box;
         margin: 20px auto 10px auto;
         border: 1px #ddd solid;
         border-radius: 3px;
