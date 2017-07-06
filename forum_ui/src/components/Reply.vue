@@ -78,7 +78,7 @@
       getReply(index){
         const limit = 20;
         Net.get({
-          url: Config.URL.article.reply.format(this.articleId),
+          url: Config.URL.reply.article.format(this.articleId),
           condition: {offset: index, limit: limit}
         }, (data) => {
           let list = data.reply;
@@ -99,9 +99,7 @@
         Net.post({
           url: Config.URL.admin.updateReplyState.format(reply.id),
           condition: {state: reply.state},
-        }, () => window.console.log("success!"), () => {
-          this.get(this.requestUrl, 0)
-        })
+        }, () => window.console.log("success!"), () => this.get(this.requestUrl, 0))
       },
       showDelete(reply) {
         return !LoginMgr.isAdminRole && LoginMgr.isLogin && LoginMgr.uid === reply.user.uid
@@ -113,7 +111,7 @@
           allow_dismiss: true,
           confirm: {
             text: '确定', action: () =>
-              Net.post({url: Config.URL.article.deleteReply.format(reply.meta.id)}, () => reply.meta.state = 2)
+              Net.post({url: Config.URL.reply.delete.format(reply.meta.id)}, () => reply.meta.state = 2)
           },
           cancel: {text: '取消', action: () => false},
         })

@@ -3,9 +3,9 @@
     <div class="nav-bar" v-bind:class="{ 'not-top': !top}">
       <div class="nav-content">
         <a href="/" class="menu-header"><i class="logo"></i><span><b>Kotlin</b> CHINA</span></a>
-        <div class="menu-main"><a href="/" title="问答版" v-bind:class="{'sel':current === 'home'}">问答版</a></div>
+        <div class="menu-main"><a href="/" title="问答版" v-bind:class="{'sel':current === 'home'}">社区</a></div>
         <div class="menu-main"><a :href="urlWiki" title="wiki" v-bind:class="{'sel':current === 'wiki'}">Wiki</a></div>
-        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="社区">社区</a></div>
+        <div class="menu-main"><a href="//www.kotliner.cn" target="_blank" title="博客">博客</a></div>
         <div class="menu-main"><a href="//www.kotlincn.net" target="_blank" title="中文站">中文站</a></div>
         <div class="menu-user menu-right" v-if="!me.isLogin">
           <div class="btn">

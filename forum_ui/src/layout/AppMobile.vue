@@ -2,7 +2,6 @@
   <div class="app-root">
     <input type="checkbox" id="drawer-toggle" name="drawer-toggle"/>
     <label for="drawer-toggle" id="drawer-toggle-label"></label>
-
     <header id="root-header">
       <span class="logo"><b>Kotlin</b> CHINA</span>
     </header>

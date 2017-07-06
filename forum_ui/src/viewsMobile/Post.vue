@@ -1,28 +1,24 @@
 <template>
   <app-layout>
     <div class="topic">
-      <article v-if="topic !== null ">
+      <article>
         <header>
-          <section>
-            <app-avatar :avatar="topic.author.username" :size="'small'"></app-avatar>
-            <span class="name">{{topic.author.username}}</span>
-            <span v-if="topic && categories.length >= topic.article.category" class="category">
-              {{ categories[topic.article.category - 1]}}
-            </span>
-            <a :href="editUrl" v-if="editUrl !== ''" class="edit">编辑</a>
-            <i v-if="topic.is_fine" class="fine"></i>
-          </section>
-          <section class="title">{{ topic.article.title }}</section>
-          <section class="tag-lay">
-            <span class="tag" v-for="tag in topic.article.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}</span>
-          </section>
-          <section class="right">发布于 {{ topic.article.create_time | moment}}</section>
+          <span v-if="article && categories.length >= article.article.category" class="category">
+              {{ categories[article.article.category - 1]}}
+          </span>
+          <section class="title">{{ article.article.title }}</section>
+          <br>
+          <span class="description right">
+            {{article.author.username}} 发布于 {{article.article.create_time | moment}}
+          </span>
         </header>
         <section>
-          <display-panels :content="content"></display-panels>
+          <display-panels :content="article.content.content"></display-panels>
         </section>
       </article>
-      <a class="footer" :href="commentUrl" v-if="commentUrl !== ''"><i class="icon-com"></i>评论{{ topic.replies }}</a>
+      <a class="footer" v-on:click="toComment">
+        <i class="icon-com"></i>评论
+      </a>
     </div>
   </app-layout>
 </template>
@@ -39,82 +35,59 @@
   import Avatar from "../components/Avatar.vue";
 
   export default {
-    data () {
-      return {
-        editUrl: '',
-        commentUrl: '',
-
-        id: '',
-        articleId: '',
-
-        topic: null,
-        content: '',
-        reply: [],
-        toReplyContent: '',
-        categories: []
-      }
-    },
     components: {
-      AppLayout,
+      'app-layout': AppLayout,
       'app-reply': Reply,
       'display-panels': DisplayPanels,
-      "app-avatar": Avatar
+    },
+    data () {
+      return {
+        id: this.$root.params.id,
+        article: {
+          article: {title: '', tags: '', category: 1},
+          content: {content: ''},
+          author: {uid: ''},
+        },
+        categories: [],
+        reply: [],
+        toReplyContent: '',
+      }
     },
     created(){
-      this.id = this.$root.params.id;
-      this.getArticle();
-      this.getCategories();
-      Event.on('login', () => this.renderEditUrl());
+      this.init();
       Event.on('route-update', () => {
-        this.id = this.$root.params.id;
-        if (this.id) {
-          this.articleId = this.id;
-          this.getArticle();
-          this.getCategories();
+        const newId = this.$root.params.id;
+        if (this.id !== newId) {
+          this.id = newId;
+          if (this.id) this.init()
         }
       })
     },
-    mounted(){
-      this.articleId = this.id;
-    },
     methods: {
-      getArticle(){
-        Net.get({
-          url: Config.URL.article.detail.format(this.id),
-          type: "GET",
-          condition: {}
-        }, (data) => {
-          this.topic = data;
-          this.content = data.content.content;
-          this.renderEditUrl();
-          this.commentUrl = Config.UI.comments + "/" + this.articleId;
-        }, (resp) => {
-          if (resp.code === 34) window.location.href = "/404"
-        })
-      },
-      getCategories() {
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.category;
-            this.categories = resp.category;
+      init(){
+        Net.get({url: Config.URL.article.category}, (resp) => {//categories 信息
+          this.categories = resp.category;
+          Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
+            this.article = resp;
+          }, (resp) => {
+            if (resp.code === 34) window.location.href = "/404"
           });
-        }
+        });
       },
-      renderEditUrl() {
-        if (this.topic !== null
-          && this.topic.author
-          && LoginMgr.info().isLogin
-          && LoginMgr.info().uid === this.topic.author.uid
-          || LoginMgr.isAdmin()) {
-          this.editUrl = Config.UI.edit + "/" + this.articleId;
-        } else {
-          this.editUrl = ''
-        }
+      toComment() {
+        window.location.href = Config.UI.comments + "/" + this.id
       }
-    }
+    },
+    computed: {
+      showEdit() {
+        return this.article && LoginMgr.isLogin && LoginMgr.uid === this.article.author.uid || LoginMgr.isAdminRole
+      },
+      metaData() {
+        const result = this.article.article;
+        result.categories = this.categories;
+        return result
+      }
+    },
   }
 </script>
 
@@ -131,15 +104,9 @@
         padding-top: 15px;
         padding-bottom: 38px;
         margin-bottom: 20px;
+        margin-top: 15px;
         font-size: .2rem;
         color: #999;
-
-        .name {
-          font-size: .28rem;
-          line-height: 30px;
-          margin-left: 8px;
-          vertical-align: top;
-        }
         .category {
           font-size: .2rem;
           display: inline-block;
@@ -150,6 +117,14 @@
           margin-top: 8px;
           margin-left: 8px;
         }
+        .title {
+          display: inline;
+          color: #333;
+          font-size: .33rem;
+          line-height: 30px;
+          margin-bottom: 0;
+
+        }
         .fine {
           display: inline-block;
           width: 30px;
@@ -159,33 +134,15 @@
           margin-top: 4px;
           background-size: 50% 50%;
         }
-        .title {
-          color: #333;
-          font-size: .38rem;
+        .description {
+          font-size: .22rem;
           line-height: 30px;
-          margin-bottom: 0;
-        }
-        .tag-lay {
-          padding: 6px 0;
-        }
-        .tag {
-          font-size: 12px;
-          display: inline-block;
-          background-color: #c9dcf5;
-          color: #333;
-          padding:0 2px;
+          margin-left: 8px;
           vertical-align: top;
-          margin-top: 0;
-          line-height: 20px;
-          margin-right: 8px;
+          margin-right: 8px
         }
         .right {
           float: right;
-        }
-        .edit {
-          padding: 8px 10px;
-          color: red;
-          display: inline-block;
         }
       }
     }

@@ -82,7 +82,6 @@
       span {
         padding-bottom: 5px;
       }
-    ;
     }
   }
 </style>

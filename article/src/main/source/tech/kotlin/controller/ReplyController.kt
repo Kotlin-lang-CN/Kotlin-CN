@@ -32,7 +32,7 @@ object ReplyController {
     val replyApi by Serv.bind(ReplyApi::class)
     val textApi by Serv.bind(TextApi::class)
 
-    val createReply = Route { req, _ ->
+    val createArticleReply = Route { req, _ ->
         val articleId = req.params(":id")
                 .check(Err.PARAMETER) { it.toLong(); true }
                 .toLong()

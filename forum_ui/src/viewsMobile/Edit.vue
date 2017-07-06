@@ -318,7 +318,7 @@
           this.categories = window.data.categories;
           this.category = this.categories[index];
         } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
+          Net.get({url: Config.URL.article.category}, (resp) => {
             window.data.categories = resp.category;
             this.categories = resp.category;
             this.category = this.categories[index];

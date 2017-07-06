@@ -1,24 +1,16 @@
 <template>
   <div>
     <div class="content">
-      <div class="list" v-for="value in articles" v-on:click="toArticle(value.meta.id)">
+      <div class="list" v-for="value in articles" v-on:click="forward(value.meta.id)">
         <section>
-          <app-avatar :avatar="value.author.username" :size="'small'"></app-avatar>
+          <span v-if="categories.length >= value.meta.category" class="category">
+            {{ categories[value.meta.category - 1] }}
+          </span>
+          <span class="title">{{ value.meta.title }}</span>
+        </section>
+        <section>
           <span class="name">{{value.author.username}}</span>
-          <i v-if="value.is_fine" class="fine"></i>
-        </section>
-        <section>
-          <span v-if="categories.length >= value.meta.category"
-                class="category"> {{ categories[value.meta.category - 1] }}</span>
-          <span v-on:click="toArticle(value.meta.id)" class="title">{{ value.meta.title }}</span>
-        </section>
-        <section>
-           <span class="tag focus" v-on:click="toArticle(value.meta.id)"
-                 v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}</span>
-        </section>
-        <section class="right">
-          {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
-          {{ value.replies }}评论
+          <small>发布于 {{ value.meta.create_time | moment}}, {{ value.replies }}评论</small>
         </section>
       </div>
     </div>
@@ -32,16 +24,14 @@
   import Event from "../assets/js/Event.js";
   import LoginMgr from '../assets/js/LoginMgr.js';
   import Avatar from "../components/Avatar.vue";
-
   export default {
     components: {
       "app-avatar": Avatar
     },
     data() {
       return {
-        isAdmin: LoginMgr.isAdmin(),
+        me: LoginMgr,
         loading: false,
-        urlTopic: Config.UI.post + '/',
         articles: [],
         offset: 0,
         hasMore: false,
@@ -58,59 +48,27 @@
       requestUrl: ''
     },
     created() {
-      this.getCategories();
-      Event.on('login', () => this.isAdmin = LoginMgr.isAdmin());
+      Net.get({url: Config.URL.article.category}, (resp) => {
+        this.categories = resp.category;
+        this.get(this.requestUrl, 0)
+      });
     },
     methods: {
       get(url, offset){
-        if (url.trim().length === 0)
-          return;
-
+        if (url.trim().length === 0) return;
         const limit = 20;
         Net.get({
           url: url,
           condition: {'offset': offset, 'limit': limit}
         }, (data) => {
-          if (offset === 0) {
-            this.articles = [];
-          }
+          if (offset === 0) this.articles = [];
           this.hasMore = data.articles.length >= limit;
           this.articles = this.articles.concat(data.articles);
           this.offset = data.next_offset;
         })
       },
-      toArticle(id) {
-        window.location.href = this.urlTopic + id
-      },
-      updateState(article) {
-        Net.post({
-          url: Config.URL.admin.updateArticleState.format(article.id),
-          condition: {
-            state: article.state
-          },
-        }, () => {
-          window.console.log("success!")
-        }, () => {
-          this.get(this.requestUrl, 0)
-        })
-      },
-      getCategories(){
-        if (!window.data) window.data = {};
-        if (window.data.categories) {
-          this.categories = window.data.categories;
-        } else {
-          Net.get({url: Config.URL.article.categoryType}, (resp) => {
-            window.data.categories = resp.categories;
-            this.categories = resp.category;
-          });
-        }
-      },
-      showDelete(article) {
-        let info = LoginMgr.info();
-        return !info.isAdminRole && info.isLogin && info.uid === article.author.uid
-      },
-      deleteArticle(article){
-        Net.post({url: Config.URL.article.delete.format(article.meta.id)}, () => this.articles.remove(article))
+      forward(id) {
+        window.location.href = Config.UI.post + '/' + id
       }
     },
     watch: {
@@ -130,42 +88,42 @@
       border-top: 0;
     }
     .list {
-      border-top: 1px #f1f1f1 solid;
+      border-bottom: 1px #f1f1f1 solid;
       display: block;
       text-align: left;
       color: #999;
-      font-size: .2rem;
-      padding: 15px 0 10px 0;
+      padding: 10px 0 10px 0;
+      margin-top: 10px;
       section {
-        margin-bottom: 5px;
+        margin-top: 3px;
+        margin-bottom: 3px;
       }
       .name {
-        font-size: .28rem;
+        font-size: .2rem;
         line-height: 30px;
         margin-left: 5px;
       }
       .category {
-        margin: 5px 0;
+        margin-left: 10px;
         color: white;
         background-color: #2572e5;
-        font-size: .24rem;
-        padding: 0 6px;
+        font-size: .20rem;
+        padding: 0 0 0 3px;
       }
       .title {
         color: #333;
-        font-size: .3rem;
+        font-size: .30rem;
+        margin-left: 3px;
+        margin-right: 0;
+      }
+      .footer {
+        text-align: right;
+        font-size: .2em;
+        margin-top: -5px;
       }
       .right {
         text-align: right;
-      }
-      .fine {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        float: right;
-        margin-top: 4px;
-        background: url(../assets/img/fine.png) no-repeat;
-        background-size: 50% 50%;
+        display: inline;
       }
     }
 

@@ -103,7 +103,7 @@
     },
     created: function () {
       new Promise((next) => {
-        Net.get({url: Config.URL.article.categoryType}, (resp) => {
+        Net.get({url: Config.URL.article.category}, (resp) => {
           this.meta.categories = resp.category;
           if (this.updateMode) next()
         })

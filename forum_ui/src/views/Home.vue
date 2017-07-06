@@ -51,22 +51,22 @@
       }
     },
     mounted() {
-      Net.get({url: Config.URL.article.categoryType}, (resp) => {
+      Net.get({url: Config.URL.article.category}, (resp) => {
         this.categories = resp.category;
         this.selectFine()
       });
     },
     methods: {
       selectFine(){
-        this.articleListUrl = Config.URL.article.fine;
+        this.articleListUrl = Config.URL.article.getFine;
         this.select = 0;
       },
       selectLatest() {
-        this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.list;
+        this.articleListUrl = LoginMgr.isAdmin() ? Config.URL.admin.articleList : Config.URL.article.getLatest;
         this.select = 1;
       },
       selectCategory(id){
-        this.articleListUrl = Config.URL.article.category.format(id);
+        this.articleListUrl = Config.URL.article.getCategory.format(id);
         this.select = id + 1;
       },
     }

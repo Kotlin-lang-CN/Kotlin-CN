@@ -71,10 +71,8 @@
         }
         LoginMgr.require(() => {
           Net.post({
-            url: Config.URL.article.reply.format(this.articleId),
-            condition: {
-              content: this.input
-            }
+            url: Config.URL.reply.article.format(this.articleId),
+            condition: {content: this.input}
           }, (data) => {
             if (data.id.length > 0) {
               this.input = '';

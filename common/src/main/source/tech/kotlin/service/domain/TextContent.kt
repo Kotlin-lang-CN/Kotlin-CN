@@ -26,4 +26,8 @@ class TextContent {
     @JsonProperty("create_time")
     var createTime: Long = 0
 
+    @Protobuf(required = true, order = 5, fieldType = FieldType.STRING, description = "md5")
+    @JsonProperty("md5")
+    var md5: String = ""
+
 }

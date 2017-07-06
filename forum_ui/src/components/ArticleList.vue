@@ -4,10 +4,13 @@
       <div class="list" v-for="value in articles" v-on:click="forward(value.meta.id)">
         <section>
           <div class="footnote">
-            最后由{{ value.last_editor.username }} 更新于 {{ value.meta.last_edit_time | moment}}
+            最后由 <i v-on:click.stop="showUser(value.last_editor)" class="user-link">{{ value.last_editor.username }}</i>
+            更新于 {{ value.meta.last_edit_time | moment}}
           </div>
           <div class="flex">
-            <app-avatar :username="value.author.username"></app-avatar>
+            <app-avatar :username="value.author.username"
+                        :logo="value.author.logo">
+            </app-avatar>
             <div class="wrap">
               <div class="title">
                 <span class="focus">{{ value.meta.title }}</span>
@@ -28,7 +31,8 @@
                     v-for="tag in value.meta.tags.split(/;/)">{{ '#' + tag + '&nbsp' }}
             </span>
               <div class="footnote right">
-                {{ value.author.username }} 发布于 {{ value.meta.create_time | moment}}
+                <i v-on:click.stop="showUser(value.author)" class="user-link">{{ value.author.username }}</i>
+                发布于 {{ value.meta.create_time | moment}}
               </div>
             </div>
           </div>
@@ -70,7 +74,7 @@
       requestUrl: ''
     },
     created() {
-      Net.get({url: Config.URL.article.categoryType}, (resp) => {
+      Net.get({url: Config.URL.article.category}, (resp) => {
         this.categories = resp.category;
         this.get(this.requestUrl, 0)
       });
@@ -95,14 +99,8 @@
       updateState(article) {
         Net.post({
           url: Config.URL.admin.updateArticleState.format(article.id),
-          condition: {
-            state: article.state
-          },
-        }, () => {
-          window.console.log("success!")
-        }, () => {
-          this.get(this.requestUrl, 0)
-        })
+          condition: {state: article.state},
+        }, () => window.console.log("success!"), () => this.get(this.requestUrl, 0))
       },
       showDelete(article) {
         return !this.me.isAdminRole && this.me.isLogin && this.me.uid === article.author.uid
@@ -121,6 +119,9 @@
             this.articles.remove(article)
           })
         });
+      },
+      showUser(user) {
+        Event.emit('name-card', user)
       }
     },
     watch: {
@@ -136,13 +137,16 @@
 <style scoped lang="less">
   .content {
     border-top: 1px solid #f1f1f1;
+    .user-link {
+      color: #2b75e1;
+    }
+
     .list:nth-child(1) {
       border-top: 0;
     }
     .list section:hover .flex .delete {
       display: inline-block;
     }
-
     .list {
       border-top: 1px #f1f1f1 solid;
       display: block;

@@ -20,14 +20,12 @@ import tech.kotlin.common.mysql.Mysql
  *********************************************************************/
 object ArticleService : ArticleApi {
 
-    val textApi by Serv.bind(TextApi::class)
-
     //创建一篇文章
     override fun create(req: CreateArticleReq): ArticleResp {
         val articleId = IDs.next()
         val current = System.currentTimeMillis()
         //调用文本服务创建新的文本对象
-        val contentId = textApi.createContent(CreateTextContentReq().apply {
+        val contentId = TextService.createContent(CreateTextContentReq().apply {
             this.content = req.content
             this.serializeId = "article:$articleId"
         }).id
@@ -70,7 +68,7 @@ object ArticleService : ArticleApi {
     //更新文章内容
     override fun updateContent(req: UpdateArticleContentReq): ArticleResp {
         //调用文本服务创建新的文本对象
-        val contentID = textApi.createContent(CreateTextContentReq().apply {
+        val contentID = TextService.createContent(CreateTextContentReq().apply {
             this.content = req.content
             this.serializeId = "article:${req.articleId}"
         }).id

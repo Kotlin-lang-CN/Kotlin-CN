@@ -61,7 +61,7 @@
     },
     methods: {
       init(){
-        Net.get({url: Config.URL.article.categoryType}, (resp) => {//categories 信息
+        Net.get({url: Config.URL.article.category}, (resp) => {//categories 信息
           this.categories = resp.category;
           this.asyncToc();
           this.asyncContent();
@@ -102,8 +102,7 @@
     },
     computed: {
       showEdit() {
-        return this.article && LoginMgr.isLogin && LoginMgr.uid === this.article.author.uid
-          || LoginMgr.isAdminRole
+        return this.article && LoginMgr.isLogin && LoginMgr.uid === this.article.author.uid || LoginMgr.isAdminRole
       },
     }
   }
@@ -121,7 +120,7 @@
     right: 0;
     overflow: hidden;
     .toc {
-      width: 27%;
+      width: 22%;
       margin-right: 2%;
       overflow-y: scroll;
       padding-right: 20px;
@@ -130,7 +129,7 @@
       display: none
     }
     .content {
-      width: 73%;
+      width: 78%;
       overflow-y: scroll;
       padding-right: 30px;
     }

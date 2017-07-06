@@ -40,17 +40,17 @@
           this.star_state = undefined;
           return
         }
-        Net.get({url: Config.URL.flower.starArticle.format(this.id)}, (resp) => this.star_state = resp.has_star)
+        Net.get({url: Config.URL.flower.article_star.format(this.id)}, (resp) => this.star_state = resp.has_star)
       },
       getCount() {
         Net.get({
-          url: Config.URL.flower.countArticle,
+          url: Config.URL.flower.article_count,
           condition: {ids: this.id}
         }, (resp) => this.flowers = resp.data[this.id])
       },
       star() {
         Login.require(() => {
-          Net.post({url: Config.URL.flower.starArticle.format(this.id)}, () => {
+          Net.post({url: Config.URL.flower.article_star.format(this.id)}, () => {
             this.star_state = true;
             this.getCount()
           })
@@ -58,7 +58,7 @@
       },
       unstar() {
         Login.require(() => {
-          Net.post({url: Config.URL.flower.unstarArticle.format(this.id)}, () => {
+          Net.post({url: Config.URL.flower.article_unstar.format(this.id)}, () => {
             this.star_state = false;
             this.getCount()
           })

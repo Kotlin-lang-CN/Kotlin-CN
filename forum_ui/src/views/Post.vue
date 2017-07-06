@@ -5,10 +5,13 @@
         <header>
           <article-meta :meta.sync="metaData"></article-meta>
           <div>
-            <label v-if="article.article.create_time !== article.article.last_edit_time">
-              最近更新于{{ article.article.last_edit_time | moment}}，
+            <label>
+              <span><i v-on:click="showUser(article.author)">{{ article.author.username }}</i></span>
+              发布于 {{ article.article.create_time | moment}}
             </label>
-            <span>{{ article.author.username }}</span> 发布于 {{ article.article.create_time | moment}}
+            <label v-if="article.article.create_time !== article.article.last_edit_time">
+              , 最近一次更新于{{ article.article.last_edit_time | moment}}
+            </label>
             <a :href="'/edit/' + id" v-if="showEdit" class="edit">编辑</a>
           </div>
         </header>
@@ -71,7 +74,7 @@
     },
     methods: {
       init(){
-        Net.get({url: Config.URL.article.categoryType}, (resp) => {//categories 信息
+        Net.get({url: Config.URL.article.category}, (resp) => {//categories 信息
           this.categories = resp.category;
           Net.get({url: Config.URL.article.detail.format(this.id)}, (resp) => {//问斩信息
             this.article = resp;
@@ -101,6 +104,9 @@
           const pos = posNormal ? posNormal : posDecode;
           $('html, body').animate({scrollTop: pos ? pos.top : 0}, 'fast');
         }
+      },
+      showUser(user) {
+        Event.emit('name-card', user)
       }
     },
     computed: {

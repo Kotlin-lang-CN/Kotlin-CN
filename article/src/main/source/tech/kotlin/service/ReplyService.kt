@@ -22,14 +22,12 @@ import tech.kotlin.common.mysql.Mysql
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object ReplieService : ReplyApi {
-
-    val textApi by Serv.bind(TextApi::class)
+object ReplyService : ReplyApi {
 
     //创建一则文章回复
     override fun create(req: CreateArticleReplyReq): CreateReplyResp {
         val replyId = IDs.next()
-        val contentId = textApi.createContent(CreateTextContentReq().apply {
+        val contentId = TextService.createContent(CreateTextContentReq().apply {
             this.serializeId = "reply:$replyId"
             this.content = req.content
         }).id

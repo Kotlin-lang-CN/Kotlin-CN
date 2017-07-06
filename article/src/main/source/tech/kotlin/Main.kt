@@ -16,6 +16,7 @@ import tech.kotlin.service.article.FlowerApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
 import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.service.domain.Reply
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -66,7 +67,7 @@ fun main(vararg args: String) {
 fun initService() {
     Serv.init(EtcdRegistrator(Props))
     Serv.register(ArticleApi::class, ArticleService)
-    Serv.register(ReplyApi::class, ReplieService)
+    Serv.register(ReplyApi::class, ReplyService)
     Serv.register(TextApi::class, TextService)
     Serv.register(FlowerApi::class, FlowerService)
     Serv.publish(
@@ -90,10 +91,16 @@ fun initHttpServer() {
             get("/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
             get("/category", ArticleViewController.getCategory.gate("获取文章类型列表"))
 
-            get("/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
-            post("/:id/reply", ReplyController.createReply.gate("参与文章评论"))
-            post("/reply/:id/delete", ReplyController.delReply.gate("删除评论"))
-            get("/reply/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
+            get("/user/:id", ArticleViewController.getByUser.gate("获取用户最新文章列表"))
+        }
+
+        path("/reply") {
+            get("/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
+            get("/article/:id", ReplyController.queryReply.gate("获取文章评论列表"))
+            post("/article/:id", ReplyController.createArticleReply.gate("参与文章评论"))
+            post("/id/:id/delete", ReplyController.delReply.gate("删除评论"))
+
+            get("/user/:id", ReplyController.queryReply.gate("获取用户创作的评论内容"))
         }
 
         path("/flower") {

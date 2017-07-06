@@ -1,9 +1,7 @@
 <template>
   <div class="app-root">
     <nav>
-      <div v-on:click="back" class="back">
-        <i class="icon-back"></i>返回
-      </div>
+      <div v-on:click="back" class="back"><i class="icon-back"></i>返回</div>
     </nav>
     <div ref="page" class="page-content">
       <div class="app">
@@ -54,6 +52,7 @@
     font-weight: normal;
     color: #333;
   }
+
   .app-root {
     > nav {
       border-bottom: 1px #f1f1f1 solid;
