@@ -1,10 +1,8 @@
 package tech.kotlin.controller
 
 import spark.Route
-import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
-import tech.kotlin.service.Err
-import tech.kotlin.service.account.*
+import tech.kotlin.service.*
 import tech.kotlin.service.account.req.*
 import tech.kotlin.service.account.resp.GithubCheckTokenReq
 import tech.kotlin.service.article.req.EmailCheckTokenReq
@@ -19,16 +17,10 @@ import java.net.URLDecoder
  *********************************************************************/
 object AccountController {
 
-    val accountApi by Serv.bind(AccountApi::class)
-    val sessionApi by Serv.bind(SessionApi::class)
-    val userApi by Serv.bind(UserApi::class)
-    val githubApi by Serv.bind(GithubApi::class)
-    val emailApi by Serv.bind(EmailApi::class)
-
     val login = Route { req, _ ->
         val githubToken = req.queryParams("github_token")
 
-        val loginResp = accountApi.loginWithName(LoginReq().apply {
+        val loginResp = AccountService.loginWithName(LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
             this.loginName = req.queryParams("login_name")
@@ -38,7 +30,7 @@ object AccountController {
                     .check(Err.PARAMETER, "无效的密码") { !it.isNullOrBlank() }
 
             if (!githubToken.isNullOrBlank()) {
-                this.githubUser = githubApi.checkToken(GithubCheckTokenReq().apply {
+                this.githubUser = GithubService.checkToken(GithubCheckTokenReq().apply {
                     this.token = githubToken
                     this.device = Device(req)
                 }).info
@@ -71,13 +63,13 @@ object AccountController {
         val githubToken = req.queryParams("github_token")
 
         //创建账号
-        val createResp = accountApi.create(CreateAccountReq().apply {
+        val createResp = AccountService.create(CreateAccountReq().apply {
             this.username = username
             this.password = password
             this.email = email
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
             if (!githubToken.isNullOrBlank()) {
-                this.githubUser = githubApi.checkToken(GithubCheckTokenReq().apply {
+                this.githubUser = GithubService.checkToken(GithubCheckTokenReq().apply {
                     this.token = githubToken
                     this.device = Device(req)
                 }).info
@@ -87,7 +79,7 @@ object AccountController {
         //修改头像
         val logo = req.queryParams("logo") ?: ""
         if (!logo.isNullOrBlank()) {
-            userApi.updateById(UpdateUserReq().apply {
+            UserService.updateById(UpdateUserReq().apply {
                 this.id = createResp.account.id
                 this.args = strDict {
                     if (!logo.isNullOrBlank()) this["logo"] = logo
@@ -103,8 +95,8 @@ object AccountController {
 
     val activateEmail = Route { req, _ ->
         val token = URLDecoder.decode(req.queryParams("token"), "UTF-8")
-        val resp = emailApi.checkToken(EmailCheckTokenReq().apply { this.token = token })
-        userApi.activateEmail(ActivateEmailReq().apply { this.uid = resp.uid;this.email = resp.email })
+        val resp = EmailService.checkToken(EmailCheckTokenReq().apply { this.token = token })
+        UserService.activateEmail(ActivateEmailReq().apply { this.uid = resp.uid;this.email = resp.email })
         return@Route ok()
     }
 
@@ -113,10 +105,10 @@ object AccountController {
                 .check(Err.PARAMETER, "uid错误") { it.toLong(); true }
                 .toLong()
 
-        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
+        val owner = SessionService.checkToken(CheckTokenReq(req)).account
         owner.check(Err.UNAUTHORIZED) { it.role == Account.Role.ADMIN || it.id == uid }
 
-        val queryUser = userApi.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
+        val queryUser = UserService.queryById(QueryUserReq().apply { id = arrayListOf(uid) })
         val info = queryUser.info[uid] ?: abort(Err.USER_NOT_EXISTS)
         val account = queryUser.account[uid] ?: abort(Err.SYSTEM)
 
@@ -147,10 +139,10 @@ object AccountController {
             abort(Err.PARAMETER, "密码格式有误")
         }
 
-        sessionApi.checkToken(CheckTokenReq(req)).account
+        SessionService.checkToken(CheckTokenReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
-        accountApi.updatePassword(UpdatePasswordReq().apply {
+        AccountService.updatePassword(UpdatePasswordReq().apply {
             this.id = uid
             this.password = password
         })
@@ -170,10 +162,10 @@ object AccountController {
         if (username.isNullOrBlank() && email.isNullOrBlank() && logo.isNullOrBlank())
             abort(Err.PARAMETER)
 
-        sessionApi.checkToken(CheckTokenReq(req)).account
+        SessionService.checkToken(CheckTokenReq(req)).account
                 .check(Err.UNAUTHORIZED) { it.id == uid || it.role == Account.Role.ADMIN }
 
-        userApi.updateById(UpdateUserReq().apply {
+        UserService.updateById(UpdateUserReq().apply {
             this.id = uid
             this.args = strDict {
                 if (!username.isNullOrBlank()) this["username"] = username

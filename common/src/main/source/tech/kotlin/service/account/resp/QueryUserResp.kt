@@ -1,4 +1,4 @@
-package tech.kotlin.service.article.resp
+package tech.kotlin.service.account.resp
 
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf

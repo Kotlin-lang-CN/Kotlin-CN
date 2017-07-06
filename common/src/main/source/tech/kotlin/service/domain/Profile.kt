@@ -16,10 +16,10 @@ class Profile {
 
     @Protobuf(order = 2, fieldType = FieldType.UINT32, required = true)
     @JsonProperty("gender")
-    var gender: Int = 0
+    var gender: Int = Gender.MALE
 
     @Protobuf(order = 3, fieldType = FieldType.STRING, required = true)
-    @JsonProperty("")
+    @JsonProperty("github")
     var github: String = ""
 
     @Protobuf(order = 4, fieldType = FieldType.STRING, required = true)
@@ -41,5 +41,9 @@ class Profile {
     @Protobuf(order = 8, fieldType = FieldType.STRING, required = true)
     @JsonProperty("education")
     var education: String = ""
-    
+
+    object Gender {
+        const val MALE = 0
+        const val FEMALE = 1
+    }
 }

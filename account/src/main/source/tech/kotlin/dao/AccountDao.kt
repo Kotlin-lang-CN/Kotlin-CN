@@ -18,12 +18,12 @@ object AccountDao {
         Mysql.register(AccountMapper::class.java)
     }
 
-    fun getById(session: SqlSession, id: Long, useCache: Boolean = false, updateCache: Boolean = false): Account? {
+    fun getById(session: SqlSession, id: Long, useCache: Boolean): Account? {
         if (useCache) {
             val cached = Cache.getById(id)
             if (cached != null) return cached
             val result = session[AccountMapper::class].getById(id)
-            if (result != null && updateCache) Cache.update(result)
+            if (result != null && useCache) Cache.update(result)
             return result
         } else {
             return session[AccountMapper::class].getById(id)
@@ -80,7 +80,7 @@ object AccountDao {
         @Results(
                 Result(property = "lastLogin", column = "last_login"),
                 Result(property = "createTime", column = "create_time")
-        )
+                )
         fun getById(id: Long): Account?
 
         @Insert("""

@@ -18,12 +18,12 @@ object UserInfoDao {
         Mysql.register(UserInfoMapper::class.java)
     }
 
-    fun getById(session: SqlSession, uid: Long, useCache: Boolean = false, updateCache: Boolean = false): UserInfo? {
+    fun getById(session: SqlSession, uid: Long, useCache: Boolean): UserInfo? {
         if (useCache) {
             val cached = Cache.getById(uid)
             if (cached != null) return cached
             val result = session[UserInfoMapper::class].getById(uid)
-            if (result != null && updateCache) Cache.update(result)
+            if (result != null && useCache) Cache.update(result)
             return result
         } else {
             return session[UserInfoMapper::class].getById(uid)
@@ -48,8 +48,8 @@ object UserInfoDao {
         if (mayBeNull == null) {
             mapper.insert(user)
         } else {
-            Cache.drop(user.uid)
             mapper.update(user)
+            Cache.drop(user.uid)
         }
     }
 
@@ -59,7 +59,7 @@ object UserInfoDao {
         mapper.updateWithArgs(args = args.apply { this["uid"] = "$uid" })
     }
 
-    internal object Cache {
+    private object Cache {
 
         fun key(uid: Long) = "user_info:$uid"
 

@@ -1,6 +1,5 @@
 package tech.kotlin.service.account.req
 
-import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.FieldType.UINT64
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty

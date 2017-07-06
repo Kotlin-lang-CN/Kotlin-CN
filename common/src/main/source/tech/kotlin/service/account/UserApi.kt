@@ -4,7 +4,7 @@ import tech.kotlin.common.rpc.annotations.RpcInterface
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.account.req.UpdateUserReq
 import tech.kotlin.service.domain.EmptyResp
-import tech.kotlin.service.article.resp.QueryUserResp
+import tech.kotlin.service.account.resp.QueryUserResp
 import tech.kotlin.service.TypeDef
 import tech.kotlin.service.account.req.ActivateEmailReq
 

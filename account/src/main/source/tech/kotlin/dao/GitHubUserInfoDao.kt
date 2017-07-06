@@ -12,7 +12,7 @@ import tech.kotlin.common.serialize.Json
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
-object GithubUserInfoDao {
+object GitHubUserInfoDao {
 
     init {
         Mysql.register(GithubUserInfoMapper::class.java)

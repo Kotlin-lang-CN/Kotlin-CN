@@ -70,4 +70,9 @@ object TypeDef {
         const val GET_BY_USER = 100003
         const val CHANGE_STATE = 100004
     }
+
+    object Profile {
+        const val QUERY_BY_ID = 110000
+        const val UPDATE_BY_ID = 110001
+    }
 }
