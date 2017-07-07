@@ -1,6 +1,7 @@
 package tech.kotlin.controller
 
 import spark.Route
+import tech.kotlin.common.algorithm.MD5
 import tech.kotlin.common.utils.*
 import tech.kotlin.service.*
 import tech.kotlin.service.account.req.*
@@ -57,7 +58,7 @@ object AccountController {
                 .check(Err.PARAMETER, "无效的邮箱") {
                     !it.isNullOrBlank() && it.matches(Regex(
                             "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
-                    ))
+                                                           ))
                 }
 
         val githubToken = req.queryParams("github_token")
@@ -77,15 +78,11 @@ object AccountController {
         })
 
         //修改头像
-        val logo = req.queryParams("logo") ?: ""
-        if (!logo.isNullOrBlank()) {
-            UserService.updateById(UpdateUserReq().apply {
-                this.id = createResp.account.id
-                this.args = strDict {
-                    if (!logo.isNullOrBlank()) this["logo"] = logo
-                }
-            })
-        }
+        val logo = req.queryParams("logo") ?: "https://s.gravatar.com/avatar/${MD5.hash(email)}"
+        UserService.updateById(UpdateUserReq().apply {
+            this.id = createResp.account.id
+            this.args = strDict { this["logo"] = logo  }
+        })
 
         return@Route ok {
             it["uid"] = createResp.account.id
