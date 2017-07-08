@@ -9,24 +9,24 @@ import tech.kotlin.service.domain.UserInfo
 
 class GithubAuthResp {
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 1, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.OBJECT, description = "github账号")
-    @com.fasterxml.jackson.annotation.JsonProperty("github")
-    var github = tech.kotlin.service.domain.GithubUser()
+    @Protobuf(order = 1, required = true, fieldType = FieldType.OBJECT, description = "github账号")
+    @JsonProperty("github")
+    var github = GithubUser()
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 2, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.BOOL, description = "是否需要绑定账号")
-    @com.fasterxml.jackson.annotation.JsonProperty("has_account")
+    @Protobuf(order = 2, required = true, fieldType = FieldType.BOOL, description = "是否需要绑定账号")
+    @JsonProperty("has_account")
     var hasAccount = false
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 3, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.OBJECT, description = "已绑定账号")
-    @com.fasterxml.jackson.annotation.JsonProperty("account")
-    var account = tech.kotlin.service.domain.Account()
+    @Protobuf(order = 3, required = true, fieldType = FieldType.OBJECT, description = "已绑定账号")
+    @JsonProperty("account")
+    var account = Account()
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 4, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.OBJECT, description = "用户信息")
-    @com.fasterxml.jackson.annotation.JsonProperty("user_info")
-    var userInfo = tech.kotlin.service.domain.UserInfo()
+    @Protobuf(order = 4, required = true, fieldType = FieldType.OBJECT, description = "用户信息")
+    @JsonProperty("user_info")
+    var userInfo = UserInfo()
 
-    @com.baidu.bjf.remoting.protobuf.annotation.Protobuf(order = 5, required = true, fieldType = com.baidu.bjf.remoting.protobuf.FieldType.STRING, description = "第三方账号登录token")
-    @com.fasterxml.jackson.annotation.JsonProperty("session_token")
+    @Protobuf(order = 5, required = true, fieldType = FieldType.STRING, description = "第三方账号登录token")
+    @JsonProperty("session_token")
     var token = ""
 
 }

@@ -70,6 +70,7 @@ object GithubService : GithubApi {
             this.hasAccount = hasAccount
             this.userInfo = userInfo
             this.account = account
+            this.github = githubInfo
             this.token = JWT.dumps(key = jwtToken, content = GithubSession().apply {
                 device = req.device
                 user = githubInfo

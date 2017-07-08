@@ -28,7 +28,6 @@ import kotlin.collections.HashMap
 object ArticleViewController {
 
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
-    val sessionApi by Serv.bind(SessionApi::class, ServDef.ACCOUNT)
 
     val getList = Route { req, _ ->
         val offset = req.queryParams("offset")

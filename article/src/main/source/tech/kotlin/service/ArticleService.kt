@@ -1,24 +1,24 @@
 package tech.kotlin.service
 
 import com.github.pagehelper.PageHelper
-import tech.kotlin.common.rpc.Serv
-import tech.kotlin.service.domain.Article
-import tech.kotlin.service.article.resp.ArticleResp
-import tech.kotlin.service.article.resp.QueryArticleByIdResp
+import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao
 import tech.kotlin.service.article.ArticleApi
-import tech.kotlin.service.article.TextApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.ArticleListResp
-import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.service.article.resp.ArticleResp
+import tech.kotlin.service.article.resp.CountArticleByAuthorResp
+import tech.kotlin.service.article.resp.QueryArticleByIdResp
+import tech.kotlin.service.domain.Article
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
 object ArticleService : ArticleApi {
+
 
     //创建一篇文章
     override fun create(req: CreateArticleReq): ArticleResp {
@@ -78,8 +78,7 @@ object ArticleService : ArticleApi {
             this.args = hashMapOf(
                     "last_edit_time" to "${System.currentTimeMillis()}",
                     "last_edit_uid" to "${req.editorUid}",
-                    "content_id" to "$contentID"
-            )
+                    "content_id" to "$contentID")
         })
     }
 
@@ -100,8 +99,7 @@ object ArticleService : ArticleApi {
     //查询最新的文章
     override fun getLatest(req: QueryLatestArticleReq): ArticleListResp {
         val result = Mysql.read {
-            PageHelper.offsetPage<Article>(req.offset, req.limit
-            ).doSelectPageInfo<Article> {
+            PageHelper.offsetPage<Article>(req.offset, req.limit).doSelectPageInfo<Article> {
                 ArticleDao.getLatest(it, args = HashMap<String, String>().apply {
                     if (!req.category.isNullOrBlank()) this["category"] = req.category
                     if (!req.state.isNullOrBlank()) this["state"] = req.state
@@ -109,6 +107,30 @@ object ArticleService : ArticleApi {
             }.list
         }
         return ArticleListResp().apply {
+            this.result = result
+        }
+    }
+
+    //根据用户查询文章
+    override fun getByAuthor(req: QueryByAuthorReq): ArticleListResp {
+        val result = Mysql.read {
+            PageHelper.offsetPage<Article>(req.offset, req.limit).doSelectPageInfo<Article> {
+                ArticleDao.getByAuthor(it, id = req.author, cache = true)
+            }.list
+        }
+        return ArticleListResp().apply {
+            this.result = result
+        }
+    }
+
+    //获取用户查询
+    override fun countByAuthor(req: CountArticleByAuthorReq): CountArticleByAuthorResp {
+        val result = Mysql.read {
+            req.author.map { author ->
+                author to ArticleDao.countByAuthor(it, author)
+            }.toMap()
+        }
+        return CountArticleByAuthorResp().apply {
             this.result = result
         }
     }

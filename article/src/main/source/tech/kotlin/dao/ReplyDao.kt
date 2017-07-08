@@ -55,6 +55,16 @@ object ReplyDao {
         }
     }
 
+    fun getByAuthor(session: SqlSession, author: Long): List<Reply> {
+        val result = session[ReplyMapper::class].queryByAuthor(author)
+        result.forEach { ReplyCache.update(it) }
+        return result
+    }
+
+    fun getCountByAuthor(session: SqlSession, author: Long): Int {
+        return session[ReplyMapper::class].queryCountByAuthor(author)
+    }
+
     private object ReplyCache {
 
         fun key(id: Long) = "reply:$id"
@@ -98,7 +108,7 @@ object ReplyDao {
                 Result(column = "create_time", property = "createTime"),
                 Result(column = "content_id", property = "contentId"),
                 Result(column = "alias_id", property = "aliasId")
-        )
+                )
         fun queryById(id: Long): Reply?
 
         @Select("""
@@ -106,13 +116,11 @@ object ReplyDao {
         WHERE reply_pool_id = #{replyPoolId}
         ORDER BY create_time DESC
         """)
-        @Results(
-                Result(column = "reply_pool_id", property = "replyPoolId"),
-                Result(column = "owner_uid", property = "ownerUID"),
-                Result(column = "create_time", property = "createTime"),
-                Result(column = "content_id", property = "contentId"),
-                Result(column = "alias_id", property = "aliasId")
-        )
+        @Results(Result(column = "reply_pool_id", property = "replyPoolId"),
+                 Result(column = "owner_uid", property = "ownerUID"),
+                 Result(column = "create_time", property = "createTime"),
+                 Result(column = "content_id", property = "contentId"),
+                 Result(column = "alias_id", property = "aliasId"))
         fun queryByPool(replyPoolId: String): List<Reply>
 
         @Select("""
@@ -120,6 +128,26 @@ object ReplyDao {
         WHERE reply_pool_id = #{replyPoolId}
         """)
         fun queryCountByPool(replyPoolId: String): Int
+
+        @Select("""
+        SELECT * FROM reply
+        WHERE owner_uid = #{author}
+        AND state = ${Reply.State.NORMAL}
+        ORDER by create_time DESC
+        """)
+        @Results(Result(column = "reply_pool_id", property = "replyPoolId"),
+                 Result(column = "owner_uid", property = "ownerUID"),
+                 Result(column = "create_time", property = "createTime"),
+                 Result(column = "content_id", property = "contentId"),
+                 Result(column = "alias_id", property = "aliasId"))
+        fun queryByAuthor(author: Long): List<Reply>
+
+        @Select("""
+        SELECT COUNT(id) FROM reply
+        WHERE owner_uid = #{author}
+        AND state = ${Reply.State.NORMAL}
+        """)
+        fun queryCountByAuthor(author: Long): Int
 
         @Select("""
         SELECT COUNT(id) FROM reply

@@ -16,7 +16,6 @@ import tech.kotlin.service.article.FlowerApi
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.TextApi
 import tech.kotlin.common.mysql.Mysql
-import tech.kotlin.service.domain.Reply
 import java.util.concurrent.Executors
 
 /*********************************************************************
@@ -72,8 +71,7 @@ fun initService() {
     Serv.register(FlowerApi::class, FlowerService)
     Serv.publish(
             broadcastIp = Props str "deploy.broadcast.host", port = Launcher.publish,
-            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
-                )
+            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20))
 }
 
 fun initHttpServer() {
@@ -113,6 +111,14 @@ fun initHttpServer() {
             post("/reply/:id/unstar", FlowerController.unstarReply.gate("取消点赞评论"))
             get("/reply/:id/star", FlowerController.queryReply.gate("获取对评论的点赞状态"))
             get("/reply/star/count", FlowerController.countReply.gate("获取评论点赞数量"))
+        }
+
+        path("/creator") {
+            get("/article", CreatorController.getMyArticles.gate("获取我创作的文章"))
+            get("/reply", CreatorController.getMyReplies.gate("获取我创作的评论"))
+
+            get("/article/count", CreatorController.getArticleCount.gate("获取用户的文章数"))
+            get("/reply/count", CreatorController.getReplyCount.gate("获取用户的回复数"))
         }
 
         path("/rss") {

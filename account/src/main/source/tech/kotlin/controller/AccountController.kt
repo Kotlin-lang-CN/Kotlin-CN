@@ -57,8 +57,7 @@ object AccountController {
         val email = req.queryParams("email")
                 .check(Err.PARAMETER, "无效的邮箱") {
                     !it.isNullOrBlank() && it.matches(Regex(
-                            "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"
-                                                           ))
+                            "^\\s*\\w+(?:\\.?[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$"))
                 }
 
         val githubToken = req.queryParams("github_token")
@@ -78,15 +77,18 @@ object AccountController {
         })
 
         //修改头像
-        val logo = req.queryParams("logo") ?: "https://s.gravatar.com/avatar/${MD5.hash(email)}"
-        UserService.updateById(UpdateUserReq().apply {
-            this.id = createResp.account.id
-            this.args = strDict { this["logo"] = logo  }
-        })
+        val logo = req.queryParams("logo")
+        if (!logo.isNullOrBlank()) {
+            UserService.updateById(UpdateUserReq().apply {
+                this.id = createResp.account.id
+                this.args = strDict { this["logo"] = logo }
+            })
+        }
 
         return@Route ok {
             it["uid"] = createResp.account.id
             it["token"] = createResp.token
+            it["logo"] = logo ?: createResp.userInfo.logo
         }
     }
 

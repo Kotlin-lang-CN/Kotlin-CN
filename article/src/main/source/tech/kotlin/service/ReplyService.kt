@@ -1,21 +1,21 @@
 package tech.kotlin.service
 
 import com.github.pagehelper.PageHelper
-import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao
 import tech.kotlin.dao.ReplyDao
 import tech.kotlin.service.domain.Reply
 import tech.kotlin.service.article.ReplyApi
-import tech.kotlin.service.article.TextApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.CreateReplyResp
-import tech.kotlin.service.article.resp.QueryReplyByArticleResp
+import tech.kotlin.service.article.resp.ReplyListResp
 import tech.kotlin.service.article.resp.QueryReplyByIdResp
 import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.service.article.QueryReplyCountByAuthorReq
+import tech.kotlin.service.article.QueryReplyCountByAuthorResp
 
 
 /*********************************************************************
@@ -44,7 +44,7 @@ object ReplyService : ReplyApi {
         Mysql.write {
             if (reply.aliasId != 0L) {
                 val alias = ReplyDao.getById(it, req.aliasId, cache = false) ?:
-                        abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+                            abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
 
                 if (alias.replyPoolId != "article:${req.articleId}")
                     abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
@@ -80,14 +80,13 @@ object ReplyService : ReplyApi {
     }
 
     //查询一篇文章的所有回复
-    override fun getReplyByArticle(req: QueryReplyByArticleReq): QueryReplyByArticleResp {
+    override fun getReplyByArticle(req: QueryReplyByArticleReq): ReplyListResp {
         val result = Mysql.read {
-            PageHelper.offsetPage<Reply>(req.offset, req.limit
-            ).doSelectPageInfo<Reply> {
+            PageHelper.offsetPage<Reply>(req.offset, req.limit).doSelectPageInfo<Reply> {
                 ReplyDao.getByPool(it, "article:${req.articleId}")
             }.list
         }
-        return QueryReplyByArticleResp().apply {
+        return ReplyListResp().apply {
             this.result = result
         }
     }
@@ -98,6 +97,28 @@ object ReplyService : ReplyApi {
             req.id.map { it to ReplyDao.getCountByPoolId(session, if (it == 0L) "" else "article:$it") }.toMap()
         }
         return QueryReplyCountByArticleResp().apply {
+            this.result = result
+        }
+    }
+
+    //获取用户创作的评论
+    override fun getReplyByAuthor(req: QuerReplyByAuthorReq): ReplyListResp {
+        val result = Mysql.read {
+            PageHelper.offsetPage<Reply>(req.offset, req.limit).doSelectPageInfo<Reply> {
+                ReplyDao.getByAuthor(it, req.author)
+            }.list
+        }
+        return ReplyListResp().apply {
+            this.result = result
+        }
+    }
+
+    //获取用户评论数
+    override fun getReplyCountByAuthor(req: QueryReplyCountByAuthorReq): QueryReplyCountByAuthorResp {
+        val result = Mysql.read { session ->
+            req.author.map { it to ReplyDao.getCountByAuthor(session, it) }.toMap()
+        }
+        return QueryReplyCountByAuthorResp().apply {
             this.result = result
         }
     }

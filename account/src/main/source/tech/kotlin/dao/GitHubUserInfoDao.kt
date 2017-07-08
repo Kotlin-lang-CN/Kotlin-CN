@@ -84,8 +84,7 @@ object GitHubUserInfoDao {
         fun update(githubUser: GithubUser)
 
         @Insert("""
-        INSERT INTO github_user_info
-        VALUES
+        INSERT INTO github_user_info VALUES
         (#{uid}, #{accessToken}, #{id}, #{name}, #{email}, #{avatar}, #{login}, #{blog},
         #{location}, #{followerCount}, #{company})
         """)

@@ -1,7 +1,9 @@
 package tech.kotlin.controller
 
 import spark.Route
+import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
+import tech.kotlin.common.serialize.Json
 import tech.kotlin.service.domain.Device
 import tech.kotlin.common.utils.ok
 import tech.kotlin.service.account.SessionApi
@@ -35,6 +37,8 @@ object GithubController {
             this.code = code
             this.state = state
         })
+
+        Log.i("BeforeResp", Json.dumps(authResp))
         if (!authResp.hasAccount) {
             return@Route ok {
                 it["need_create_account"] = true
@@ -55,6 +59,7 @@ object GithubController {
                 it["username"] = authResp.userInfo.username
                 it["email"] = authResp.userInfo.email
                 it["is_email_validate"] = authResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
+                it["logo"] = authResp.userInfo.logo
                 it["role"] = authResp.account.role
             }
         }

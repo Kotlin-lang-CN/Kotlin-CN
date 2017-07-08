@@ -30,6 +30,8 @@ object TypeDef {
         const val UPDATE_CONTENT = 40002
         const val QUERY_BY_ID = 40003
         const val GET_LATEST = 40004
+        const val GET_BY_AUTHOR = 40005
+        const val COUNT_BY_AUTHOR = 40006
     }
 
     object Reply {
@@ -38,6 +40,8 @@ object TypeDef {
         const val GET_REPLY_BY_ID = 50002
         const val GET_REPLY_BY_ARTICLE = 50003
         const val GET_REPLY_COUNT_BY_ARTICLE = 50004
+        const val GET_REPLY_BY_AUTHOR = 50005
+        const val GET_REPLY_COUNT_BY_AUTHOR = 50006
     }
 
     object Text {
