@@ -17,6 +17,7 @@ import tech.kotlin.common.utils.str
 import tech.kotlin.controller.AccountController
 import tech.kotlin.controller.AdminController
 import tech.kotlin.controller.GithubController
+import tech.kotlin.controller.ProfileController
 import tech.kotlin.service.*
 import tech.kotlin.service.account.*
 import java.util.concurrent.Executors
@@ -75,6 +76,7 @@ fun initService() {
     Serv.register(GithubApi::class, GithubService)
     Serv.register(SessionApi::class, SessionService)
     Serv.register(UserApi::class, UserService)
+    Serv.register(ProfileApi::class, ProfileService)
 
     Serv.publish(broadcastIp = Props str "deploy.broadcast.host",
                  port = Launcher.publish,
@@ -87,18 +89,26 @@ fun initHttpServer() {
     Spark.init()
     path("/api") {
         path("/account") {
+            //登录注册会话
             post("/login", AccountController.login.gate("用户登录"))
             post("/register", AccountController.register.gate("用户注册"))
+
+            //用户信息
             post("/user/:uid/password", AccountController.alterPassword.gate("修改密码"))
             post("/user/:uid/update", AccountController.updateUserInfo.gate("更新用户信息"))
             get("/user/:uid", AccountController.getUserInfo.gate("查询用户信息"))
             get("/email/activate", AccountController.activateEmail.gate("激活账户邮箱"))
+
+            //用户资料
+            post("/profile/update", ProfileController.updateProfile.gate("更新用户资料"))
+            get("/profile", ProfileController.getProfile.gate("获取用户资料"))
         }
+
         path("/github") {
             get("/state", GithubController.createState.gate("获取登录会话"))
             post("/auth", GithubController.auth.gate("github登录"))
-
         }
+
         path("/admin") {
             get("/article/list", AdminController.getArticleList.gate("管理员获取文章列表"))
             post("/user/:id/state", AdminController.userState.gate("修改用户状态"))

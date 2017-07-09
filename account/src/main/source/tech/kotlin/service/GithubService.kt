@@ -9,7 +9,7 @@ import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
-import tech.kotlin.dao.GithubUserInfoDao
+import tech.kotlin.dao.GitHubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.account.GithubApi
 import tech.kotlin.service.account.req.GithubAuthReq
@@ -60,16 +60,17 @@ object GithubService : GithubApi {
         var account = Account()
         var userInfo = UserInfo()
         val hasAccount = Mysql.read {
-            val result = GithubUserInfoDao.getById(it, id = githubInfo.id, useCache = true, updateCache = true)
+            val result = GitHubUserInfoDao.getById(it, id = githubInfo.id, useCache = true, updateCache = true)
             if (result == null || result.uid == 0L) return@read false
-            userInfo = UserInfoDao.getById(it, result.uid, useCache = true, updateCache = true)!!
-            account = AccountDao.getById(it, result.uid, useCache = true, updateCache = true)!!
+            userInfo = UserInfoDao.getById(it, result.uid, useCache = true)!!
+            account = AccountDao.getById(it, result.uid, useCache = true)!!
             return@read true
         }
         return GithubAuthResp().apply {
             this.hasAccount = hasAccount
             this.userInfo = userInfo
             this.account = account
+            this.github = githubInfo
             this.token = JWT.dumps(key = jwtToken, content = GithubSession().apply {
                 device = req.device
                 user = githubInfo

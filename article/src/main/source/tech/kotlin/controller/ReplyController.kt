@@ -2,23 +2,23 @@ package tech.kotlin.controller
 
 import spark.Route
 import tech.kotlin.common.rpc.Serv
+import tech.kotlin.common.utils.abort
+import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.dict
+import tech.kotlin.common.utils.ok
+import tech.kotlin.service.Err
+import tech.kotlin.service.ReplyService
+import tech.kotlin.service.ServDef
+import tech.kotlin.service.TextService
+import tech.kotlin.service.account.SessionApi
+import tech.kotlin.service.account.UserApi
+import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.article.req.*
 import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.Reply
 import tech.kotlin.service.domain.TextContent
 import tech.kotlin.service.domain.UserInfo
-import tech.kotlin.common.utils.ok
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.account.SessionApi
-import tech.kotlin.service.account.UserApi
-import tech.kotlin.service.article.ReplyApi
-import tech.kotlin.service.article.TextApi
-import tech.kotlin.service.Err
-import tech.kotlin.common.utils.abort
-import tech.kotlin.common.utils.check
-import tech.kotlin.service.account.req.CheckTokenReq
-import tech.kotlin.service.account.req.QueryUserReq
-import tech.kotlin.service.article.req.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -29,10 +29,7 @@ object ReplyController {
     val sessionApi by Serv.bind(SessionApi::class, ServDef.ACCOUNT)
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
 
-    val replyApi by Serv.bind(ReplyApi::class)
-    val textApi by Serv.bind(TextApi::class)
-
-    val createReply = Route { req, _ ->
+    val createArticleReply = Route { req, _ ->
         val articleId = req.params(":id")
                 .check(Err.PARAMETER) { it.toLong(); true }
                 .toLong()
@@ -47,7 +44,7 @@ object ReplyController {
 
         val owner = sessionApi.checkToken(CheckTokenReq(req)).account
 
-        val createResp = replyApi.create(CreateArticleReplyReq().apply {
+        val createResp = ReplyService.create(CreateArticleReplyReq().apply {
             this.articleId = articleId
             this.ownerUID = owner.id
             this.content = content
@@ -62,12 +59,12 @@ object ReplyController {
                 .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
         val owner = sessionApi.checkToken(CheckTokenReq(req)).account
-        val reply = replyApi.getReplyById(QueryReplyByIdReq().apply {
+        val reply = ReplyService.getReplyById(QueryReplyByIdReq().apply {
             this.id = arrayListOf(replyId)
         }).result[replyId] ?: abort(Err.REPLY_NOT_EXISTS)
 
         if (reply.ownerUID == owner.id) {
-            replyApi.changeState(ChangeReplyStateReq().apply {
+            ReplyService.changeState(ChangeReplyStateReq().apply {
                 this.replyId = replyId
                 this.state = Reply.State.DELETE
             })
@@ -91,7 +88,7 @@ object ReplyController {
                 ?.toInt()
                 ?: 20
 
-        val reply = replyApi.getReplyByArticle(QueryReplyByArticleReq().apply {
+        val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
             this.articleId = articleId
             this.offset = offset
             this.limit = limit
@@ -103,7 +100,7 @@ object ReplyController {
             users.putAll(userApi.queryById(QueryUserReq().apply {
                 this.id = reply.map { it.ownerUID }.toList()
             }).info)
-            contents.putAll(textApi.getById(QueryTextReq().apply {
+            contents.putAll(TextService.getById(QueryTextReq().apply {
                 this.id = reply.map { it.contentId }.toList()
             }).result)
         }
@@ -139,7 +136,7 @@ object ReplyController {
                 ?.map { it.toLong() }
                 ?: listOf(0L)
 
-        val result = replyApi.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+        val result = ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
             this.id = queryId
         })
         return@Route ok {

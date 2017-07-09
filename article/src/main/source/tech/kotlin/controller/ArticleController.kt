@@ -13,6 +13,8 @@ import tech.kotlin.service.Err
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.tryExec
+import tech.kotlin.service.ArticleService
+import tech.kotlin.service.TextService
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.*
@@ -26,8 +28,6 @@ object ArticleController {
 
     val sessionApi by Serv.bind(SessionApi::class, ServDef.ACCOUNT)
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
-    val articleApi by Serv.bind(ArticleApi::class)
-    val textApi by Serv.bind(TextApi::class)
 
     val postArticle = Route { req, _ ->
         val title = req.queryParams("title")
@@ -48,7 +48,7 @@ object ArticleController {
                     category != Category.STATION.ordinal + 1 || it.role == Account.Role.ADMIN
                 }
 
-        val id = articleApi.create(CreateArticleReq().apply {
+        val id = ArticleService.create(CreateArticleReq().apply {
             this.title = title
             this.author = author
             this.category = category
@@ -57,7 +57,7 @@ object ArticleController {
             this.content = content
         }).articleId
 
-        val article = articleApi.queryById(QueryArticleByIdReq().apply {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.SYSTEM)
 
@@ -86,7 +86,7 @@ object ArticleController {
                     category != Category.STATION.ordinal + 1 || it.role == Account.Role.ADMIN
                 }
 
-        val article = articleApi.queryById(QueryArticleByIdReq().apply {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
         if (me.role != Account.Role.ADMIN && article.author != me.id) abort(Err.UNAUTHORIZED)
@@ -94,7 +94,7 @@ object ArticleController {
         //生成文本对象
         var contentId = 0L
         if (!content.isNullOrBlank()) {
-            contentId = articleApi.updateContent(UpdateArticleContentReq().apply {
+            contentId = ArticleService.updateContent(UpdateArticleContentReq().apply {
                 this.content = content
                 this.editorUid = me.id
                 this.articleId = article.id
@@ -102,7 +102,7 @@ object ArticleController {
         }
 
         //更新文章元数据
-        articleApi.updateMeta(UpdateArticleReq().apply {
+        ArticleService.updateMeta(UpdateArticleReq().apply {
             this.id = id
             this.args = strDict {
                 if (!title.isNullOrBlank()) this += "title" to title
@@ -123,13 +123,13 @@ object ArticleController {
 
         //只有作者和管理员才能删除文章
         val me = sessionApi.checkToken(CheckTokenReq(req)).account
-        val article = articleApi.queryById(QueryArticleByIdReq().apply {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
         if (me.role != Account.Role.ADMIN && article.author != me.id) abort(Err.UNAUTHORIZED)
 
         //跟新文章元数据
-        articleApi.updateMeta(UpdateArticleReq().apply {
+        ArticleService.updateMeta(UpdateArticleReq().apply {
             this.id = id
             this.args = hashMapOf("state" to "${Article.State.DELETE}")
         })
@@ -140,7 +140,7 @@ object ArticleController {
     val getArticleById = Route { req, _ ->
         val id = req.params(":id").check(Err.PARAMETER) { it.toLong();true }.toLong()
 
-        val article = articleApi.queryById(QueryArticleByIdReq().apply {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(id)
         }).articles[id] ?: abort(Err.ARTICLE_NOT_EXISTS)
 
@@ -160,7 +160,7 @@ object ArticleController {
             this.id = arrayListOf(article.lastEditUID)
         }).info[article.author] ?: UserInfo()
 
-        val content = textApi.getById(QueryTextReq().apply {
+        val content = TextService.getById(QueryTextReq().apply {
             this.id = arrayListOf(article.contentId)
         }).result[article.contentId] ?: TextContent()
 

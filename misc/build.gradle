@@ -28,5 +28,6 @@ dependencies {
     compile project(':common')
     //email
     compile 'javax.mail:mail:1.4.7'
+    compile 'com.qiniu:qiniu-java-sdk:7.2.+'
     testCompile 'junit:junit:4.12'
 }

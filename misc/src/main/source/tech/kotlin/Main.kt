@@ -59,6 +59,10 @@ fun initHttpCgi() {
             get("/home/link", MiscController.getHomeLink.gate("首页链接"))
             post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
         }
+
+        path("/file"){
+            get("/token", FileController.qiniuToken.gate("获取qiniu上传token"))
+        }
     }
     notFound { req, response ->
         if (req.requestMethod().toUpperCase() != "OPTIONS") {

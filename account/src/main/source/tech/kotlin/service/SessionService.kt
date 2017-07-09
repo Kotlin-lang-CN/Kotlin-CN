@@ -36,7 +36,7 @@ object SessionService : SessionApi {
 
         //invoke account state
         val account = Mysql.read {
-            AccountDao.getById(it, req.uid, useCache = false, updateCache = true)
+            AccountDao.getById(it, req.uid, useCache = false)
         } ?: abort(Err.USER_NOT_EXISTS)
         account.check(Err.UNAUTHORIZED) { it.state != Account.State.BAN }
 
@@ -71,9 +71,9 @@ object SessionService : SessionApi {
         }
 
         //validate account state
-        val account = Mysql.read { AccountDao.getById(it, content.uid, useCache = true, updateCache = true) }
-                ?.check(Err.USER_BAN) { it.state != Account.State.BAN }
-                ?: abort(Err.TOKEN_FAIL)
+        val account = Mysql.read { AccountDao.getById(it, content.uid, useCache = true) }
+                              ?.check(Err.USER_BAN) { it.state != Account.State.BAN }
+                      ?: abort(Err.TOKEN_FAIL)
 
         ////validate user email state
         //val user = Mysql.read { UserInfoDao.getById(it, content.uid, useCache = true, updateCache = true) }

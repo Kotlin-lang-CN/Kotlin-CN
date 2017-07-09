@@ -1,11 +1,12 @@
 package tech.kotlin.service.article
 
 import tech.kotlin.common.rpc.annotations.RpcInterface
-import tech.kotlin.service.article.resp.ArticleResp
-import tech.kotlin.service.article.resp.QueryArticleByIdResp
 import tech.kotlin.service.TypeDef
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.ArticleListResp
+import tech.kotlin.service.article.resp.ArticleResp
+import tech.kotlin.service.article.resp.CountArticleByAuthorResp
+import tech.kotlin.service.article.resp.QueryArticleByIdResp
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -28,4 +29,10 @@ interface ArticleApi {
     @RpcInterface(TypeDef.Article.GET_LATEST)
     fun getLatest(req: QueryLatestArticleReq): ArticleListResp
 
+    @RpcInterface(TypeDef.Article.GET_BY_AUTHOR)
+    fun getByAuthor(req: QueryByAuthorReq): ArticleListResp
+
+    @RpcInterface(TypeDef.Article.COUNT_BY_AUTHOR)
+    fun countByAuthor(req: CountArticleByAuthorReq): CountArticleByAuthorResp
 }
+

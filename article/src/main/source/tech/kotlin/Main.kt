@@ -66,13 +66,12 @@ fun main(vararg args: String) {
 fun initService() {
     Serv.init(EtcdRegistrator(Props))
     Serv.register(ArticleApi::class, ArticleService)
-    Serv.register(ReplyApi::class, ReplieService)
+    Serv.register(ReplyApi::class, ReplyService)
     Serv.register(TextApi::class, TextService)
     Serv.register(FlowerApi::class, FlowerService)
     Serv.publish(
             broadcastIp = Props str "deploy.broadcast.host", port = Launcher.publish,
-            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
-                )
+            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20))
 }
 
 fun initHttpServer() {
@@ -90,10 +89,16 @@ fun initHttpServer() {
             get("/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
             get("/category", ArticleViewController.getCategory.gate("获取文章类型列表"))
 
-            get("/:id/reply", ReplyController.queryReply.gate("获取文章评论列表"))
-            post("/:id/reply", ReplyController.createReply.gate("参与文章评论"))
-            post("/reply/:id/delete", ReplyController.delReply.gate("删除评论"))
-            get("/reply/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
+            get("/user/:id", ArticleViewController.getByUser.gate("获取用户最新文章列表"))
+        }
+
+        path("/reply") {
+            get("/count", ReplyController.queryReplyCount.gate("获取文章评论数量"))
+            get("/article/:id", ReplyController.queryReply.gate("获取文章评论列表"))
+            post("/article/:id", ReplyController.createArticleReply.gate("参与文章评论"))
+            post("/id/:id/delete", ReplyController.delReply.gate("删除评论"))
+
+            get("/user/:id", ReplyController.queryReply.gate("获取用户创作的评论内容"))
         }
 
         path("/flower") {
@@ -106,6 +111,14 @@ fun initHttpServer() {
             post("/reply/:id/unstar", FlowerController.unstarReply.gate("取消点赞评论"))
             get("/reply/:id/star", FlowerController.queryReply.gate("获取对评论的点赞状态"))
             get("/reply/star/count", FlowerController.countReply.gate("获取评论点赞数量"))
+        }
+
+        path("/creator") {
+            get("/article", CreatorController.getMyArticles.gate("获取我创作的文章"))
+            get("/reply", CreatorController.getMyReplies.gate("获取我创作的评论"))
+
+            get("/article/count", CreatorController.getArticleCount.gate("获取用户的文章数"))
+            get("/reply/count", CreatorController.getReplyCount.gate("获取用户的回复数"))
         }
 
         path("/rss") {

@@ -6,7 +6,7 @@ import tech.kotlin.common.os.Log
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
 import tech.kotlin.dao.AccountDao
-import tech.kotlin.dao.GithubUserInfoDao
+import tech.kotlin.dao.GitHubUserInfoDao
 import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.UserInfo
@@ -93,7 +93,7 @@ object AccountService : AccountApi {
             //绑定github账号
             if (req.githubUser.id != 0L) {
                 req.githubUser.uid = account.id
-                GithubUserInfoDao.saveOrUpdate(it, req.githubUser)
+                GitHubUserInfoDao.saveOrUpdate(it, req.githubUser)
             }
         }
 
@@ -112,10 +112,10 @@ object AccountService : AccountApi {
         var userInfo: UserInfo by Delegates.notNull<UserInfo>()
         //查询账号
         val account = Mysql.read {
-            userInfo = UserInfoDao.getByName(it, req.loginName) ?: //查询缓存
-                       UserInfoDao.getByEmail(it, req.loginName) ?: //查询数据库
+            userInfo = UserInfoDao.getByName(it, req.loginName, updateCache = true) ?: //查询缓存
+                       UserInfoDao.getByEmail(it, req.loginName, updateCache = true) ?: //查询数据库
                        abort(Err.USER_NOT_EXISTS)
-            return@read AccountDao.getById(it, id = userInfo.uid, useCache = false, updateCache = true) ?:
+            return@read AccountDao.getById(it, id = userInfo.uid, useCache = false) ?:
                         abort(Err.USER_NOT_EXISTS)
         }
 
@@ -127,10 +127,10 @@ object AccountService : AccountApi {
             //绑定github账号
             if (req.githubUser.id != 0L) {
                 req.githubUser.uid = account.id
-                GithubUserInfoDao.saveOrUpdate(it, req.githubUser)
+                GitHubUserInfoDao.saveOrUpdate(it, req.githubUser)
             }
             AccountDao.saveOrUpdate(it, account.apply { lastLogin = System.currentTimeMillis() })
-            AccountDao.getById(it, account.id)!!
+            AccountDao.getById(it, account.id, useCache = false)!!
         }
 
         return LoginResp().apply {
@@ -146,7 +146,7 @@ object AccountService : AccountApi {
     //修改用户状态
     override fun changeUserState(req: ChangeUserStateReq): EmptyResp {
         Mysql.write {
-            AccountDao.getById(it, req.uid) ?: abort(Err.UNAUTHORIZED)
+            AccountDao.getById(it, req.uid, useCache = false) ?: abort(Err.UNAUTHORIZED)
             AccountDao.update(it, req.uid, hashMapOf("state" to "${req.state}"))
         }
         return EmptyResp()

@@ -4,6 +4,7 @@ import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.Props
 import tech.kotlin.common.utils.str
+import tech.kotlin.service.ArticleService
 import tech.kotlin.service.domain.Article
 import tech.kotlin.service.domain.TextContent
 import tech.kotlin.service.domain.UserInfo
@@ -11,9 +12,8 @@ import tech.kotlin.service.article.req.QueryLatestArticleReq
 import tech.kotlin.service.article.req.QueryTextReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.ServDef
+import tech.kotlin.service.TextService
 import tech.kotlin.service.account.UserApi
-import tech.kotlin.service.article.ArticleApi
-import tech.kotlin.service.article.TextApi
 import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,12 +31,9 @@ object RssController {
     val frontendHost = Props str "deploy.frontend.host"
 
     val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
-    val articleApi by Serv.bind(ArticleApi::class)
-    val textApi by Serv.bind(TextApi::class)
-
 
     val fine = Route { _, resp ->
-        val articles = articleApi.getLatest(QueryLatestArticleReq().apply {
+        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = 0
             this.limit = 20
             this.state = "${Article.State.FINE}"
@@ -53,7 +50,7 @@ object RssController {
 
         val contents = HashMap<Long, TextContent>()
         if (articles.isNotEmpty()) {
-            contents.putAll(textApi.getById(QueryTextReq().apply {
+            contents.putAll(TextService.getById(QueryTextReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.contentId })
                 }
@@ -65,7 +62,7 @@ object RssController {
     }
 
     val latest = Route { _, resp ->
-        val articles = articleApi.getLatest(QueryLatestArticleReq().apply {
+        val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = 0
             this.limit = 20
             this.state = "${Article.State.FINE},${Article.State.NORMAL}"
@@ -82,7 +79,7 @@ object RssController {
 
         val contents = HashMap<Long, TextContent>()
         if (articles.isNotEmpty()) {
-            contents.putAll(textApi.getById(QueryTextReq().apply {
+            contents.putAll(TextService.getById(QueryTextReq().apply {
                 this.id = ArrayList<Long>().apply {
                     addAll(articles.map { it.contentId })
                 }

@@ -5,7 +5,7 @@ import tech.kotlin.service.domain.UserInfo
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.account.req.UpdateUserReq
 import tech.kotlin.service.domain.EmptyResp
-import tech.kotlin.service.article.resp.QueryUserResp
+import tech.kotlin.service.account.resp.QueryUserResp
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.dao.AccountDao
@@ -28,8 +28,8 @@ object UserService : UserApi {
         val userInfoMap = HashMap<Long, UserInfo>()
         Mysql.read { session ->
             req.id.forEach { uid ->
-                val account = AccountDao.getById(session, uid, useCache = true, updateCache = true)
-                val userInfo = UserInfoDao.getById(session, uid, useCache = true, updateCache = true)
+                val account = AccountDao.getById(session, uid, useCache = true)
+                val userInfo = UserInfoDao.getById(session, uid, useCache = true)
                 if (account != null) accountMap[uid] = account
                 if (userInfo != null) userInfoMap[uid] = userInfo
             }
@@ -68,9 +68,9 @@ object UserService : UserApi {
     //激活邮箱
     override fun activateEmail(req: ActivateEmailReq): EmptyResp {
         Mysql.write {
-            UserInfoDao.getById(it, req.uid)
+            UserInfoDao.getById(it, req.uid, useCache = false)
                     ?.check(Err.ILLEGAL_EMAIL_ACTIVATE_CODE) { it.email == req.email }
-                    ?: abort(Err.USER_NOT_EXISTS)
+            ?: abort(Err.USER_NOT_EXISTS)
             UserInfoDao.update(it, req.uid, hashMapOf("email_state" to "${UserInfo.EmailState.VERIFIED}"))
         }
         return EmptyResp()

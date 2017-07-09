@@ -5,6 +5,7 @@ import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.ok
 import tech.kotlin.common.utils.tryExec
 import tech.kotlin.service.Err
+import tech.kotlin.service.FlowerService
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.CheckTokenReq
@@ -19,12 +20,11 @@ import tech.kotlin.service.article.req.StarReq
 object FlowerController {
 
     val sessionApi by Serv.bind(SessionApi::class, ServDef.ACCOUNT)
-    val flowerApi by Serv.bind(FlowerApi::class)
 
     val starArticle = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "缺少article") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        flowerApi.star(StarReq().apply {
+        FlowerService.star(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -34,7 +34,7 @@ object FlowerController {
     val unstarArticle = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "缺少article") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        flowerApi.unstar(StarReq().apply {
+        FlowerService.unstar(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -44,7 +44,7 @@ object FlowerController {
     val queryArticle = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "缺少article") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        val data = flowerApi.queryStar(StarReq().apply {
+        val data = FlowerService.queryStar(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -58,7 +58,7 @@ object FlowerController {
         val ids = req.tryExec(Err.PARAMETER, "非法的id信息") {
             it.queryParams("ids").split(",").filter { it.isNotBlank() }.map { it.trim().toLong() }.map { "article:$it" }
         }
-        val resp = flowerApi.countStar(CountStarReq().apply { this.poolIds = ids })
+        val resp = FlowerService.countStar(CountStarReq().apply { this.poolIds = ids })
         return@Route ok {
             it["data"] = resp.result.entries.map { it.key.split(":")[1] to it.value }.toMap()
         }
@@ -67,7 +67,7 @@ object FlowerController {
     val starReply = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "非法的article id") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        flowerApi.star(StarReq().apply {
+        FlowerService.star(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -77,7 +77,7 @@ object FlowerController {
     val unstarReply = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "非法的article id") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        flowerApi.unstar(StarReq().apply {
+        FlowerService.unstar(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -87,7 +87,7 @@ object FlowerController {
     val queryReply = Route { req, _ ->
         val articleId = req.tryExec(Err.PARAMETER, "非法的reply id") { it.params(":id").toLong() }
         val account = sessionApi.checkToken(CheckTokenReq(req)).account
-        val data = flowerApi.queryStar(StarReq().apply {
+        val data = FlowerService.queryStar(StarReq().apply {
             this.owner = account.id
             this.poolId = "article:$articleId"
         })
@@ -101,7 +101,7 @@ object FlowerController {
         val ids = req.tryExec(Err.PARAMETER, "非法的reply id") {
             it.queryParams("ids").split(",").filter { it.isNotBlank() }.map { it.trim().toLong() }.map { "reply:$it" }
         }
-        val resp = flowerApi.countStar(CountStarReq().apply { this.poolIds = ids })
+        val resp = FlowerService.countStar(CountStarReq().apply { this.poolIds = ids })
         return@Route ok {
             it["data"] = resp.result.entries.map { it.key.split(":")[1] to it.value }.toMap()
         }

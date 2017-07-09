@@ -3,8 +3,9 @@ package tech.kotlin.service.account
 import tech.kotlin.common.rpc.annotations.RpcInterface
 import tech.kotlin.service.TypeDef
 import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.account.req.UpdateProfileReq
 import tech.kotlin.service.account.req.UpdateUserReq
-import tech.kotlin.service.article.resp.QueryUserResp
+import tech.kotlin.service.account.resp.QueryProfileResp
 import tech.kotlin.service.domain.EmptyResp
 
 /*********************************************************************
@@ -13,10 +14,10 @@ import tech.kotlin.service.domain.EmptyResp
  *********************************************************************/
 interface ProfileApi {
 
-    @RpcInterface(TypeDef.User.QUERY_BY_ID)
-    fun queryById(req: QueryUserReq): QueryUserResp
+    @RpcInterface(TypeDef.Profile.QUERY_BY_ID)
+    fun queryById(req: QueryUserReq): QueryProfileResp
 
-    @RpcInterface(TypeDef.User.UPDATE_BY_ID)
-    fun updateById(req: UpdateUserReq): EmptyResp
+    @RpcInterface(TypeDef.Profile.UPDATE_BY_ID)
+    fun updateById(req: UpdateProfileReq): EmptyResp
 
 }
