@@ -21,7 +21,7 @@ object AccountController {
     val login = Route { req, _ ->
         val githubToken = req.queryParams("github_token")
 
-        val loginResp = AccountService.loginWithName(LoginReq().apply {
+        val loginReq = LoginReq().apply {
             this.device = tryExec(Err.PARAMETER, "无效的设备信息") { Device(req) }
 
             this.loginName = req.queryParams("login_name")
@@ -36,7 +36,17 @@ object AccountController {
                     this.device = Device(req)
                 }).info
             }
-        })
+        }
+
+        val loginResp = AccountService.loginWithName(loginReq)
+        if (!loginReq.githubUser.avatar.isNullOrBlank() && loginResp.userInfo.logo.isNullOrBlank()) {
+            UserService.updateById(UpdateUserReq().apply {
+                this.id = loginResp.account.id
+                this.args = strDict { this["logo"] = loginReq.githubUser.avatar }
+            })
+        }
+        val logo = if (loginReq.githubUser.avatar.isNullOrBlank())
+            loginResp.userInfo.logo else loginReq.githubUser.avatar
 
         return@Route ok {
             it["uid"] = loginResp.userInfo.uid
@@ -45,7 +55,7 @@ object AccountController {
             it["email"] = loginResp.userInfo.email
             it["is_email_validate"] = loginResp.userInfo.emailState == UserInfo.EmailState.VERIFIED
             it["role"] = loginResp.account.role
-            it["logo"] = loginResp.userInfo.logo
+            it["logo"] = logo
         }
     }
 
