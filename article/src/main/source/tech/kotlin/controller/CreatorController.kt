@@ -4,17 +4,16 @@ import spark.Route
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
+import tech.kotlin.common.utils.dict
 import tech.kotlin.common.utils.ok
-import tech.kotlin.service.ArticleService
-import tech.kotlin.service.Err
-import tech.kotlin.service.ReplyService
-import tech.kotlin.service.ServDef
+import tech.kotlin.service.*
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.CheckTokenReq
+import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.QueryReplyCountByAuthorReq
-import tech.kotlin.service.article.req.CountArticleByAuthorReq
-import tech.kotlin.service.article.req.QuerReplyByAuthorReq
-import tech.kotlin.service.article.req.QueryByAuthorReq
+import tech.kotlin.service.article.req.*
+import tech.kotlin.service.domain.*
+import java.util.ArrayList
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -38,15 +37,32 @@ object CreatorController {
 
         val me = sessionApi.checkToken(CheckTokenReq(req)).account.id
 
-        val result = ReplyService.getReplyByAuthor(QuerReplyByAuthorReq().apply {
+        val reply = ReplyService.getReplyByAuthor(QuerReplyByAuthorReq().apply {
             this.author = me
             this.offset = offset
             this.limit = limit
-        })
+        }).result
+
+        val users = HashMap<Long, UserInfo>()
+        val contents = HashMap<Long, TextContent>()
+        if (reply.isNotEmpty()) {
+            users.putAll(ReplyController.userApi.queryById(QueryUserReq().apply {
+                this.id = reply.map { it.ownerUID }.toList()
+            }).info)
+            contents.putAll(TextService.getById(QueryTextReq().apply {
+                this.id = reply.map { it.contentId }.toList()
+            }).result)
+        }
 
         return@Route ok {
-            it["result"] = result.result
-            it["next_offset"] = offset + result.result.size
+            it["reply"] = reply.map {
+                dict {
+                    this["meta"] = it
+                    this["user"] = users[it.ownerUID] ?: UserInfo()
+                    this["content"] = contents[it.contentId] ?: TextContent()
+                }
+            }
+            it["next_offset"] = offset + reply.size
         }
     }
 
@@ -64,15 +80,40 @@ object CreatorController {
 
         val me = sessionApi.checkToken(CheckTokenReq(req)).account.id
 
-        val result = ArticleService.getByAuthor(QueryByAuthorReq().apply {
+        val articles = ArticleService.getByAuthor(QueryByAuthorReq().apply {
             this.author = me
             this.offset = offset
             this.limit = limit
-        })
+        }).result
+
+        val users = HashMap<Long, UserInfo>()
+        if (articles.isNotEmpty()) {
+            users.putAll(ArticleViewController.userApi.queryById(QueryUserReq().apply {
+                this.id = ArrayList<Long>().apply {
+                    addAll(articles.map { it.author })
+                    addAll(articles.map { it.lastEditUID })
+                }.distinctBy { it }
+            }).info)
+        }
+
+        val replies = HashMap<Long, Int>()
+        if (articles.isNotEmpty()) {
+            replies.putAll(ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
+                this.id = articles.map { it.id }.toList()
+            }).result)
+        }
 
         return@Route ok {
-            it["result"] = result.result
-            it["next_offset"] = offset + result.result.size
+            it["articles"] = articles.map {
+                dict {
+                    this["meta"] = it
+                    this["author"] = users[it.author] ?: UserInfo()
+                    this["last_editor"] = users[it.lastEditUID] ?: UserInfo()
+                    this["replies"] = replies[it.id] ?: 0
+                    this["is_fine"] = it.state == Article.State.FINE
+                }
+            }
+            it["next_offset"] = offset + articles.size
         }
     }
 

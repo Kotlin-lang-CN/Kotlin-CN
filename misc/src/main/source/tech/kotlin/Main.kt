@@ -61,7 +61,7 @@ fun initHttpCgi() {
         }
 
         path("/file"){
-//            get("/token", FileControlle)
+            get("/token", FileController.qiniuToken.gate("获取qiniu上传token"))
         }
     }
     notFound { req, response ->
