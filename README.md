@@ -16,11 +16,9 @@
  
 邮件联系我: [chpengzh](mailto:chpengzh@foxmail.com)
 
-互动文章版: [https://discuss.kotliner.cn](https://discuss.kotliner.cn)
+论坛: [https://kotliner.cn](https://kotliner.cn)
  
-wiki专题: [https://discuss.kotliner.cn/wiki](https://discuss.kotliner.cn/wiki)
- 
-社区: [https://www.kotliner.cn](https://www.kotliner.cn)
+社区博客: [https://www.kotliner.cn](https://www.kotliner.cn)
  
 中文站: [https://www.kotlincn.net](https://www.kotlincn.net)
  
@@ -41,4 +39,4 @@ wiki专题: [https://discuss.kotliner.cn/wiki](https://discuss.kotliner.cn/wiki)
  
 想参与该项目开发，可以通过邮件联系我，或者在github上提issue。
  
-- Kotlin China 问答版服务端结构简述 [here](https://discuss.kotliner.cn/post/6284216879862673408)
+- Kotlin China 问答版服务端结构简述 [here](https://kotliner.cn/post/6284216879862673408)
