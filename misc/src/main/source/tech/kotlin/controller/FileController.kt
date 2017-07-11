@@ -9,6 +9,7 @@ import tech.kotlin.common.utils.str
 import tech.kotlin.service.ServDef
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.CheckTokenReq
+import java.util.*
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -27,4 +28,12 @@ object FileController {
         val token = auth.uploadToken(bucket)
         return@Route  ok { it["token"] = token }
     }
+}
+
+fun main(args: Array<String>) {
+    val a: Int = 10000
+    val b: Int? = a
+    val c: Int? = a
+    println(Integer.valueOf(b!!))
+    println(Integer.valueOf(c!!))
 }

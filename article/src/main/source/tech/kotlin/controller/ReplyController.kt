@@ -38,9 +38,9 @@ object ReplyController {
                 .check(Err.PARAMETER, "评论内容为空") { !it.isNullOrBlank() && it.trim().length >= 10 }
 
         val aliasId = req.queryParams("alias_id")
-                ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
-                ?.toLong()
-                ?: 0
+                              ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
+                              ?.toLong()
+                      ?: 0
 
         val owner = sessionApi.checkToken(CheckTokenReq(req)).account
 
@@ -79,14 +79,14 @@ object ReplyController {
                 .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
         val offset = req.queryParams("offset")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 0
+                             ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                             ?.toInt()
+                     ?: 0
 
         val limit = req.queryParams("limit")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 20
+                            ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                            ?.toInt()
+                    ?: 20
 
         val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
             this.articleId = articleId
@@ -98,7 +98,10 @@ object ReplyController {
         val contents = HashMap<Long, TextContent>()
         if (reply.isNotEmpty()) {
             users.putAll(userApi.queryById(QueryUserReq().apply {
-                this.id = reply.map { it.ownerUID }.toList()
+                this.id = ArrayList<Long>().apply {
+                    addAll(reply.map { it.ownerUID })
+                    addAll(reply.map { it.aliasId }.filter { it != 0L })
+                }
             }).info)
             contents.putAll(TextService.getById(QueryTextReq().apply {
                 this.id = reply.map { it.contentId }.toList()
@@ -123,6 +126,7 @@ object ReplyController {
                                 contents[it.contentId] ?: TextContent()
                             else
                                 TextContent()
+                    users[it.aliasId]?.apply { this@dict += "alias" to this }
                 }
             }
             it["next_offset"] = offset + reply.size
@@ -131,17 +135,15 @@ object ReplyController {
 
     val queryReplyCount = Route { req, _ ->
         val queryId = req.queryParams("id")
-                ?.check(Err.PARAMETER) { it.split(',').map { it.toLong() };true }
-                ?.split(',')
-                ?.map { it.toLong() }
-                ?: listOf(0L)
+                              ?.check(Err.PARAMETER) { it.split(',').map { it.toLong() };true }
+                              ?.split(',')
+                              ?.map { it.toLong() }
+                      ?: listOf(0L)
 
         val result = ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
             this.id = queryId
         })
-        return@Route ok {
-            it["data"] = result.result
-        }
+        return@Route ok { it["data"] = result.result }
     }
 
 }

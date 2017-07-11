@@ -14,6 +14,8 @@ import tech.kotlin.service.article.resp.QueryReplyByIdResp
 import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.rpc.Serv
+import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.article.QueryReplyCountByAuthorReq
 import tech.kotlin.service.article.QueryReplyCountByAuthorResp
 
@@ -31,7 +33,6 @@ object ReplyService : ReplyApi {
             this.serializeId = "reply:$replyId"
             this.content = req.content
         }).id
-
         val reply = Reply().apply {
             this.id = replyId
             this.replyPoolId = "article:${req.articleId}"
@@ -41,17 +42,7 @@ object ReplyService : ReplyApi {
             this.contentId = contentId
             this.aliasId = req.aliasId
         }
-        Mysql.write {
-            if (reply.aliasId != 0L) {
-                val alias = ReplyDao.getById(it, req.aliasId, cache = false) ?:
-                            abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-
-                if (alias.replyPoolId != "article:${req.articleId}")
-                    abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-            }
-            ArticleDao.getById(it, req.articleId, false) ?: abort(Err.ARTICLE_NOT_EXISTS)
-            ReplyDao.create(it, reply)
-        }
+        Mysql.write { ReplyDao.create(it, reply) }
         return CreateReplyResp().apply {
             this.replyId = reply.id
             this.contentId = contentId

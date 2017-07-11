@@ -31,8 +31,7 @@ fun initRpcCgi(cgiPort: String) {
     val port = cgiPort.tryExec(Err.SYSTEM, "illegal publish host $cgiPort") { it.toInt() }
     Serv.publish(
             broadcastIp = Props str "deploy.broadcast.host", port = port,
-            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20)
-    )
+            serviceName = ServDef.ARTICLE, executorService = Executors.newFixedThreadPool(20))
 }
 
 fun initHttpCgi(cgiPort: String) {
