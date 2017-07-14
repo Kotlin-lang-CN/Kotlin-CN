@@ -14,7 +14,6 @@ import tech.kotlin.common.tcp.TcpHandler
 import tech.kotlin.common.tcp.TcpPackage
 import tech.kotlin.service.domain.EmptyResp
 import java.net.Inet4Address
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -153,7 +152,7 @@ object Serv : HandlerThread("Serv") {
                 }
                 timeoutSchedule = Runnable {
                     Log.e("connection to $name-${api.simpleName} @ " +
-                            "${remoteAddress?.hostName}:${remoteAddress?.port} disconnected")
+                          "${remoteAddress?.hostName}:${remoteAddress?.port} disconnected")
                     connection.close()
                 }
                 /*schedule*/

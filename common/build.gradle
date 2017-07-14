@@ -44,4 +44,6 @@ dependencies {
     //redis
     compile 'redis.clients:jedis:2.9.0'
     testCompile 'junit:junit:4.12'
+    //rabbitmq
+    compile 'com.rabbitmq:amqp-client:4.1.0'
 }

@@ -6,19 +6,14 @@ import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.dict
 import tech.kotlin.common.utils.ok
-import tech.kotlin.service.Err
-import tech.kotlin.service.ReplyService
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.TextService
+import tech.kotlin.service.*
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.*
-import tech.kotlin.service.domain.Account
-import tech.kotlin.service.domain.Reply
-import tech.kotlin.service.domain.TextContent
-import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.domain.*
+import tech.kotlin.service.message.MessageApi
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -40,17 +35,16 @@ object ReplyController {
         val aliasId = req.queryParams("alias_id")
                               ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
                               ?.toLong()
-                      ?: 0
+                      ?: 0L
 
-        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req))
 
         val createResp = ReplyService.create(CreateArticleReplyReq().apply {
             this.articleId = articleId
-            this.ownerUID = owner.id
+            this.ownerUID = owner.account.id
             this.content = content
             this.aliasId = aliasId
         })
-
         return@Route ok { it["id"] = createResp.replyId }
     }
 

@@ -29,11 +29,3 @@ object FileController {
         return@Route  ok { it["token"] = token }
     }
 }
-
-fun main(args: Array<String>) {
-    val a: Int = 10000
-    val b: Int? = a
-    val c: Int? = a
-    println(Integer.valueOf(b!!))
-    println(Integer.valueOf(c!!))
-}

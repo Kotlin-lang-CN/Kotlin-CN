@@ -30,7 +30,7 @@ object Launcher {
     @Parameter(names = arrayOf("-h", "--http-port"),
                required = false,
                description = "http服务端口号")
-    var http: Int = 8080
+    var http: Int = 8083
 }
 
 fun main(vararg args: String) {
@@ -60,7 +60,7 @@ fun initHttpCgi() {
             post("/home/link", MiscController.setHomeLink.gate("设置首页链接"))
         }
 
-        path("/file"){
+        path("/file") {
             get("/token", FileController.qiniuToken.gate("获取qiniu上传token"))
         }
     }

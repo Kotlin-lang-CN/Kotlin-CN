@@ -6,8 +6,8 @@
     <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
     </plugins>
-    <environments default="development">
-        <environment id="development">
+    <environments default="release">
+        <environment id="release">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="${mysql.driver}"/>

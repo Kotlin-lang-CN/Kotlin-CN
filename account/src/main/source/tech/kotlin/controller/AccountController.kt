@@ -2,6 +2,7 @@ package tech.kotlin.controller
 
 import spark.Route
 import tech.kotlin.common.algorithm.MD5
+import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.utils.*
 import tech.kotlin.service.*
 import tech.kotlin.service.account.req.*
@@ -10,6 +11,7 @@ import tech.kotlin.service.article.req.EmailCheckTokenReq
 import tech.kotlin.service.domain.Account
 import tech.kotlin.service.domain.Device
 import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.message.MessageApi
 import java.net.URLDecoder
 
 /*********************************************************************
