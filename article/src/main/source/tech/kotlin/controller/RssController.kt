@@ -106,11 +106,15 @@ object RssController {
                     appendChild(createElement("language").apply { textContent = "${Locale.CHINA}" })
                     articles.forEach {
                         appendChild(createElement("item").apply {
-                            appendChild(createElement("title").apply { textContent = it.title })
+                            appendChild(createElement("title").apply {
+                                textContent = it.title
+                            })
                             appendChild(createElement("description").apply {
                                 textContent = contents[it.contentId]!!.content
                             })
-                            appendChild(createElement("author").apply { textContent = users[it.author]!!.username })
+                            appendChild(createElement("author").apply {
+                                textContent = users[it.author]!!.username
+                            })
                             appendChild(createElement("pubDate").apply {
                                 textContent = df.format(it.createTime - localeDivide)
                             })
@@ -125,10 +129,13 @@ object RssController {
                 })
             })
         }
+        // XML 1.1
         return StringWriter().apply {
             TransformerFactory.newInstance()
                     .newTransformer()
                     .transform(DOMSource(doc), StreamResult(this))
         }.toString()
+                .replace(Regex("[^\u0009\r\n\u0020-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]"), "")//xml1.0
+                .replace(Regex("[^\u0001-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]+"), "")//xml1.1
     }
 }
