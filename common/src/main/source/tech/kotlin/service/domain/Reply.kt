@@ -45,6 +45,6 @@ class Reply {
     }
 
     object Pool {
-        const val ARTICLE = 0
+        const val ARTICLE = "article"
     }
 }

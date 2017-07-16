@@ -1,6 +1,5 @@
 package tech.kotlin.service.article.req
 
-import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.FieldType.STRING
 import com.baidu.bjf.remoting.protobuf.FieldType.UINT32
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
