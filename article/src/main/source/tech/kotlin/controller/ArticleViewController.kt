@@ -180,7 +180,4 @@ object ArticleViewController {
 
     val getCategory = Route { _, _ -> ok { it["category"] = Category.values().map { it.value } } }
 
-    val getByUser = Route { _, _ ->
-
-    }
 }

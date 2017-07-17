@@ -14,6 +14,9 @@
                 <property name="url" value="${mysql.url}"/>
                 <property name="username" value="${mysql.username}"/>
                 <property name="password" value="${mysql.password}"/>
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingQuery" value="select now() from kpi.lastupdatedlog limit 1"/>
+                <property name="poolPingConnectionsNotUsedFor" value="3600000"/>
             </dataSource>
         </environment>
     </environments>

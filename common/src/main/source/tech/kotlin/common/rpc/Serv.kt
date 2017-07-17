@@ -14,7 +14,6 @@ import tech.kotlin.common.tcp.TcpHandler
 import tech.kotlin.common.tcp.TcpPackage
 import tech.kotlin.service.domain.EmptyResp
 import java.net.Inet4Address
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -43,6 +42,7 @@ object Serv : HandlerThread("Serv") {
     private val initLatch = CountDownLatch(1)
     private val services = ConcurrentHashMap<Class<*>, Any>()
 
+    //初始化
     fun init(registrator: ServiceRegistrator = object : ServiceRegistrator {
         override fun publishService(serviceName: String, address: String, port: Int) = Unit
         override fun getService(serviceName: String): InetSocketAddress = TODO("not implments")
@@ -59,11 +59,13 @@ object Serv : HandlerThread("Serv") {
         initLatch.countDown()//init finish
     }
 
+    //服务注册
     fun <T : Any> register(interfaceType: KClass<T>, implement: T) {
         provider.register(interfaceType.java, implement)
         services[interfaceType.java] = implement
     }
 
+    //服务发布
     fun publish(broadcastIp: String, port: Int, serviceName: String, executorService: ExecutorService) {
         Log.i("publish start $broadcastIp, $port, $serviceName")
         val serviceIp = NetworkInterface.getNetworkInterfaces().toList().first {
@@ -79,11 +81,77 @@ object Serv : HandlerThread("Serv") {
         this.ioThread.listen(InetSocketAddress(serviceIp, port))
     }
 
-    internal class RpcHandler : TcpHandler() {
+    //绑定属性
+    class bind<T : Any>(val api: KClass<T>, val name: String = "") : ReadOnlyProperty<Any, T> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): T {
+            synchronized(bind::class) {
+                val localService = services[api.java]
+                @Suppress("UNCHECKED_CAST")
+                if (localService != null) return localService as T
+                val serviceConn = connMap[api]
+                if (serviceConn != null) return serviceConn.getProxy(api.java)
+                val newServiceConn = ServiceConn(api, name).apply { connMap[api] = this }
+                return newServiceConn.getProxy(api.java)
+            }
+        }
+    }
+
+    //rpc服务连接管理
+    private val connMap = ConcurrentHashMap<KClass<*>, ServiceConn<*>>()
+
+    //rpc服务连接类
+    private class ServiceConn<T : Any>(val api: KClass<T>, val name: String = "") : Consumer() {
+
+        internal var conn: Connection? = null
+        internal var sendSchedule: Runnable? = null
+        internal var timeoutSchedule: Runnable? = null
+        internal var remoteAddress: InetSocketAddress? = null
+
+        override fun onProxyTransport(requestId: Long, type: Int, data: ByteArray) {
+            val connection: Connection = synchronized(this) {
+                val connection = conn
+                if (connection != null) return@synchronized connection
+                Log.i("Service init binder ${api.java.name} for ${this.javaClass.name}")
+                val address = registrator.getService(name).apply { remoteAddress = this }
+                val newConn = ioThread.connect(address).apply { attach(this@ServiceConn) }
+                conn = newConn
+                return@synchronized newConn
+            }
+
+            if (connection.send(type, requestId, data) == 0) {
+                connection.close()
+                conn = null
+                throw ServiceBusy("service busy while invoke $type")
+            }
+        }
+
+        fun pingSchedule(connection: Connection, handler: Handler) {
+            synchronized(this) {
+                /*cancel current schedule*/
+                sendSchedule?.apply { handler.cancel(this) }
+                timeoutSchedule?.apply { handler.cancel(this) }
+                /*define new schedule*/
+                sendSchedule = Runnable {
+                    connection.send(ProtoCode.PONG, UUID.randomUUID().mostSignificantBits, Proto.dumps(EmptyResp()))
+                }
+                timeoutSchedule = Runnable {
+                    Log.e("connection to $name-${api.simpleName} @ " +
+                          "${remoteAddress?.hostName}:${remoteAddress?.port} disconnected")
+                    connection.close()
+                }
+                /*schedule*/
+                handler.postDelay(sendSchedule, TTL)
+                handler.postDelay(timeoutSchedule, TTL * 2)
+            }
+        }
+    }
+
+    //rpc异步连接逻辑
+    private class RpcHandler : TcpHandler() {
 
         override fun onConnect(connection: Connection) {
             val binder = connection.attachment() ?: return
-            (binder as bind<*>).pingSchedule(connection, this)
+            (binder as ServiceConn<*>).pingSchedule(connection, this)
         }
 
         override fun onData(connection: Connection, data: TcpPackage) {
@@ -101,7 +169,7 @@ object Serv : HandlerThread("Serv") {
                     }
                 }
             } else {
-                binder as bind<*>
+                binder as ServiceConn<*>
                 if (data.type == ProtoCode.PONG) {
                     binder.pingSchedule(connection, this)
                 } else {
@@ -111,60 +179,7 @@ object Serv : HandlerThread("Serv") {
         }
 
         override fun onDisconnected(connection: Connection) {
-            connection.attachment()?.apply { (this as bind<*>).conn = null }
-        }
-
-    }
-
-    class bind<T : Any>(val api: KClass<T>, val name: String = "") : ReadOnlyProperty<Any, T>, Consumer() {
-
-        internal var conn: Connection? = null
-        internal var sendSchedule: Runnable? = null
-        internal var timeoutSchedule: Runnable? = null
-        internal var remoteAddress: InetSocketAddress? = null
-
-        override fun onProxyTransport(requestId: Long, type: Int, data: ByteArray) {
-            val connection: Connection = synchronized(this) {
-                val connection = conn
-                if (connection != null) return@synchronized connection
-                Log.i("Service init binder ${api.java.name} for ${this.javaClass.name}")
-                val address = registrator.getService(name).apply { remoteAddress = this }
-                val newConn = ioThread.connect(address).apply { attach(this@bind) }
-                conn = newConn
-                return@synchronized newConn
-            }
-
-            if (connection.send(type, requestId, data) == 0) {
-                connection.close()
-                conn = null
-                throw ServiceBusy("service busy while invoke $type")
-            }
-        }
-
-
-        fun pingSchedule(connection: Connection, handler: Handler) {
-            synchronized(this) {
-                /*cancel current schedule*/
-                sendSchedule?.apply { handler.cancel(this) }
-                timeoutSchedule?.apply { handler.cancel(this) }
-                /*define new schedule*/
-                sendSchedule = Runnable {
-                    connection.send(ProtoCode.PONG, UUID.randomUUID().mostSignificantBits, Proto.dumps(EmptyResp()))
-                }
-                timeoutSchedule = Runnable {
-                    Log.e("connection to $name-${api.simpleName} @ " +
-                            "${remoteAddress?.hostName}:${remoteAddress?.port} disconnected")
-                    connection.close()
-                }
-                /*schedule*/
-                handler.postDelay(sendSchedule, TTL)
-                handler.postDelay(timeoutSchedule, TTL * 2)
-            }
-        }
-
-        override fun getValue(thisRef: Any, property: KProperty<*>): T {
-            @Suppress("UNCHECKED_CAST")
-            return (services[api.java] ?: getProxy(api.java)) as T
+            connection.attachment()?.apply { (this as ServiceConn<*>).conn = null }
         }
     }
 }

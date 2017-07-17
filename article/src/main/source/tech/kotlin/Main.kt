@@ -36,12 +36,12 @@ object Launcher {
     @Parameter(names = arrayOf("-h", "--http-port"),
                required = false,
                description = "http服务端口号")
-    var http: Int = 8080
+    var http: Int = 8081
 
     @Parameter(names = arrayOf("-p", "--publish"),
                required = false,
                description = "服务发布端口")
-    var publish: Int = 9000
+    var publish: Int = 9001
 }
 
 
@@ -88,8 +88,6 @@ fun initHttpServer() {
             get("/fine", ArticleViewController.getFine.gate("获取精品文章"))
             get("/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
             get("/category", ArticleViewController.getCategory.gate("获取文章类型列表"))
-
-            get("/user/:id", ArticleViewController.getByUser.gate("获取用户最新文章列表"))
         }
 
         path("/reply") {

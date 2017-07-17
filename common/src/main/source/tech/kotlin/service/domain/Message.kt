@@ -16,7 +16,7 @@ class Message {
 
     @Protobuf(order = 2, required = true, fieldType = FieldType.UINT32, description = "解析类型")
     @JsonProperty("type")
-    var type = 0
+    var type = Type.ToArticle
 
     @Protobuf(order = 3, required = true, fieldType = FieldType.UINT64, description = "时间戳")
     @JsonProperty("create_time")
@@ -31,7 +31,25 @@ class Message {
     var createor = 0L
 
     @Protobuf(order = 6, required = true, fieldType = FieldType.UINT64, description = "消息接受者者id")
-    @JsonProperty("creator")
+    @JsonProperty("acceptor")
     var acceptor = 0L
+
+    @Protobuf(order = 7, required = true, fieldType = FieldType.UINT32, description = "消息状态")
+    @JsonProperty("status")
+    var status = Status.UNREAD
+
+    object Status {
+        const val UNREAD = 0
+        const val READ = 1
+    }
+
+    object Type {
+        const val ToArticle = 0
+        const val ToReply = 1
+    }
+
+    object Group {
+        const val ARTICLE = "a:%d"
+    }
 
 }

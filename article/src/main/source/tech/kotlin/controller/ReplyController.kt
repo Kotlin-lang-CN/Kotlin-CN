@@ -6,19 +6,14 @@ import tech.kotlin.common.utils.abort
 import tech.kotlin.common.utils.check
 import tech.kotlin.common.utils.dict
 import tech.kotlin.common.utils.ok
-import tech.kotlin.service.Err
-import tech.kotlin.service.ReplyService
-import tech.kotlin.service.ServDef
-import tech.kotlin.service.TextService
+import tech.kotlin.service.*
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.UserApi
 import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.*
-import tech.kotlin.service.domain.Account
-import tech.kotlin.service.domain.Reply
-import tech.kotlin.service.domain.TextContent
-import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.domain.*
+import tech.kotlin.service.message.MessageApi
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -38,19 +33,18 @@ object ReplyController {
                 .check(Err.PARAMETER, "评论内容为空") { !it.isNullOrBlank() && it.trim().length >= 10 }
 
         val aliasId = req.queryParams("alias_id")
-                ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
-                ?.toLong()
-                ?: 0
+                              ?.check(Err.PARAMETER, "非法的关联id") { it.toLong();true }
+                              ?.toLong()
+                      ?: 0L
 
-        val owner = sessionApi.checkToken(CheckTokenReq(req)).account
+        val owner = sessionApi.checkToken(CheckTokenReq(req))
 
         val createResp = ReplyService.create(CreateArticleReplyReq().apply {
             this.articleId = articleId
-            this.ownerUID = owner.id
+            this.ownerUID = owner.account.id
             this.content = content
             this.aliasId = aliasId
         })
-
         return@Route ok { it["id"] = createResp.replyId }
     }
 
@@ -79,14 +73,14 @@ object ReplyController {
                 .check(Err.PARAMETER) { it.toLong();true }.toLong()
 
         val offset = req.queryParams("offset")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 0
+                             ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                             ?.toInt()
+                     ?: 0
 
         val limit = req.queryParams("limit")
-                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                ?.toInt()
-                ?: 20
+                            ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                            ?.toInt()
+                    ?: 20
 
         val reply = ReplyService.getReplyByArticle(QueryReplyByArticleReq().apply {
             this.articleId = articleId
@@ -98,7 +92,10 @@ object ReplyController {
         val contents = HashMap<Long, TextContent>()
         if (reply.isNotEmpty()) {
             users.putAll(userApi.queryById(QueryUserReq().apply {
-                this.id = reply.map { it.ownerUID }.toList()
+                this.id = ArrayList<Long>().apply {
+                    addAll(reply.map { it.ownerUID })
+                    addAll(reply.map { it.aliasId }.filter { it != 0L })
+                }
             }).info)
             contents.putAll(TextService.getById(QueryTextReq().apply {
                 this.id = reply.map { it.contentId }.toList()
@@ -123,6 +120,7 @@ object ReplyController {
                                 contents[it.contentId] ?: TextContent()
                             else
                                 TextContent()
+                    users[it.aliasId]?.apply { this@dict += "alias" to this }
                 }
             }
             it["next_offset"] = offset + reply.size
@@ -131,17 +129,15 @@ object ReplyController {
 
     val queryReplyCount = Route { req, _ ->
         val queryId = req.queryParams("id")
-                ?.check(Err.PARAMETER) { it.split(',').map { it.toLong() };true }
-                ?.split(',')
-                ?.map { it.toLong() }
-                ?: listOf(0L)
+                              ?.check(Err.PARAMETER) { it.split(',').map { it.toLong() };true }
+                              ?.split(',')
+                              ?.map { it.toLong() }
+                      ?: listOf(0L)
 
         val result = ReplyService.getReplyCountByArticle(QueryReplyCountByArticleReq().apply {
             this.id = queryId
         })
-        return@Route ok {
-            it["data"] = result.result
-        }
+        return@Route ok { it["data"] = result.result }
     }
 
 }

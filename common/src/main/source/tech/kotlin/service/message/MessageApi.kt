@@ -3,6 +3,9 @@ package tech.kotlin.service.message
 import tech.kotlin.common.rpc.annotations.RpcInterface
 import tech.kotlin.service.TypeDef
 import tech.kotlin.service.domain.EmptyResp
+import tech.kotlin.service.message.req.*
+import tech.kotlin.service.message.resp.QueryGroupStateResp
+import tech.kotlin.service.message.resp.QueryMessageResp
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com
@@ -11,26 +14,18 @@ import tech.kotlin.service.domain.EmptyResp
 interface MessageApi {
 
     @RpcInterface(TypeDef.Message.BROAD_CAST)
-    fun broadcast(req: BroadcastReq): SendMessageResp
+    fun broadcast(req: BroadcastReq): EmptyResp
 
     @RpcInterface(TypeDef.Message.LIST_CAST)
-    fun listcast(req: ListcastReq): SendMessageResp
+    fun listcast(req: ListcastReq): EmptyResp
 
-    @RpcInterface(TypeDef.Message.GET_BY_USER)
-    fun getByUser(req: QueryMessageReq): QueryMessageResp
+    @RpcInterface(TypeDef.Message.GROUP_CAST)
+    fun groupcast(req: GroupcastReq): EmptyResp
 
-    @RpcInterface(TypeDef.Message.CHANGE_STATE)
-    fun changeState(req: ChangeStateReq): EmptyResp
+    @RpcInterface(TypeDef.Message.GET_BY_ACCEPTOR)
+    fun getByAcceptor(req: QueryMessageReq): QueryMessageResp
 
-}
-
-class QueryMessageReq {
-}
-
-class QueryMessageResp {
-
-}
-
-class ChangeStateReq {
+    @RpcInterface(TypeDef.Message.MARK_READ)
+    fun markReadReq(req: MarkReadReq): EmptyResp
 
 }

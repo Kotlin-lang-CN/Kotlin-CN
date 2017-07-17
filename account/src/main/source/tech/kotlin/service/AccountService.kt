@@ -16,6 +16,7 @@ import tech.kotlin.service.account.resp.LoginResp
 import tech.kotlin.service.account.AccountApi
 import tech.kotlin.service.account.SessionApi
 import tech.kotlin.service.account.req.*
+import tech.kotlin.service.article.req.EmailReq
 import kotlin.properties.Delegates
 
 /*********************************************************************
@@ -160,6 +161,9 @@ object AccountService : AccountApi {
         return EmptyResp()
     }
 
+    private fun sendEmailActivate() {
+
+    }
 }
 
 

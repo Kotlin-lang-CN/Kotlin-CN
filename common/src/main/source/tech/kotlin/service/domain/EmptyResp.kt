@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  *********************************************************************/
 class EmptyResp {
 
-    @Protobuf(order = 1, required = false,fieldType = FieldType.UINT32)
+    @Protobuf(order = 1, required = false, fieldType = FieldType.UINT32)
     var state = 0
 
 }

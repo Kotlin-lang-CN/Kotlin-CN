@@ -10,11 +10,13 @@ if [ ${mode} = 'release' ]; then
     rsync -azP account/build/libs/  root@106.75.105.42:bin/
     rsync -azP article/build/libs/  root@106.75.105.42:bin/
     rsync -azP misc/build/libs/     root@106.75.105.42:bin/
+    rsync -azP message/build/libs/  root@106.75.105.42:bin/
 
 elif [ ${mode} = 'dev' ]; then
 
     rsync -azP account/build/libs/  root@debug.kotlin-cn.org:bin/
     rsync -azP article/build/libs/  root@debug.kotlin-cn.org:bin/
     rsync -azP misc/build/libs/     root@debug.kotlin-cn.org:bin/
+    rsync -azP message/build/libs/  root@debug.kotlin-cn.org:bin/
 
 fi

@@ -1,21 +1,30 @@
 package tech.kotlin.service
 
 import com.github.pagehelper.PageHelper
+import tech.kotlin.common.mysql.Mysql
+import tech.kotlin.common.rpc.Serv
+import tech.kotlin.common.serialize.Json
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
-import tech.kotlin.dao.ArticleDao
+import tech.kotlin.common.utils.dict
 import tech.kotlin.dao.ReplyDao
-import tech.kotlin.service.domain.Reply
+import tech.kotlin.service.account.UserApi
+import tech.kotlin.service.account.req.QueryUserReq
+import tech.kotlin.service.article.QueryReplyCountByAuthorReq
+import tech.kotlin.service.article.QueryReplyCountByAuthorResp
 import tech.kotlin.service.article.ReplyApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.CreateReplyResp
-import tech.kotlin.service.article.resp.ReplyListResp
 import tech.kotlin.service.article.resp.QueryReplyByIdResp
 import tech.kotlin.service.article.resp.QueryReplyCountByArticleResp
+import tech.kotlin.service.article.resp.ReplyListResp
 import tech.kotlin.service.domain.EmptyResp
-import tech.kotlin.common.mysql.Mysql
-import tech.kotlin.service.article.QueryReplyCountByAuthorReq
-import tech.kotlin.service.article.QueryReplyCountByAuthorResp
+import tech.kotlin.service.domain.Message
+import tech.kotlin.service.domain.Reply
+import tech.kotlin.service.domain.UserInfo
+import tech.kotlin.service.message.req.GroupcastReq
+import tech.kotlin.service.message.MessageApi
+import tech.kotlin.service.message.req.ListcastReq
 
 
 /*********************************************************************
@@ -24,6 +33,9 @@ import tech.kotlin.service.article.QueryReplyCountByAuthorResp
  *********************************************************************/
 object ReplyService : ReplyApi {
 
+    val messageApi by Serv.bind(MessageApi::class, ServDef.MESSAGE)
+    val userApi by Serv.bind(UserApi::class, ServDef.ACCOUNT)
+
     //创建一则文章回复
     override fun create(req: CreateArticleReplyReq): CreateReplyResp {
         val replyId = IDs.next()
@@ -31,27 +43,19 @@ object ReplyService : ReplyApi {
             this.serializeId = "reply:$replyId"
             this.content = req.content
         }).id
-
         val reply = Reply().apply {
             this.id = replyId
-            this.replyPoolId = "article:${req.articleId}"
+            this.replyPoolId = "${Reply.Pool.ARTICLE}:${req.articleId}"
             this.ownerUID = req.ownerUID
             this.createTime = System.currentTimeMillis()
             this.state = Reply.State.NORMAL
             this.contentId = contentId
             this.aliasId = req.aliasId
         }
-        Mysql.write {
-            if (reply.aliasId != 0L) {
-                val alias = ReplyDao.getById(it, req.aliasId, cache = false) ?:
-                            abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
+        Mysql.write { ReplyDao.create(it, reply) }
 
-                if (alias.replyPoolId != "article:${req.articleId}")
-                    abort(Err.REPLY_NOT_EXISTS, "关联评论不存在")
-            }
-            ArticleDao.getById(it, req.articleId, false) ?: abort(Err.ARTICLE_NOT_EXISTS)
-            ReplyDao.create(it, reply)
-        }
+        //send message to describer
+        sendMsg(req)
         return CreateReplyResp().apply {
             this.replyId = reply.id
             this.contentId = contentId
@@ -83,7 +87,7 @@ object ReplyService : ReplyApi {
     override fun getReplyByArticle(req: QueryReplyByArticleReq): ReplyListResp {
         val result = Mysql.read {
             PageHelper.offsetPage<Reply>(req.offset, req.limit).doSelectPageInfo<Reply> {
-                ReplyDao.getByPool(it, "article:${req.articleId}")
+                ReplyDao.getByPool(it, "${Reply.Pool.ARTICLE}:${req.articleId}")
             }.list
         }
         return ReplyListResp().apply {
@@ -94,7 +98,9 @@ object ReplyService : ReplyApi {
     //获取文章评论数量
     override fun getReplyCountByArticle(req: QueryReplyCountByArticleReq): QueryReplyCountByArticleResp {
         val result = Mysql.read { session ->
-            req.id.map { it to ReplyDao.getCountByPoolId(session, if (it == 0L) "" else "article:$it") }.toMap()
+            req.id.map {
+                it to ReplyDao.getCountByPoolId(session, if (it == 0L) "" else "${Reply.Pool.ARTICLE}:$it")
+            }.toMap()
         }
         return QueryReplyCountByArticleResp().apply {
             this.result = result
@@ -121,6 +127,42 @@ object ReplyService : ReplyApi {
         return QueryReplyCountByAuthorResp().apply {
             this.result = result
         }
+    }
+
+    private fun sendMsg(req: CreateArticleReplyReq) {
+        val article = ArticleService.queryById(QueryArticleByIdReq().apply {
+            this.ids = arrayListOf(req.articleId)
+        }).articles[req.articleId] ?: return
+
+        val from = userApi.queryById(QueryUserReq().apply {
+            this.id = arrayListOf(req.ownerUID)
+        }).info[req.ownerUID] ?: UserInfo()
+
+        //关注文章通知
+        messageApi.groupcast(GroupcastReq().apply {
+            this.type = Message.Type.ToArticle
+            this.content = Json.dumps(dict {
+                this["from"] = from
+                this["article"] = article
+            })
+            this.createor = req.ownerUID
+            this.groupId = Message.Group.ARTICLE.format(req.articleId)
+            this.excludeUID = ArrayList<Long>().apply {
+                if (article.author != req.ownerUID) add(req.ownerUID)
+                if (req.aliasId != 0L) add(req.aliasId)
+            }
+        })
+        //对用户评论通知
+        if (req.aliasId == 0L) return
+        messageApi.listcast(ListcastReq().apply {
+            this.type = Message.Type.ToReply
+            this.content = Json.dumps(dict {
+                this["from"] = from
+                this["article"] = article
+            })
+            this.createor = req.ownerUID
+            this.acceptor = arrayListOf(req.aliasId)
+        })
     }
 }
 

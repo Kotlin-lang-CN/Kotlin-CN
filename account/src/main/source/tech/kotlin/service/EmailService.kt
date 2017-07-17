@@ -1,9 +1,11 @@
 package tech.kotlin.service
 
+import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.os.Handler
 import tech.kotlin.common.os.Looper
 import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.utils.*
+import tech.kotlin.dao.UserInfoDao
 import tech.kotlin.service.account.req.CreateEmailSessionReq
 import tech.kotlin.service.article.req.EmailCheckTokenReq
 import tech.kotlin.service.article.req.EmailReq
@@ -11,6 +13,7 @@ import tech.kotlin.service.account.resp.CreateEmailSessionResp
 import tech.kotlin.service.account.resp.EmailCheckTokenResp
 import tech.kotlin.service.domain.EmptyResp
 import tech.kotlin.service.account.EmailApi
+import tech.kotlin.service.domain.UserInfo
 import java.util.*
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
@@ -45,19 +48,17 @@ object EmailService : EmailApi {
 
     override fun checkToken(req: EmailCheckTokenReq): EmailCheckTokenResp {
         val map = Redis { it.hgetAll("email_activate:${req.token}") }
-        if (map["uid"].isNullOrBlank() || map["email"].isNullOrBlank())
-            abort(Err.ILLEGAL_EMAIL_ACTIVATE_CODE)
+        if (map["uid"].isNullOrBlank() || map["email"].isNullOrBlank()) abort(Err.ILLEGAL_EMAIL_ACTIVATE_CODE)
+
         val uid = map["uid"]!!.toLong()
         val email = map["email"]!!
-//        Mysql.write {
-//            val user = UserInfoDao.getById(it, uid) ?: abort(Err.USER_NOT_EXISTS)
-//            if (user.email != email) abort(Err.ILLEGAL_EMAIL_ACTIVATE_CODE)
-//            if (user.emailState == UserInfo.EmailState.TO_BE_VERIFY) {
-//                UserInfoDao.update(it, uid, strDict {
-//                    this["email_state"] = "${UserInfo.EmailState.VERIFIED}"
-//                })
-//            }
-//        }
+        Mysql.write {
+            val user = UserInfoDao.getById(it, uid, useCache = false) ?: abort(Err.USER_NOT_EXISTS)
+            if (user.email != email) abort(Err.ILLEGAL_EMAIL_ACTIVATE_CODE)
+            if (user.emailState == UserInfo.EmailState.TO_BE_VERIFY) {
+                UserInfoDao.update(it, uid, strDict { this["email_state"] = "${UserInfo.EmailState.VERIFIED}" })
+            }
+        }
         return EmailCheckTokenResp().apply {
             this.uid = uid
             this.email = email

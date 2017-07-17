@@ -19,6 +19,7 @@ import tech.kotlin.service.account.req.CheckTokenReq
 import tech.kotlin.service.account.req.QueryUserReq
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.domain.*
+import tech.kotlin.service.message.MessageApi
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

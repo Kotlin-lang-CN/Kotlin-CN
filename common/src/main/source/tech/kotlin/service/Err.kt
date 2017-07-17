@@ -18,4 +18,5 @@ enum class Err(val code: Int, val msg: String) {
     REPLY_NOT_EXISTS(35, "评论不存在"),
     ACTIVATE_EMAIL_ALREADY(36, "用户已绑定邮箱"),
     ILLEGAL_EMAIL_ACTIVATE_CODE(37, "无效的邮箱验证码"),
+    MESSAGE_NOT_EXISTS(38, "消息不存在"),
 }

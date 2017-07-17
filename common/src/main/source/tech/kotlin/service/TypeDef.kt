@@ -71,8 +71,14 @@ object TypeDef {
     object Message {
         const val BROAD_CAST = 100001
         const val LIST_CAST = 100002
-        const val GET_BY_USER = 100003
-        const val CHANGE_STATE = 100004
+        const val GROUP_CAST = 100003
+        const val JOIN_GROUP = 100004
+        const val LEAVE_GROUP = 100005
+        const val GET_BY_ACCEPTOR = 100006
+        const val MARK_READ = 100007
+        const val QUERY_GROUP_STATE = 100008
+        const val LIST_GROUP = 100009
+        const val COUNT_GROUP = 100010
     }
 
     object Profile {

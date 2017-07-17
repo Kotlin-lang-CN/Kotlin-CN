@@ -43,4 +43,8 @@ class Reply {
         const val BAN = 1
         const val DELETE = 2
     }
+
+    object Pool {
+        const val ARTICLE = "article"
+    }
 }
