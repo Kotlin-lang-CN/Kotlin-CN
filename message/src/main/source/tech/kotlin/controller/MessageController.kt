@@ -29,7 +29,7 @@ object MessageController {
     val sessionApi by Serv.bind(SessionApi::class, ServDef.ACCOUNT)
 
     //个人未读消息数
-    val unread = Route { req, _ ->
+    val latest = Route { req, _ ->
         val offset = req.queryParams("offset")
                              ?.apply { check(Err.PARAMETER) { it.toInt();true } }
                              ?.toInt()
@@ -49,6 +49,7 @@ object MessageController {
 
         return@Route ok {
             it["message"] = result.msgs
+            it["next_offset"] = offset + result.msgs.size
         }
     }
 
@@ -123,7 +124,13 @@ object MessageController {
     //文章订阅者数
     val articleSubscriberCount = Route { req, _ ->
         val ids = req.tryExec(Err.PARAMETER, "非法的id") {
-            it.queryParams("ids").split(",").filter { it.isNotBlank() }.map { it.trim().toLong() }.map { "reply:$it" }
+            it.queryParams("ids").split(",").filter {
+                it.isNotBlank()
+            }.map {
+                it.trim().toLong()
+            }.map {
+                Message.Group.ARTICLE.format(it)
+            }
         }
         return@Route ok {
             it["count"] = GroupService.countGroup(CountGroupReq().apply { this.ids = ids }).result
