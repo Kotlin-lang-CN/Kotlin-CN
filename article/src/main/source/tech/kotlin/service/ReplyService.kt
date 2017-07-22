@@ -55,7 +55,7 @@ object ReplyService : ReplyApi {
         Mysql.write { ReplyDao.create(it, reply) }
 
         //send message to describer
-        sendMsg(req)
+        sendMsg(req, reply)
         return CreateReplyResp().apply {
             this.replyId = reply.id
             this.contentId = contentId
@@ -129,7 +129,7 @@ object ReplyService : ReplyApi {
         }
     }
 
-    private fun sendMsg(req: CreateArticleReplyReq) {
+    private fun sendMsg(req: CreateArticleReplyReq, reply: Reply) {
         val article = ArticleService.queryById(QueryArticleByIdReq().apply {
             this.ids = arrayListOf(req.articleId)
         }).articles[req.articleId] ?: return
@@ -144,6 +144,8 @@ object ReplyService : ReplyApi {
             this.content = Json.dumps(dict {
                 this["from"] = from
                 this["article"] = article
+                this["reply"] = reply
+                this["content"] = req.content
             })
             this.createor = req.ownerUID
             this.groupId = Message.Group.ARTICLE.format(req.articleId)
@@ -159,6 +161,8 @@ object ReplyService : ReplyApi {
             this.content = Json.dumps(dict {
                 this["from"] = from
                 this["article"] = article
+                this["reply"] = reply
+                this["content"] = req.content
             })
             this.createor = req.ownerUID
             this.acceptor = arrayListOf(req.aliasId)

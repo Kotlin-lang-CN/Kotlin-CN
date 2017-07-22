@@ -56,9 +56,7 @@ object GroupService : GroupApi {
 
     override fun countGroup(req: CountGroupReq): CountGroupResp {
         return CountGroupResp().apply {
-            this.result = Redis {
-                req.ids.map { group -> group to it.scard("msg:g:$group") }.toMap()
-            }
+            this.result = Redis { req.ids.map { group -> it.scard("msg:g:$group") } }
         }
     }
 

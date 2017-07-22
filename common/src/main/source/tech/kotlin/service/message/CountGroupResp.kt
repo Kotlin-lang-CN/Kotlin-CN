@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 class CountGroupResp {
 
-    @Protobuf(order = 1, required = true, fieldType = FieldType.MAP, description = "组id")
+    @Protobuf(order = 1, required = true, fieldType = FieldType.UINT64, description = "订阅数")
     @JsonProperty("result")
-    var result: Map<String, Long> = HashMap()
+    var result: List<Long> = ArrayList()
 
 }

@@ -3,21 +3,15 @@ package tech.kotlin
 import com.beust.jcommander.JCommander
 import com.beust.jcommander.Parameter
 import spark.Spark.*
-import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.os.Log
 import tech.kotlin.common.redis.Redis
 import tech.kotlin.common.rpc.Serv
 import tech.kotlin.common.rpc.registrator.EtcdRegistrator
 import tech.kotlin.common.serialize.Json
-import tech.kotlin.common.utils.Props
-import tech.kotlin.common.utils.gate
-import tech.kotlin.common.utils.str
-import tech.kotlin.common.utils.tryExec
+import tech.kotlin.common.utils.*
 import tech.kotlin.controller.MessageController
-import tech.kotlin.service.Err
 import tech.kotlin.service.MessageService
 import tech.kotlin.service.ServDef
-import tech.kotlin.service.account.*
 import tech.kotlin.service.message.MessageApi
 import java.util.concurrent.Executors
 
@@ -77,7 +71,7 @@ fun initHttpCgi() {
     init()
     path("/api") {
         path("/message") {
-            get("/latest", MessageController.unread.gate("获取用户消息列表"))
+            get("/latest", MessageController.latest.gate("获取用户消息列表"))
             post("/read/:id", MessageController.markRead.gate("标记已读"))
 
             get("/article/subscribe/count", MessageController.articleSubscriberCount.gate("文章订阅数"))
@@ -85,6 +79,15 @@ fun initHttpCgi() {
             get("/article/:id/subscribe", MessageController.subscribeState.gate("我的订阅状态"))
             post("/article/:id/subscribe", MessageController.subscribeArticle.gate("订阅文章"))
             post("/article/:id/unsubscribe", MessageController.unsubscribeArticle.gate("取消订阅文章"))
+        }
+    }
+    notFound { req, response ->
+        if (req.requestMethod().toUpperCase() != "OPTIONS") {
+            response.status(404)
+            Json.dumps(dict { this["code"] = 404; this["msg"] = "not found" })
+        } else {
+            response.status(200)
+            Json.dumps(dict { this["code"] = 0; this["msg"] = "" })
         }
     }
 }
