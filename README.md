@@ -18,7 +18,7 @@
 
 论坛: [https://kotliner.cn](https://kotliner.cn)
  
-社区博客: [https://www.kotliner.cn](https://blog.kotliner.cn)
+社区博客: [https://blog.kotliner.cn](https://blog.kotliner.cn)
  
 中文站: [https://www.kotlincn.net](https://www.kotlincn.net)
  
