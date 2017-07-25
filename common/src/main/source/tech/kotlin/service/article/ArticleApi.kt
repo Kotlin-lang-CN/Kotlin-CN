@@ -34,5 +34,6 @@ interface ArticleApi {
 
     @RpcInterface(TypeDef.Article.COUNT_BY_AUTHOR)
     fun countByAuthor(req: CountArticleByAuthorReq): CountArticleByAuthorResp
+
 }
 

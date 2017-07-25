@@ -31,14 +31,14 @@ object ArticleViewController {
 
     val getList = Route { req, _ ->
         val offset = req.queryParams("offset")
-                             ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                             ?.toInt()
-                     ?: 0
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
 
         val limit = req.queryParams("limit")
-                            ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                            ?.toInt()
-                    ?: 20
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
@@ -78,19 +78,19 @@ object ArticleViewController {
 
     val getByCategory = Route { req, _ ->
         val category = req.params(":id")
-                               ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                               ?.toInt()
-                       ?: 0
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
 
         val offset = req.queryParams("offset")
-                             ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                             ?.toInt()
-                     ?: 0
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
 
         val limit = req.queryParams("limit")
-                            ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                            ?.toInt()
-                    ?: 20
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
@@ -132,14 +132,14 @@ object ArticleViewController {
 
     val getFine = Route { req, _ ->
         val offset = req.queryParams("offset")
-                             ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                             ?.toInt()
-                     ?: 0
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 0
 
         val limit = req.queryParams("limit")
-                            ?.apply { check(Err.PARAMETER) { it.toInt();true } }
-                            ?.toInt()
-                    ?: 20
+                ?.apply { check(Err.PARAMETER) { it.toInt();true } }
+                ?.toInt()
+                ?: 20
 
         val articles = ArticleService.getLatest(QueryLatestArticleReq().apply {
             this.offset = offset
@@ -179,5 +179,7 @@ object ArticleViewController {
     }
 
     val getCategory = Route { _, _ -> ok { it["category"] = Category.values().map { it.value } } }
+
+    val getCount = Route { _, _ -> ok { it["total"] = ArticleService.countAll().result } }
 
 }

@@ -5,6 +5,7 @@ import tech.kotlin.common.mysql.Mysql
 import tech.kotlin.common.utils.IDs
 import tech.kotlin.common.utils.abort
 import tech.kotlin.dao.ArticleDao
+import tech.kotlin.domain.resp.CountArticleResp
 import tech.kotlin.service.article.ArticleApi
 import tech.kotlin.service.article.req.*
 import tech.kotlin.service.article.resp.ArticleListResp
@@ -18,7 +19,6 @@ import tech.kotlin.service.domain.Article
  * Copyright (c) http://chpengzh.com - All Rights Reserved
  *********************************************************************/
 object ArticleService : ArticleApi {
-
 
     //创建一篇文章
     override fun create(req: CreateArticleReq): ArticleResp {
@@ -134,5 +134,12 @@ object ArticleService : ArticleApi {
             this.result = result
         }
     }
+
+    //查询用户总数
+    fun countAll(): CountArticleResp {
+        return CountArticleResp().apply { this.result = Mysql.read { ArticleDao.countAll(it) } }
+    }
+
 }
+
 

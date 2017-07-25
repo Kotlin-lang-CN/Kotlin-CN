@@ -187,4 +187,6 @@ object AccountController {
         return@Route ok()
     }
 
+    val getCount = Route { _, _ -> ok { it["total"] = AccountService.getCount() } }
+
 }

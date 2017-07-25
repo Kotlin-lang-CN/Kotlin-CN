@@ -28,23 +28,23 @@ import java.util.concurrent.Executors
  *********************************************************************/
 object Launcher {
     @Parameter(names = arrayOf("-c", "--config-file"),
-               required = false,
-               description = "指定配置文件")
+            required = false,
+            description = "指定配置文件")
     var config: String = ""
 
     @Parameter(names = arrayOf("-l", "--log-level"),
-               required = false,
-               description = "指定日志等级")
+            required = false,
+            description = "指定日志等级")
     var log: Int = Log.LOG_LEVEL
 
     @Parameter(names = arrayOf("-h", "--http-port"),
-               required = false,
-               description = "http服务端口号")
+            required = false,
+            description = "http服务端口号")
     var http: Int = 8080
 
     @Parameter(names = arrayOf("-p", "--publish"),
-               required = false,
-               description = "服务发布端口")
+            required = false,
+            description = "服务发布端口")
     var publish: Int = 9000
 }
 
@@ -79,9 +79,9 @@ fun initService() {
     Serv.register(ProfileApi::class, ProfileService)
 
     Serv.publish(broadcastIp = Props str "deploy.broadcast.host",
-                 port = Launcher.publish,
-                 serviceName = ServDef.ACCOUNT,
-                 executorService = Executors.newFixedThreadPool(20))
+            port = Launcher.publish,
+            serviceName = ServDef.ACCOUNT,
+            executorService = Executors.newFixedThreadPool(20))
 }
 
 fun initHttpServer() {
@@ -102,6 +102,8 @@ fun initHttpServer() {
             //用户资料
             post("/profile/update", ProfileController.updateProfile.gate("更新用户资料"))
             get("/profile", ProfileController.getProfile.gate("获取用户资料"))
+
+            get("/count", AccountController.getCount.gate("获取当前用户总数"))
         }
 
         path("/github") {

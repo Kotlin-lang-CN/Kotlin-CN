@@ -46,6 +46,10 @@ object ArticleDao {
         return session[ArticleMapper::class].queryCountByAuthor(id)
     }
 
+    fun countAll(session: SqlSession): Int {
+        return session[ArticleMapper::class].queryAll()
+    }
+
     fun createOrUpdate(session: SqlSession, article: Article) {
         val mapper = session[ArticleMapper::class]
         if (mapper.queryById(article.id) == null) {
@@ -95,16 +99,16 @@ object ArticleDao {
         LIMIT 1
         """)
         @Results(Result(property = "createTime", column = "create_time"),
-                 Result(property = "lastEdit", column = "last_edit_time"),
-                 Result(property = "lastEditUID", column = "last_edit_uid"),
-                 Result(property = "contentId", column = "content_id"))
+                Result(property = "lastEdit", column = "last_edit_time"),
+                Result(property = "lastEditUID", column = "last_edit_uid"),
+                Result(property = "contentId", column = "content_id"))
         fun queryById(id: Long): Article?
 
         @SelectProvider(type = SqlGenerator::class, method = "queryLatest")
         @Results(Result(property = "createTime", column = "create_time"),
-                 Result(property = "lastEdit", column = "last_edit_time"),
-                 Result(property = "lastEditUID", column = "last_edit_uid"),
-                 Result(property = "contentId", column = "content_id"))
+                Result(property = "lastEdit", column = "last_edit_time"),
+                Result(property = "lastEditUID", column = "last_edit_uid"),
+                Result(property = "contentId", column = "content_id"))
         fun queryLatest(args: HashMap<String, String>): List<Article>
 
         @Select("""
@@ -114,9 +118,9 @@ object ArticleDao {
         ORDER BY create_time DESC
         """)
         @Results(Result(property = "createTime", column = "create_time"),
-                 Result(property = "lastEdit", column = "last_edit_time"),
-                 Result(property = "lastEditUID", column = "last_edit_uid"),
-                 Result(property = "contentId", column = "content_id"))
+                Result(property = "lastEdit", column = "last_edit_time"),
+                Result(property = "lastEditUID", column = "last_edit_uid"),
+                Result(property = "contentId", column = "content_id"))
         fun queryByAuthor(id: Long): List<Article>
 
 
@@ -126,6 +130,13 @@ object ArticleDao {
         AND (state = ${Article.State.NORMAL} OR state = ${Article.State.FINE})
         """)
         fun queryCountByAuthor(id: Long): Int
+
+        @Select("""
+        SELECT COUNT(*) FROM article
+        WHERE (state = ${Article.State.NORMAL}
+        OR state = ${Article.State.FINE})
+        """)
+        fun queryAll(): Int
 
         @Insert("""
         INSERT INTO article

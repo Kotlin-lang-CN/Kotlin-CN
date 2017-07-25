@@ -32,6 +32,7 @@ object TypeDef {
         const val GET_LATEST = 40004
         const val GET_BY_AUTHOR = 40005
         const val COUNT_BY_AUTHOR = 40006
+        const val COUNT_ALL = 40007
     }
 
     object Reply {

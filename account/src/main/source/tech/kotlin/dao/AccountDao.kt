@@ -41,6 +41,11 @@ object AccountDao {
         }
     }
 
+    fun getCount(session: SqlSession): Int {
+        return session[AccountMapper::class].getCount()
+    }
+
+
     fun update(session: SqlSession, uid: Long, args: HashMap<String, String>) {
         val mapper = session[AccountMapper::class]
         Cache.invalid(uid)
@@ -72,6 +77,9 @@ object AccountDao {
 
     interface AccountMapper {
 
+        @Select("SELECT COUNT(*) FROM account")
+        fun getCount(): Int
+
         @Select("""
         SELECT  * FROM account
         WHERE id = #{id}
@@ -80,7 +88,7 @@ object AccountDao {
         @Results(
                 Result(property = "lastLogin", column = "last_login"),
                 Result(property = "createTime", column = "create_time")
-                )
+        )
         fun getById(id: Long): Account?
 
         @Insert("""

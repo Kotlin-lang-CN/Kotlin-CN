@@ -114,10 +114,10 @@ object AccountService : AccountApi {
         //查询账号
         val account = Mysql.read {
             userInfo = UserInfoDao.getByName(it, req.loginName, updateCache = true) ?: //查询缓存
-                       UserInfoDao.getByEmail(it, req.loginName, updateCache = true) ?: //查询数据库
-                       abort(Err.USER_NOT_EXISTS)
+                    UserInfoDao.getByEmail(it, req.loginName, updateCache = true) ?: //查询数据库
+                    abort(Err.USER_NOT_EXISTS)
             return@read AccountDao.getById(it, id = userInfo.uid, useCache = false) ?:
-                        abort(Err.USER_NOT_EXISTS)
+                    abort(Err.USER_NOT_EXISTS)
         }
 
         //校验密码
@@ -161,8 +161,9 @@ object AccountService : AccountApi {
         return EmptyResp()
     }
 
-    private fun sendEmailActivate() {
-
+    //获取当前用户总数
+    fun getCount(): Int {
+        return Mysql.read(action = AccountDao::getCount)
     }
 }
 

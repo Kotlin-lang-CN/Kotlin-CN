@@ -101,26 +101,25 @@ object ReplyDao {
         @Select("""
         SELECT * FROM reply
         WHERE id = #{id}
+        LIMIT 1
         """)
-        @Results(
-                Result(column = "reply_pool_id", property = "replyPoolId"),
+        @Results(Result(column = "reply_pool_id", property = "replyPoolId"),
                 Result(column = "owner_uid", property = "ownerUID"),
                 Result(column = "create_time", property = "createTime"),
                 Result(column = "content_id", property = "contentId"),
-                Result(column = "alias_id", property = "aliasId")
-                )
+                Result(column = "alias_id", property = "aliasId"))
         fun queryById(id: Long): Reply?
 
         @Select("""
         SELECT * FROM reply
         WHERE reply_pool_id = #{replyPoolId}
-        ORDER BY create_time DESC
+        ORDER BY create_time
         """)
         @Results(Result(column = "reply_pool_id", property = "replyPoolId"),
-                 Result(column = "owner_uid", property = "ownerUID"),
-                 Result(column = "create_time", property = "createTime"),
-                 Result(column = "content_id", property = "contentId"),
-                 Result(column = "alias_id", property = "aliasId"))
+                Result(column = "owner_uid", property = "ownerUID"),
+                Result(column = "create_time", property = "createTime"),
+                Result(column = "content_id", property = "contentId"),
+                Result(column = "alias_id", property = "aliasId"))
         fun queryByPool(replyPoolId: String): List<Reply>
 
         @Select("""
@@ -136,10 +135,10 @@ object ReplyDao {
         ORDER by create_time DESC
         """)
         @Results(Result(column = "reply_pool_id", property = "replyPoolId"),
-                 Result(column = "owner_uid", property = "ownerUID"),
-                 Result(column = "create_time", property = "createTime"),
-                 Result(column = "content_id", property = "contentId"),
-                 Result(column = "alias_id", property = "aliasId"))
+                Result(column = "owner_uid", property = "ownerUID"),
+                Result(column = "create_time", property = "createTime"),
+                Result(column = "content_id", property = "contentId"),
+                Result(column = "alias_id", property = "aliasId"))
         fun queryByAuthor(author: Long): List<Reply>
 
         @Select("""

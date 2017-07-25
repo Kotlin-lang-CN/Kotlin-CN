@@ -88,6 +88,7 @@ fun initHttpServer() {
             get("/fine", ArticleViewController.getFine.gate("获取精品文章"))
             get("/category/:id", ArticleViewController.getByCategory.gate("根据类型获取最新文章列表"))
             get("/category", ArticleViewController.getCategory.gate("获取文章类型列表"))
+            get("/count", ArticleViewController.getCount.gate("获取文章总数"))
         }
 
         path("/reply") {
