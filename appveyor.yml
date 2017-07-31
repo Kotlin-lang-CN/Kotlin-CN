@@ -3,7 +3,7 @@ environment:
 #
 
 build_script:
-  - gradlew build --info
+  - gradlew jar --info
 #
 
 # Add other jars maybe?
