@@ -2,6 +2,11 @@
 
 [![Kotlin China](https://kotlin-cn.org/static/img/logo_big.8f4f157.png)](https://kotlin-cn.org)
 
+Branch|Status
+:---:|:---:
+newest|[![Build status](https://ci.appveyor.com/api/projects/status/g66nh4l1358uk4tg?svg=true)](https://ci.appveyor.com/project/ice1000/kotlin-cn)
+master|[![Build status](https://ci.appveyor.com/api/projects/status/g66nh4l1358uk4tg/branch/master?svg=true)](https://ci.appveyor.com/project/ice1000/kotlin-cn/branch/master)
+
 本项目是由[Kotlin中文社区](https://github.com/Kotlin-lang-CN)主导开发的的 **互动文章区** 和 **Wiki**
  
 本项目服务使用[Kotlin](https://kotlinlang.org)实现并构建，正持续开发新功能板块.
