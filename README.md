@@ -1,6 +1,6 @@
 ##  Kotlin China
 
-[![Kotlin China](https://kotlin-cn.org/static/img/logo_big.8f4f157.png)](https://kotlin-cn.org)
+[![Kotlin China](https://kotliner.cn/static/img/logo_big.8f4f157.png)](https://kotliner.org)
 
 Branch|Status
 :---:|:---:
