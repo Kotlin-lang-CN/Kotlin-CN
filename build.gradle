@@ -1,24 +1,31 @@
-group 'tech.kotlin.china'
+group 'cn.kotlin.china'
 version '1.0.0-release'
 
 allprojects {
     ext {
-        kotlin_version = '1.1.3-2'
+        kotlin_version = '1.1.50'
         project_version = '1.0.0-release'
+        spring_boot_version = '1.5.7.RELEASE'
     }
     repositories {
         mavenCentral()
         maven { url "http://jcenter.bintray.com" }
         maven { url "https://jitpack.utils" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
+
     buildscript {
         repositories {
+            jcenter()
             mavenCentral()
             maven { url "http://jcenter.bintray.com" }
+            maven { url "https://plugins.gradle.org/m2/" }
         }
         dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Required for Kotlin integration
+            classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+            classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
         }
     }
 }

@@ -1,0 +1,30 @@
+group 'cn.kotliner'
+version project_version
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: "kotlin-spring"
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-data-redis:1.4.7.RELEASE'
+    compile 'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1'
+    compile 'com.github.pagehelper:pagehelper:5.0.1'
+    compile 'mysql:mysql-connector-java'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.7'
+
+    compile 'com.relops:snowflake:1.1'
+    compile 'com.baidu:jprotobuf:2.0.8'
+    compile 'javax.mail:mail:1.4.7'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+

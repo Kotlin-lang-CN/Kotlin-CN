@@ -1,7 +1,3 @@
 rootProject.name = 'Kotlin-CN'
-include 'common'
-include 'account'
-include 'article'
-include 'message'
-include 'misc'
+include 'forum'
 
