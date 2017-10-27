@@ -5,6 +5,8 @@ import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.req.CheckTokenReq
 import cn.kotliner.forum.exceptions.abort
 import cn.kotliner.forum.exceptions.check
+import cn.kotliner.forum.utils.algorithm.Json
+import cn.kotliner.forum.utils.dict
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 import javax.annotation.Resource
@@ -43,3 +45,21 @@ class Request {
         }
 
 }
+
+fun HttpServletRequest.desc() = Json.dumps(dict {
+    this["url"] = "${this@desc.requestURI} [${this@desc.method}]"
+    this["headers"] = dict {
+        val names = this@desc.headerNames
+        while (names.hasMoreElements()) {
+            val name = names.nextElement()
+            this[name] = this@desc.getHeader(name)
+        }
+    }
+    this["params"] = dict {
+        val names = this@desc.parameterNames
+        while (names.hasMoreElements()) {
+            val name = names.nextElement()
+            this[name] = this@desc.getParameter(name)
+        }
+    }
+})

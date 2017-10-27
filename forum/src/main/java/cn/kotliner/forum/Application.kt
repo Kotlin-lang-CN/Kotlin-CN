@@ -52,8 +52,8 @@ class Application : WebMvcConfigurerAdapter() {
     }
 }
 
-
-fun main(args: Array<String>) {
-    val context = SpringApplication.run(Application::class.java)
+fun main(vararg args: String) {
+    val context = SpringApplication.run(Application::class.java, *args)
     context.getBean(AccountApi::class.java).initAdmin()
 }
+
