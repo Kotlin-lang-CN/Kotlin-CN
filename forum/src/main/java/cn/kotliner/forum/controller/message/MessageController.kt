@@ -18,10 +18,14 @@ import javax.annotation.Resource
 @RequestMapping("/api/message")
 class MessageController {
 
-    @Resource private lateinit var req: Request
-    @Resource private lateinit var sessionApi: SessionApi
-    @Resource private lateinit var messageApi: MessageApi
-    @Resource private lateinit var groupApi: GroupApi
+    @Resource
+    private lateinit var req: Request
+    @Resource
+    private lateinit var sessionApi: SessionApi
+    @Resource
+    private lateinit var messageApi: MessageApi
+    @Resource
+    private lateinit var groupApi: GroupApi
 
     @GetMapping("/latest")
     fun getLatest(@RequestParam("offset", defaultValue = "0") offset: Int,
