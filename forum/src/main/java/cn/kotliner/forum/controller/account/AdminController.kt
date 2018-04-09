@@ -1,9 +1,9 @@
 package cn.kotliner.forum.controller.account
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.Article
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.Article
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.AccountApi
 import cn.kotliner.forum.service.account.api.SessionApi

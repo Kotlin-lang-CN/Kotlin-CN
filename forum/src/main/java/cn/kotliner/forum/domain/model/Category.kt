@@ -1,4 +1,4 @@
-package cn.kotliner.forum.domain
+package cn.kotliner.forum.domain.model
 
 /*********************************************************************
  * Created by chpengzh@foxmail.com

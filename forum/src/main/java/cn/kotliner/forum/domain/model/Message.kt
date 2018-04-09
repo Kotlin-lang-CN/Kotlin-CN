@@ -1,4 +1,4 @@
-package cn.kotliner.forum.domain
+package cn.kotliner.forum.domain.model
 
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf

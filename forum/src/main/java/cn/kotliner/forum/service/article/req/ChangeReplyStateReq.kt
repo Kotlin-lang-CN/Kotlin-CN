@@ -1,6 +1,6 @@
 package cn.kotliner.forum.service.article.req
 
-import cn.kotliner.forum.domain.Reply
+import cn.kotliner.forum.domain.model.Reply
 import com.baidu.bjf.remoting.protobuf.FieldType.UINT32
 import com.baidu.bjf.remoting.protobuf.FieldType.UINT64
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf

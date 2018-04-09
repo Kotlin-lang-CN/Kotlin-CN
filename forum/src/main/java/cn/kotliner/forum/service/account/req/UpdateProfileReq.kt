@@ -1,6 +1,6 @@
 package cn.kotliner.forum.service.account.req
 
-import cn.kotliner.forum.domain.Profile
+import cn.kotliner.forum.domain.model.Profile
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty

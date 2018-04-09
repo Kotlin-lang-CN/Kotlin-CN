@@ -1,8 +1,8 @@
 package cn.kotliner.forum.controller.article
 
-import cn.kotliner.forum.domain.Article
-import cn.kotliner.forum.domain.TextContent
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Article
+import cn.kotliner.forum.domain.model.TextContent
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.account.api.UserApi
 import cn.kotliner.forum.service.account.req.QueryUserReq
 import cn.kotliner.forum.service.article.api.ArticleApi
@@ -12,7 +12,6 @@ import cn.kotliner.forum.service.article.req.QueryTextReq
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.PropertySource
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import java.io.StringWriter
 import java.text.SimpleDateFormat
@@ -26,14 +25,17 @@ import javax.xml.transform.stream.StreamResult
 
 @RestController
 @RequestMapping("/api/rss")
-@PropertySource("classpath:forum.properties")
 class RssController {
 
-    @Value("\${deploy.frontend.host}") private lateinit var frontendHost: String
+    @Value("\${deploy.frontend.host}")
+    private lateinit var frontendHost: String
 
-    @Resource private lateinit var articleApi: ArticleApi
-    @Resource private lateinit var userApi: UserApi
-    @Resource private lateinit var textApi: TextApi
+    @Resource
+    private lateinit var articleApi: ArticleApi
+    @Resource
+    private lateinit var userApi: UserApi
+    @Resource
+    private lateinit var textApi: TextApi
 
     @RequestMapping("/fine", produces = arrayOf("application/xml"))
     fun getFine(resp: HttpServletResponse): String {
@@ -114,47 +116,57 @@ class RssController {
         val doc = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder()
                 .newDocument().apply {
-            appendChild(createElement("rss").apply {
-                setAttribute("version", "2.0")
-                appendChild(createElement("channel").apply {
-                    appendChild(createElement("title").apply { textContent = "Kotlin-CN 中文网" })
-                    appendChild(createElement("link").apply { textContent = frontendHost })
-                    appendChild(createElement("description").apply { textContent = "社区最新精品文章" })
-                    appendChild(createElement("language").apply { textContent = "${Locale.CHINA}" })
-                    articles.forEach {
-                        appendChild(createElement("item").apply {
+                    appendChild(createElement("rss").apply {
+                        setAttribute("version", "2.0")
+                        appendChild(createElement("channel").apply {
                             appendChild(createElement("title").apply {
-                                textContent = it.title
-                            })
-                            appendChild(createElement("description").apply {
-                                textContent = contents[it.contentId]!!.content
-                            })
-                            appendChild(createElement("author").apply {
-                                textContent = users[it.author]!!.username
-                            })
-                            appendChild(createElement("pubDate").apply {
-                                textContent = df.format(it.createTime - localeDivide)
+                                textContent = "Kotlin-CN 中文网"
                             })
                             appendChild(createElement("link").apply {
-                                textContent = "$frontendHost/post/${it.id}"
+                                textContent = frontendHost
                             })
-                            appendChild(createElement("guid").apply {
-                                textContent = "$frontendHost/post/${it.id}"
+                            appendChild(createElement("description").apply {
+                                textContent = "社区最新精品文章"
                             })
+                            appendChild(createElement("language").apply {
+                                textContent = "${Locale.CHINA}"
+                            })
+                            articles.forEach {
+                                appendChild(createElement("item").apply {
+                                    appendChild(createElement("title").apply {
+                                        textContent = it.title
+                                    })
+                                    appendChild(createElement("description").apply {
+                                        textContent = contents[it.contentId]!!.content
+                                    })
+                                    appendChild(createElement("author").apply {
+                                        textContent = users[it.author]!!.username
+                                    })
+                                    appendChild(createElement("pubDate").apply {
+                                        textContent = df.format(it.createTime - localeDivide)
+                                    })
+                                    appendChild(createElement("link").apply {
+                                        textContent = "$frontendHost/post/${it.id}"
+                                    })
+                                    appendChild(createElement("guid").apply {
+                                        textContent = "$frontendHost/post/${it.id}"
+                                    })
+                                })
+                            }
                         })
-                    }
-                })
-            })
-        }
+                    })
+                }
         // XML 1.1
         return StringWriter().apply {
             TransformerFactory.newInstance()
                     .newTransformer()
                     .transform(DOMSource(doc), StreamResult(this))
         }.toString().replace(//xml1.0
-                Regex("[^\u0009\r\n\u0020-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]"), ""
+                Regex("[^\u0009\r\n\u0020-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]"),
+                ""
         ).replace(//xml1.1
-                Regex("[^\u0001-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]+"), ""
+                Regex("[^\u0001-\uD7FF\uE000-\uFFFD\ud800\udc00-\udbff\udfff]+"),
+                ""
         )
     }
 }

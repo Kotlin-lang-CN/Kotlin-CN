@@ -4,10 +4,10 @@ import cn.kotliner.forum.utils.algorithm.JWT
 import cn.kotliner.forum.dao.AccountRepository
 import cn.kotliner.forum.dao.GitHubUserRepository
 import cn.kotliner.forum.dao.UserRepository
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.GithubSession
-import cn.kotliner.forum.domain.GithubUser
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.GithubSession
+import cn.kotliner.forum.domain.model.GithubUser
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.exceptions.abort
 import cn.kotliner.forum.exceptions.check
 import cn.kotliner.forum.exceptions.tryExec
@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit
 import javax.annotation.Resource
 
 @Service
-@PropertySource("classpath:forum.properties")
 class GitHubService : GitHubApi {
 
     @Value("\${github.jwt.token}") private lateinit var jwtToken: String

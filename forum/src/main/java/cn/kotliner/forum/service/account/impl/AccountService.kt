@@ -4,8 +4,8 @@ import cn.kotliner.forum.utils.algorithm.MD5
 import cn.kotliner.forum.dao.AccountRepository
 import cn.kotliner.forum.dao.GitHubUserRepository
 import cn.kotliner.forum.dao.UserRepository
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.AccountApi
 import cn.kotliner.forum.service.account.api.SessionApi
@@ -22,19 +22,27 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@PropertySource("classpath:forum.properties")
 class AccountService : AccountApi {
 
-    @Value("\${account.pwd.salt}") private lateinit var passwordSalt: String
-    @Value("\${admin.init.username}") private lateinit var initAdminUserName: String
-    @Value("\${admin.init.password}") private lateinit var initAdminPassword: String
-    @Value("\${admin.init.email}") private lateinit var initAdminEmail: String
+    @Value("\${account.pwd.salt}")
+    private lateinit var passwordSalt: String
+    @Value("\${admin.init.username}")
+    private lateinit var initAdminUserName: String
+    @Value("\${admin.init.password}")
+    private lateinit var initAdminPassword: String
+    @Value("\${admin.init.email}")
+    private lateinit var initAdminEmail: String
 
-    @Autowired private lateinit var sessionApi: SessionApi
-    @Autowired private lateinit var userInfoRepo: UserRepository
-    @Autowired private lateinit var accountRepo: AccountRepository
-    @Autowired private lateinit var githubRepo: GitHubUserRepository
-    @Autowired private lateinit var log: Logger
+    @Autowired
+    private lateinit var sessionApi: SessionApi
+    @Autowired
+    private lateinit var userInfoRepo: UserRepository
+    @Autowired
+    private lateinit var accountRepo: AccountRepository
+    @Autowired
+    private lateinit var githubRepo: GitHubUserRepository
+    @Autowired
+    private lateinit var log: Logger
 
     //初始化管理员账号
     @Transactional(readOnly = false)
@@ -113,12 +121,12 @@ class AccountService : AccountApi {
     @Transactional(readOnly = false)
     override fun loginWithName(req: LoginReq): LoginResp {
         val userInfo: UserInfo = userInfoRepo.getByName(req.loginName, updateCache = true) ?: //查询缓存
-                userInfoRepo.getByEmail(req.loginName, updateCache = true) ?: //查询数据库
-                abort(Err.USER_NOT_EXISTS)
+        userInfoRepo.getByEmail(req.loginName, updateCache = true) ?: //查询数据库
+        abort(Err.USER_NOT_EXISTS)
 
         //查询账号
-        val account = accountRepo.getById(id = userInfo.uid, useCache = false) ?:
-                abort(Err.USER_NOT_EXISTS)
+        val account = accountRepo.getById(id = userInfo.uid, useCache = false)
+                ?: abort(Err.USER_NOT_EXISTS)
 
         //校验密码
         if (account.password != encrypt(req.password)) abort(Err.ILLEGAL_PASSWORD)

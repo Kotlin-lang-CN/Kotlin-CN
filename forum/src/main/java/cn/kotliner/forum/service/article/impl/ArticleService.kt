@@ -2,7 +2,7 @@ package cn.kotliner.forum.service.article.impl
 
 import cn.kotliner.forum.utils.IDs
 import cn.kotliner.forum.dao.ArticleRepository
-import cn.kotliner.forum.domain.Article
+import cn.kotliner.forum.domain.model.Article
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.article.api.ArticleApi
 import cn.kotliner.forum.service.article.api.TextApi

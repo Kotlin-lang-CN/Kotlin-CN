@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.mysql.UserInfoMapper
 import cn.kotliner.forum.dao.redis.UserInfoCache
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.beans.factory.annotation.Autowired

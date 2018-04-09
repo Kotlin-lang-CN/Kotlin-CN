@@ -3,9 +3,9 @@ version '1.0.0-release'
 
 allprojects {
     ext {
-        kotlin_version = '1.1.50'
+        kotlin_version = '1.2.31'
         project_version = '1.0.0-release'
-        spring_boot_version = '1.5.7.RELEASE'
+        spring_boot_version = '1.5.9.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -23,7 +23,7 @@ allprojects {
             maven { url "https://plugins.gradle.org/m2/" }
         }
         dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // Required for Kotlin integration
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
             classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
             classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
         }

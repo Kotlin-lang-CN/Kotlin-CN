@@ -1,6 +1,6 @@
 package cn.kotliner.forum.dao.mysql
 
-import cn.kotliner.forum.domain.Flower
+import cn.kotliner.forum.domain.model.Flower
 import org.apache.ibatis.annotations.*
 
 @Mapper

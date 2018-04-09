@@ -2,8 +2,8 @@ package cn.kotliner.forum.service.account.impl
 
 import cn.kotliner.forum.dao.AccountRepository
 import cn.kotliner.forum.dao.UserRepository
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.UserApi
 import cn.kotliner.forum.exceptions.abort

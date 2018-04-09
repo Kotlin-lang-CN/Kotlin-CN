@@ -1,8 +1,8 @@
 package cn.kotliner.forum.controller.article
 
-import cn.kotliner.forum.domain.Article
-import cn.kotliner.forum.domain.Category
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Article
+import cn.kotliner.forum.domain.model.Category
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.account.api.UserApi
 import cn.kotliner.forum.service.article.api.ArticleApi
 import cn.kotliner.forum.service.article.api.ReplyApi

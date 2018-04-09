@@ -1,6 +1,6 @@
 package cn.kotliner.forum.dao.mysql
 
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.UserInfo
 import org.apache.ibatis.annotations.*
 
 @Mapper

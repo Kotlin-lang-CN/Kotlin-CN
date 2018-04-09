@@ -1,6 +1,6 @@
 package cn.kotliner.forum.dao.redis
 
-import cn.kotliner.forum.domain.TextContent
+import cn.kotliner.forum.domain.model.TextContent
 import cn.kotliner.forum.utils.algorithm.Json
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component

@@ -2,7 +2,7 @@ package cn.kotliner.forum.service.article.impl
 
 import cn.kotliner.forum.utils.IDs
 import cn.kotliner.forum.dao.FlowerRepository
-import cn.kotliner.forum.domain.Flower
+import cn.kotliner.forum.domain.model.Flower
 import cn.kotliner.forum.service.article.api.FlowerApi
 import cn.kotliner.forum.service.article.req.CountStarReq
 import cn.kotliner.forum.service.article.req.StarReq

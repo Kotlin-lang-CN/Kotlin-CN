@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.redis.AccountCache
 import cn.kotliner.forum.dao.mysql.AccountMapper
-import cn.kotliner.forum.domain.Account
+import cn.kotliner.forum.domain.model.Account
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.stereotype.Component

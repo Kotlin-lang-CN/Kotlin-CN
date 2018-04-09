@@ -2,10 +2,10 @@ package cn.kotliner.forum.service.article.impl
 
 import cn.kotliner.forum.utils.IDs
 import cn.kotliner.forum.dao.ReplyRepository
-import cn.kotliner.forum.domain.Article
-import cn.kotliner.forum.domain.Message
-import cn.kotliner.forum.domain.Reply
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Article
+import cn.kotliner.forum.domain.model.Message
+import cn.kotliner.forum.domain.model.Reply
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.UserApi
 import cn.kotliner.forum.service.article.api.ArticleApi

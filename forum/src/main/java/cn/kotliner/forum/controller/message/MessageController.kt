@@ -1,7 +1,7 @@
 package cn.kotliner.forum.controller.message
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.Message
+import cn.kotliner.forum.domain.model.Message
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.SessionApi
 import cn.kotliner.forum.service.message.api.GroupApi

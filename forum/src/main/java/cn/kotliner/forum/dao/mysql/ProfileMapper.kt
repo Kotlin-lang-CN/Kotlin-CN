@@ -1,6 +1,6 @@
 package cn.kotliner.forum.dao.mysql
 
-import cn.kotliner.forum.domain.Profile
+import cn.kotliner.forum.domain.model.Profile
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select

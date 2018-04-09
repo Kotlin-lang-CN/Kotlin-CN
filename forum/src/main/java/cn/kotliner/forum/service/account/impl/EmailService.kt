@@ -11,7 +11,7 @@ import cn.kotliner.forum.service.account.resp.CreateEmailSessionResp
 import cn.kotliner.forum.service.account.resp.EmailCheckTokenResp
 import cn.kotliner.forum.service.article.req.EmailCheckTokenReq
 import cn.kotliner.forum.service.article.req.EmailReq
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.UserInfo
 import org.apache.ibatis.io.Resources
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -28,33 +28,38 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 @Service
-@PropertySource("classpath:forum.properties")
 class EmailService : EmailApi {
 
-    @Value("\${mail.user}") private lateinit var emailUser: String
-    @Value("\${mail.password}") private lateinit var emailPassword: String
+    @Value("\${mail.user}")
+    private lateinit var emailUser: String
+    @Value("\${mail.password}")
+    private lateinit var emailPassword: String
 
-    @Autowired private lateinit var redis: StringRedisTemplate
-    @Autowired private lateinit var userRepo: UserRepository
+    @Autowired
+    private lateinit var redis: StringRedisTemplate
+    @Autowired
+    private lateinit var userRepo: UserRepository
 
-    val authenticator: Authenticator by lazy {
+    private val authenticator: Authenticator by lazy {
         object : Authenticator() { // 构建授权信息，用于进行SMTP进行身份验证
-            override fun getPasswordAuthentication() = PasswordAuthentication(emailUser, emailPassword)
+            override fun getPasswordAuthentication() =
+                    PasswordAuthentication(emailUser, emailPassword)
         }
     }
 
-    val emailProperties: Properties by lazy {
-        Resources.getResourceAsStream("forum.properties").use { Properties().apply { load(it) } }
+    private val emailProperties: Properties by lazy {
+        Resources.getResourceAsStream("application.properties").use {
+            Properties().apply {
+                load(it)
+            }
+        }
     }
 
     override fun createSession(req: CreateEmailSessionReq): CreateEmailSessionResp {
         val uuid = UUID.randomUUID()
         val token = "${IDs.encode(uuid.mostSignificantBits)}${IDs.encode(uuid.leastSignificantBits)}"
         redis.boundHashOps<String, Any>("email_activate:$token")
-                .putAll(mapOf(
-                        "uid" to "${req.uid}",
-                        "email" to req.email)
-                )
+                .putAll(mapOf("uid" to "${req.uid}", "email" to req.email))
         return CreateEmailSessionResp().apply { this.token = token }
     }
 

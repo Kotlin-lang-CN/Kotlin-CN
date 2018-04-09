@@ -1,6 +1,6 @@
 package cn.kotliner.forum.utils.gateway
 
-import cn.kotliner.forum.domain.Device
+import cn.kotliner.forum.domain.model.Device
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.req.CheckTokenReq
 import cn.kotliner.forum.exceptions.abort

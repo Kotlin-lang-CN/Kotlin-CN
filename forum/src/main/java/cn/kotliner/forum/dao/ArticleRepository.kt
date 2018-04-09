@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.mysql.ArticleMapper
 import cn.kotliner.forum.dao.redis.ArticleCache
-import cn.kotliner.forum.domain.Article
+import cn.kotliner.forum.domain.model.Article
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.stereotype.Component

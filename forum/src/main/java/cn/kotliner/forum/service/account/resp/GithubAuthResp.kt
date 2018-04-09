@@ -1,8 +1,8 @@
 package cn.kotliner.forum.service.account.resp
 
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.GithubUser
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.GithubUser
+import cn.kotliner.forum.domain.model.UserInfo
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty

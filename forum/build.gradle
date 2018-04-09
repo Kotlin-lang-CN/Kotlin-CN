@@ -22,6 +22,7 @@ dependencies {
 
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-data-redis'
+    compile 'org.springframework.boot:spring-boot-starter-aop'
     compile 'org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1'
     compile 'com.github.pagehelper:pagehelper:5.0.1'
     compile 'mysql:mysql-connector-java:6.0.6'

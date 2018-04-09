@@ -1,4 +1,4 @@
-package cn.kotliner.forum.domain
+package cn.kotliner.forum.domain.model
 
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
@@ -44,11 +44,5 @@ class Account {
     object Role {
         const val NORMAL = 0
         const val ADMIN = 1
-    }
-
-    fun isEqualTo(o: Account): Boolean {
-        return id == o.id
-                && lastLogin == o.lastLogin
-                && createTime == o.createTime
     }
 }

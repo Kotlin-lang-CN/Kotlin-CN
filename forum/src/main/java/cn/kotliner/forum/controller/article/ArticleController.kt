@@ -1,7 +1,7 @@
 package cn.kotliner.forum.controller.article
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.*
+import cn.kotliner.forum.domain.model.*
 import cn.kotliner.forum.exceptions.abort
 import cn.kotliner.forum.exceptions.check
 import cn.kotliner.forum.exceptions.tryExec

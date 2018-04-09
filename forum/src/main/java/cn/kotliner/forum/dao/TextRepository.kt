@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.mysql.TextMapper
 import cn.kotliner.forum.dao.redis.TextCache
-import cn.kotliner.forum.domain.TextContent
+import cn.kotliner.forum.domain.model.TextContent
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.stereotype.Component

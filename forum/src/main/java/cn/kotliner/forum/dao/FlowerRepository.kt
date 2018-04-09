@@ -3,7 +3,7 @@ package cn.kotliner.forum.dao
 import cn.kotliner.forum.dao.mysql.FlowerMapper
 import cn.kotliner.forum.dao.redis.FlowerCountCache
 import cn.kotliner.forum.dao.redis.FlowerEntityCache
-import cn.kotliner.forum.domain.Flower
+import cn.kotliner.forum.domain.model.Flower
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.stereotype.Component

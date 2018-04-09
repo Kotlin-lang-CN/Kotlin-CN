@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.mysql.ProfileMapper
 import cn.kotliner.forum.dao.redis.ProfileCache
-import cn.kotliner.forum.domain.Profile
+import cn.kotliner.forum.domain.model.Profile
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.beans.factory.annotation.Autowired

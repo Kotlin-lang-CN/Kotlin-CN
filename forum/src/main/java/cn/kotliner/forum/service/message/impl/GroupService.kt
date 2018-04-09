@@ -1,6 +1,6 @@
 package cn.kotliner.forum.service.message.impl
 
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.account.api.UserApi
 import cn.kotliner.forum.service.message.api.GroupApi
 import cn.kotliner.forum.service.message.req.CountGroupReq

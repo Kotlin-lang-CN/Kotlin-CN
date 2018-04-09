@@ -1,7 +1,7 @@
 package cn.kotliner.forum.service.account.impl
 
 import cn.kotliner.forum.dao.ProfileRepository
-import cn.kotliner.forum.domain.Profile
+import cn.kotliner.forum.domain.model.Profile
 import cn.kotliner.forum.service.account.api.ProfileApi
 import cn.kotliner.forum.service.account.req.QueryUserReq
 import cn.kotliner.forum.service.account.req.UpdateProfileReq

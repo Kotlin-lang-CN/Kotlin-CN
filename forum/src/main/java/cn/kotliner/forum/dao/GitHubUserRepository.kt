@@ -2,7 +2,7 @@ package cn.kotliner.forum.dao
 
 import cn.kotliner.forum.dao.mysql.GithubUserMapper
 import cn.kotliner.forum.dao.redis.GithubUserCache
-import cn.kotliner.forum.domain.GithubUser
+import cn.kotliner.forum.domain.model.GithubUser
 import cn.kotliner.forum.utils.get
 import org.apache.ibatis.session.SqlSession
 import org.springframework.beans.factory.annotation.Autowired

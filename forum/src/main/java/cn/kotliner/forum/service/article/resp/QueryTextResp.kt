@@ -1,6 +1,6 @@
 package cn.kotliner.forum.service.article.resp
 
-import cn.kotliner.forum.domain.TextContent
+import cn.kotliner.forum.domain.model.TextContent
 import com.baidu.bjf.remoting.protobuf.FieldType
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf
 import com.fasterxml.jackson.annotation.JsonProperty

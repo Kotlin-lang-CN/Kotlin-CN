@@ -1,7 +1,7 @@
 package cn.kotliner.forum.controller.account
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.service.account.api.GitHubApi
 import cn.kotliner.forum.service.account.api.SessionApi
 import cn.kotliner.forum.service.account.req.CreateSessionReq

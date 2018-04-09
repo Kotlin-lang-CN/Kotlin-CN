@@ -1,7 +1,7 @@
 package cn.kotliner.forum.service.account.req
 
-import cn.kotliner.forum.domain.Device
-import cn.kotliner.forum.domain.GithubUser
+import cn.kotliner.forum.domain.model.Device
+import cn.kotliner.forum.domain.model.GithubUser
 import com.baidu.bjf.remoting.protobuf.FieldType.OBJECT
 import com.baidu.bjf.remoting.protobuf.FieldType.STRING
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf

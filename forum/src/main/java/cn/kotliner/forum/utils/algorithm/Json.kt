@@ -20,6 +20,7 @@ object Json {
             .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
             .registerModule(KotlinModule())
 
+    @JvmStatic
     fun dumps(any: Any): String = mapper.writeValueAsString(any)
 
     inline fun <reified T : Any> loads(str: String): T = mapper.readValue<T>(str)

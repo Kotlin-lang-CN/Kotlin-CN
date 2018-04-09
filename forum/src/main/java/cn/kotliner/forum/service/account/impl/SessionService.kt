@@ -11,8 +11,8 @@ import cn.kotliner.forum.service.account.req.CheckTokenReq
 import cn.kotliner.forum.service.account.req.CreateSessionReq
 import cn.kotliner.forum.service.account.resp.CheckTokenResp
 import cn.kotliner.forum.service.account.resp.CreateSessionResp
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.AccountSession
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.AccountSession
 import cn.kotliner.forum.exceptions.abort
 import cn.kotliner.forum.exceptions.check
 import cn.kotliner.forum.exceptions.tryExec
@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit
 import javax.annotation.Resource
 
 @Service
-@PropertySource("classpath:forum.properties")
 class SessionService : SessionApi {
 
     @Value("\${account.jwt.token}") private lateinit var jwtToken: String

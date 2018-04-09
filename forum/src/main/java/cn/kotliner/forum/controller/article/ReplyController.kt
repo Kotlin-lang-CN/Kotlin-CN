@@ -1,10 +1,10 @@
 package cn.kotliner.forum.controller.article
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.Account
-import cn.kotliner.forum.domain.Reply
-import cn.kotliner.forum.domain.TextContent
-import cn.kotliner.forum.domain.UserInfo
+import cn.kotliner.forum.domain.model.Account
+import cn.kotliner.forum.domain.model.Reply
+import cn.kotliner.forum.domain.model.TextContent
+import cn.kotliner.forum.domain.model.UserInfo
 import cn.kotliner.forum.exceptions.abort
 import cn.kotliner.forum.exceptions.check
 import cn.kotliner.forum.service.Err

@@ -1,7 +1,7 @@
 package cn.kotliner.forum.controller.misc
 
 import cn.kotliner.forum.utils.gateway.Request
-import cn.kotliner.forum.domain.Account
+import cn.kotliner.forum.domain.model.Account
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.account.api.SessionApi
 import cn.kotliner.forum.utils.gateway.Resp

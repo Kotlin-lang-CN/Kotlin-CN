@@ -1,6 +1,6 @@
 package cn.kotliner.forum.service.message.impl
 
-import cn.kotliner.forum.domain.Message
+import cn.kotliner.forum.domain.model.Message
 import cn.kotliner.forum.service.Err
 import cn.kotliner.forum.service.message.api.MessageApi
 import cn.kotliner.forum.service.message.req.*

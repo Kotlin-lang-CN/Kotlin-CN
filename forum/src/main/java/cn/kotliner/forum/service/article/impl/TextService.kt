@@ -2,7 +2,7 @@ package cn.kotliner.forum.service.article.impl
 
 import cn.kotliner.forum.utils.IDs
 import cn.kotliner.forum.dao.TextRepository
-import cn.kotliner.forum.domain.TextContent
+import cn.kotliner.forum.domain.model.TextContent
 import cn.kotliner.forum.service.article.api.TextApi
 import cn.kotliner.forum.service.article.req.CreateTextContentReq
 import cn.kotliner.forum.service.article.req.QueryTextReq

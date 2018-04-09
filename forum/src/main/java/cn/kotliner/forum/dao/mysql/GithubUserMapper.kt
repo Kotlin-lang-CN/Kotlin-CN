@@ -1,6 +1,6 @@
 package cn.kotliner.forum.dao.mysql
 
-import cn.kotliner.forum.domain.GithubUser
+import cn.kotliner.forum.domain.model.GithubUser
 import org.apache.ibatis.annotations.*
 
 @Mapper
